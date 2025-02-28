@@ -14,7 +14,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../design.css"> 
 
-    <title>Register</title>
+    <title>Registers</title>
     <style>
         body {
             background-image: url('../pics/BarangayBaritan.png'); 
@@ -191,7 +191,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col-auto">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">M.I.</label>
-                                <input type="text" class="form-control" id="middleIntial" placeholder="ex. B">
+                                <input type="text" class="form-control" id="middleInitial" placeholder="ex. B">
                               </div>
                         </div>
                       </div>
