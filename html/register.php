@@ -122,7 +122,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
         <div class="display-4 " style="font-weight: 700;">Profile Registration</div>
         <div class="container w-75 mt-5">
 
-        <form action="../src/account.php" method="POST">
+       
             <div class=" row justify-content-center align-items-center mt-4" >
               <div class="col text-center" >
                 <div class="step-circle inactive" >
@@ -147,7 +147,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
              
             </div>
    
-
+            <form id="registrationForm" action="../src/account.php" method="POST">
           <!-- Login Details -->
             <div class="container " style="text-align: left;">
 
@@ -156,12 +156,12 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                     <div class="h4 mt-5 text-center" style="font-weight: 700;">Login Details</div>
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Enter valid Email address</label>
-                        <input type="text" class="form-control" id="userEmail" aria-describedby="emailHelp" placeholder="example@gmail.com">
+                        <input type="text" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="example@gmail.com">
                         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Enter Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Re-Enter Password</label>
@@ -169,7 +169,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Enter Family Name</label>
-                        <input type="text" class="form-control" id="famName" placeholder="ex. Dela Cruz">
+                        <input type="text" class="form-control" id="famName" name="famName" placeholder="ex. Dela Cruz">
                       </div>
                       <br>
 
@@ -179,19 +179,19 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col w-25">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">First Name</label>
-                                <input type="text" class="form-control" id="firstName" placeholder="ex. Juan">
+                                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="ex. Juan">
                               </div>
                         </div>
                         <div class="col w-25">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Last Name</label>
-                                <input type="text" class="form-control" id="lastName" placeholder="ex. Dela Cruz">
+                                <input type="text" class="form-control" id="lastName" name="lastName"placeholder="ex. Dela Cruz">
                               </div>
                         </div>
                         <div class="col-auto">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">M.I.</label>
-                                <input type="text" class="form-control" id="middleInitial" placeholder="ex. B">
+                                <input type="text" class="form-control" id="middleInitial" name="middleInitial" placeholder="ex. B">
                               </div>
                         </div>
                       </div>
@@ -201,7 +201,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Sex</label>
-                                <select class="form-control" id="sex">
+                                <select class="form-control" id="sex" name="sex">
                                     <option value="Male">Male</option>
                                     <option  value="Female">Female</option>
         
@@ -211,13 +211,13 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Date of Birth</label>
-                                <input type="date" class="form-control" id="birthday" placeholder="ex. Dela Cruz">
+                                <input type="date" class="form-control" id="birthday" name="birthday" placeholder="ex. Dela Cruz">
                               </div>
                         </div>
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Role</label>
-                                <select class="form-control" id="role">
+                                <select class="form-control" id="role" name="role">
                                     <option value="Head">Head of the Family</option>
                                     <option value="Father">Father</option>
                                     <option value="Mother">Mother</option>
@@ -230,21 +230,21 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Email address</label>
-                        <input type="text" class="form-control" id="email" aria-describedby="emailHelp" placeholder="example@gmail.com">
+                        <input type="text" class="form-control" id="email" name="email"aria-describedby="emailHelp" placeholder="example@gmail.com">
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Contact Number</label>
-                        <input type="number" class="form-control" id="contact" aria-describedby="emailHelp" placeholder="(09)">
+                        <input type="number" class="form-control" id="contact" name="contact" aria-describedby="emailHelp" placeholder="(09)">
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Occupation</label>
-                        <input type="text" class="form-control" id="occupation" aria-describedby="emailHelp" placeholder="example@gmail.com">
+                        <input type="text" class="form-control" id="occupation" name="occupation" aria-describedby="emailHelp" placeholder="example@gmail.com">
                       </div>
                       <div class="row">
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Religion</label>
-                                <select class="form-control" id="religion">
+                                <select class="form-control" id="religion" name="religion">
                                     <option value="Roman Catholic" >Roman Catholic</option>
                                     <option value="Islam">Islam</option>
                                     <option value="Jehovah’s Witnesses">Jehovah’s Witnesses</option>
@@ -257,7 +257,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Civil Status</label>
-                                <select class="form-control" id="civilStatus">
+                                <select class="form-control" id="civilStatus" name="civilStatus">
                                   <option value="Single">Single</option>
                                   <option value="Married">Married</option>
                                   <option value="Widowed">Widowed</option>
@@ -268,9 +268,9 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                               </div>
                         </div>
                         <div class="col">
-                            <div class="form-group mt-4" style="font-weight: 800;">
+                            <div class="form-group mt-4" style="font-weight: 800; ">
                                 <label for="exampleInputPassword1">Eligibility Status</label>
-                                <select class="form-control" id="eligibilityStatus">
+                                <select class="form-control" id="eligibilityStatus" name="eligibilityStatus">
                                   <option value="pwd">PWD (Person with Disability)</option>
                                   <option value="single_parent">Single Parent</option>
                                   <option value="employed">Employed</option>
@@ -288,22 +288,22 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       <div class="h4 mt-5 text-center" style="font-weight: 700;">Emergency Contact Information</div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Emergency Contact Person</label>
-                        <input type="text" class="form-control" id="emergencyPerson" placeholder="">
+                        <input type="text" class="form-control" id="emergencyPerson" name="emergencyPerson"placeholder="">
                       </div>
 
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Emergency Contact Number</label>
-                        <input type="number" class="form-control" id="emergencyContact" placeholder="09" max="11">
+                        <input type="number" class="form-control" id="emergencyContact" name="emergencyContact" placeholder="09" max="11">
                       </div>
 
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Relationship</label>
-                        <input type="text" class="form-control" id="emergencyRelation" placeholder="">
+                        <input type="text" class="form-control" id="emergencyRelation" name="emergencyRelation" placeholder="">
                       </div>
 
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleFormControlTextarea1">Address</label>
-                        <textarea class="form-control" id="emergencyAddress" rows="3"></textarea>
+                        <textarea class="form-control" id="emergencyAddress" name="emergencyAddress"rows="3"></textarea>
                       </div>
 
 
@@ -313,15 +313,15 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                     <div class="h4 mt-5 text-center" style="font-weight: 700;">Address</div>
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Block No.</label>
-                        <input type="text" class="form-control" id="block" aria-describedby="emailHelp" placeholder="example@gmail.com">
+                        <input type="text" class="form-control" id="block" name="block" placeholder="Enter your Block No.">
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Street Name</label>
-                        <input type="text" class="form-control" id="street" placeholder="Password">
+                        <input type="text" class="form-control" id="street" name="street" placeholder="Enter your street">
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Subdivision/Village/Sitio (Optional)</label>
-                        <input type="text" class="form-control" id="subdivision" placeholder="Password">
+                        <input type="text" class="form-control" id="subdivision" name="subdivision" placeholder="Enter your Subdivision/Village/Sitio (Optional)">
                       </div>
 
                     <!-- proof of identity -->
@@ -331,7 +331,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
 
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Type of Identification Card (ID)</label>
-                        <select class="form-control" id="idType">
+                        <select class="form-control" id="idType" name="idType">
                             <option value="passport">Passport</option>
                             <option value="drivers_license">Driver's License</option>
                             <option value="philhealth">PhilHealth ID</option>
@@ -343,15 +343,15 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Upload Identification Card</label>
                         <div class="lead mt-4" style="font-size: 16px;">Front Side</div>
-                        <input type="file" class="form-control" id="idFront">
+                        <input type="file" class="form-control" id="idFront"name="idFront">
                         <div class="lead mt-4" style="font-size: 16px;">Back Side</div>
-                        <input type="file" class="form-control" id="idBack">
+                        <input type="file" class="form-control" id="idBack" name="idBack">
                       </div>
 
                       <div class="form-group mt-5" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Upload 2x2 Picture</label>
                         <div class="lead mt-4" style="font-size: 16px;">(With White Background)</div>
-                        <input type="file" class="form-control" id="2x2pic">
+                        <input type="file" class="form-control" id="2x2pic" name="2x2pic">
                         
                       </div>
                 </div>
@@ -388,7 +388,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
              <div class="me-auto">
                 <button type="button" class="learn mt-2"  style="padding: 5px 15px; background-color: rgb(162, 164, 167);" data-bs-dismiss="modal">Close</button>
              </div>
-              <button type="button" class="learn mt-2"  style="padding: 5px 15px;" data-bs-target="#exampleModal" data-bs-toggle="modal">Yes</button>
+              <button type="button" class="learn mt-2"  style="padding: 5px 15px;" data-bs-target="#exampleModal" data-bs-toggle="modal" onclick="submitForm()">Yes</button>
             </div>
           </div>
         </div>
@@ -479,6 +479,10 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
         
           current--;
           loadFormData(current);
+        }
+
+        function submitForm() {
+          document.getElementById("registrationForm").submit();
         }
         
               </script>
