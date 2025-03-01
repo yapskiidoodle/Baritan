@@ -96,9 +96,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     );
 
     if ($stmtAdd->execute()) {
-        $sqlAccount = "INSERT INTO Residents_Account_tbl (
-            Family_Name_ID, Resident_ID, username, password
-        ) VALUES (?, ?, ?, ?)";
+        if ($stmt->execute()) {
+            // Get the last inserted Resident_ID
+            $residentID = $conn->insert_id;
+    
+            // Insert into Resident_Account_tbl using prepared statements
+            $sqlAccount = "INSERT INTO Residents_Account_tbl (
+                Family_Name_ID, Resident_ID, username, password
+            ) VALUES (?, ?, ?, ?)";
+    
+            $stmt = $conn->prepare($sqlAccount);
+            if (!$stmt) {
+                die("Prepare failed: " . $conn->error);
+            }
+    
+            // Bind parameters
+            $stmt->bind_param("siss", $famName, $residentID, $userEmail, $password);
+    
+            // Execute the statement
+            if ($stmt->execute()) {
+                echo "<script>alert('Registration successful!');</script>";
+            } else {
+                echo "<script>alert('Error inserting into Resident_Account_tbl: " . $stmt->error . "');</script>";
+            }
+        } else {
+            echo "<script>alert('Error inserting into residents_information_tbl: " . $stmt->error . "');</script>";
+        }
         echo "Resident added successfully.";
     } else {
         echo "Error inserting data: " . $stmtAdd->error;
