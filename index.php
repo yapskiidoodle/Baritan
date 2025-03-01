@@ -3,6 +3,7 @@
 <head>
 <?php
 require 'src/connect.php'; // Use 'include' or 'require' to load the file
+//hello
 ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
