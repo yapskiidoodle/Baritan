@@ -46,17 +46,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $query = "SELECT MAX(Resident_ID) AS max_id FROM residents_information_tbl";
     $result = mysqli_query($conn, $query);
     $row = mysqli_fetch_assoc($result);
-    $autoIncrement = ($row['max_id'] ?? 0) + 1;
+    $autoIncrement = ((int) ($row['max_id'] ?? 0)) + 1;
 
     $Resident_ID = strtoupper(substr($famName, 0, 3)) . date("Y") . "000" . $autoIncrement;
+    $Date_Created = date("Y-m-d H:i");
 
     // Fixed column names
     $sqlAddInfo = "INSERT INTO residents_information_tbl 
     (Resident_ID, FirstName, MiddleName, LastName, Sex, Date_of_Birth, Role, Contact_Number, 
     Resident_Email, Occupation, Religion, Eligibility_Status, Civil_Status, Emergency_Person, 
     Emergency_Contact_No, Emergency_Address, Relationship_to_Person, Address, Valid_ID_Type, 
-    Valid_ID_Picture_Front, Valid_ID_Picture_Back, Pic_Path) 
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    Valid_ID_Picture_Front, Valid_ID_Picture_Back, Pic_Path, Date_Created) 
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
     $stmtAdd = $conn->prepare($sqlAddInfo);
 
@@ -64,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error preparing SQL: " . $conn->error);
     }
 
-    $stmtAdd->bind_param("ssssssssssssssssssssss", 
+    $stmtAdd->bind_param("sssssssssssssssssssssss", 
         $Resident_ID,
         $FirstName,
         $MiddleName,
@@ -86,7 +87,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $Valid_ID_Type,
         $idFrontPath,
         $idBackPath,
-        $picPath
+        $picPath,
+        $Date_Created
     );
 
     if ($stmtAdd->execute()) {
