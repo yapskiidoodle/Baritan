@@ -49,6 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $autoIncrement = ((int) ($row['max_id'] ?? 0)) + 1;
 
     $Resident_ID = strtoupper(substr($famName, 0, 3)) . date("Y") . "000" . $autoIncrement;
+    $today = new DateTime();
+    $Age = $today->diff($Date_of_Birth)->y;
     $Date_Created = date("Y-m-d H:i");
 
     // Fixed column names
@@ -56,8 +58,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     (Resident_ID, FirstName, MiddleName, LastName, Sex, Date_of_Birth, Role, Contact_Number, 
     Resident_Email, Occupation, Religion, Eligibility_Status, Civil_Status, Emergency_Person, 
     Emergency_Contact_No, Emergency_Address, Relationship_to_Person, Address, Valid_ID_Type, 
-    Valid_ID_Picture_Front, Valid_ID_Picture_Back, Pic_Path, Date_Created) 
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+    Valid_ID_Picture_Front, Valid_ID_Picture_Back, Pic_Path, Age, Date_Created) 
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
 
     $stmtAdd = $conn->prepare($sqlAddInfo);
 
@@ -65,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error preparing SQL: " . $conn->error);
     }
 
-    $stmtAdd->bind_param("sssssssssssssssssssssss", 
+    $stmtAdd->bind_param("ssssssssssssssssssssssss", 
         $Resident_ID,
         $FirstName,
         $MiddleName,
@@ -88,10 +91,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $idFrontPath,
         $idBackPath,
         $picPath,
+        $Age,
         $Date_Created
     );
 
     if ($stmtAdd->execute()) {
+        $sqlAccount = "INSERT INTO Residents_Account_tbl (
+            Family_Name_ID, Resident_ID, username, password
+        ) VALUES (?, ?, ?, ?)";
         echo "Resident added successfully.";
     } else {
         echo "Error inserting data: " . $stmtAdd->error;
