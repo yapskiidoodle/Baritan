@@ -1,8 +1,24 @@
+<?php
+// Database connection settings
+$host = "localhost"; // Change if needed
+$username = "root"; // Change if needed
+$password = ""; // Change if needed
+$database = "Barangay_Baritan"; // Change to your actual database name
+
+// Create connection
+$conn = new mysqli($host, $username, $password, $database);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <?php
 require 'src/connect.php'; // Use 'include' or 'require' to load the file
+//hello
 ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
