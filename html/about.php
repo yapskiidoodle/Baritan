@@ -112,59 +112,68 @@
         
 
 
-        
-    <!--Login Modal Box-->
+        <div id="modalLogin" class="modal" style="margin-top: 2%; height:70%; font-family: sans-serif;">
     
-
-      <div id="modalLogin" class="modal" style="margin-bottom: -5%; ">
-        <!-- Modal content -->
-           <div class="modal-content" >
-           <span class="close">&times;</span>
-           <div class="row">
-               <div class="col-md-7">
-                   <div class="container display-5" style="padding: 5% 5% 5% 10% ;font-weight: 600; color: #1C3A5B; font-size: 40px;">
-                       Login
-                       <div class="lead pt-2">Login to continue</div>
-                   </div>
-                   <form style="padding: 1% 5% 5% 10%;" onsubmit="return login(event)">
+    <!-- Modal content -->
+    <div class="modal-content" style=" border: none; border-radius: 10px; height: 100%; overflow: hidden;">
+        <span class="close" style="position: absolute; top: 10px; right: 15px; cursor: pointer; z-index: 3;">&times;</span>
+        <div class="row h-100 g-0">
+            <div class="col-md-7 d-flex flex-column">
+                <div class="container display-5" style="padding: 5% 5% 2% 10%; font-weight: 600; color: #00264d; font-size: 40px; margin-top:50px;">
+                    Login
+                    <div class="lead pt-2">Login to continue</div>
+                </div>
+                <form style="padding: 1% 10% 5% 10%;" onsubmit="return login(event)">
                     <div class="form-group">
                         <label for="exampleInputEmail1" class="lead">Email address</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="exampleInputPassword1" class="lead">Password</label>
-                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col">
-                            <button type="button" class="btn btn-danger" style="width: 100%;">Cancel</button>
+                        <div class="col-md-6">
+                        <button type="button" class="btn btn-danger" style="width: 100%; border-radius: 7px; padding: 10px; font-size: 16px;" onclick="closeModal()">Cancel</button>
                         </div>
-                        <div class="col">
-                            <button type="submit" id="loginBtn" class="btn text-white" style="width: 100%; background: #1C3A5B;"  >Login</button>
+                        <div class="col-md-6">
+                            <button type="submit" id="loginBtn" class="btn text-white" style="width: 100%; background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;" data-bs-toggle="modal" data-bs-target="#account">Login</button>
                         </div>
                     </div>
                 </form>
-               </div>
-               <div class="col-md-5" style="  margin-bottom: -2%; margin-right: -2%;">
-                   <div style="margin-top:-13.6%  ">
-                       <img src="../pics/BarangayBaritan.png" alt="" style=" width:490px; height: 491px ;  position: inherit; border-top-right-radius:10px;  border-bottom-right-radius:10px; "  >
-                       <div class="text-white text-center display-5 " style="margin-top: -90%; margin-left: 50px; font-weight: 700; font-size: 36px;">
-                           Sign Up
-                           <div class="lead mt-3">
-                               Lorem ipsum dolor sit, amet consectetur adipisicing elit. Odio velit  
-                           </div>
-                              <a href="html/register.php"> <button type="submit" class="btn text-white learn" style="width: 50%; background: #1C3A5B; margin-top: 30%; ">Register</button>
-                              </a>
-                       </div>
-                   </div>
-               </div>
-           </div>
-           </div>
+                <div style="margin-top: auto;"> </div>
+            </div>
+            <div class="col-md-5" style="position: relative; overflow: hidden; border-top-right-radius:10px;  border-bottom-right-radius:10px; padding: 0; margin: 0; height: 100%;">
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; border-top-right-radius:10px;  border-bottom-right-radius:10px;">
+                    <img src="../pics/BarangayBaritan.png" alt="" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; border-top-right-radius:10px;  border-bottom-right-radius:10px;">
+                </div>
+                <div class="text-white text-center display-5" style="position: relative; z-index: 2; padding: 20% 10%; margin-top:50px;">
+                    <div class="div" style="font-weight: 700; font-size: 36px;">
+                        Sign Up
+                    </div>
+                    <div class="lead mt-3">
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio velit
+                    </div>
+                    <button type="submit" class="btn text-white learn" 
+            style="width: 50%; background: #1C3A5B; margin-top: 10%;"  
+            data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
+            Register
+        </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-     </div>
-   
+<script>
+        function closeModal() {
+            document.getElementById('modalLogin').style.display = 'none';
+            document.querySelector('.modal-backdrop').style.display = 'none';
+        }
+</script>
+
 <script src="../script.js"></script>
 
 

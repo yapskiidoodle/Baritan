@@ -6,11 +6,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve Form Data
     $userEmail = $_POST['userEmail'] ?? '';
     $password = $_POST['password'] ?? '';
-    $LastName = $_POST['lastName'] ?? '';
     $FamilyName = $_POST['famName'] ?? '';
 
     $FirstName = $_POST['firstName'] ?? '';
     $MiddleName = $_POST['middleInitial'] ?? '';
+    $LastName = $_POST['lastName'] ?? '';
     $Sex = $_POST['sex'] ?? '';
     $Date_of_Birth = $_POST['birthday'] ?? '';
     $Role = $_POST['role'] ?? '';
@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = mysqli_query($conn, $query);
     $row = mysqli_fetch_assoc($result);
     $residentCount = ($row['total'] ?? 0) + 1;
-    $Resident_ID = strtoupper(substr($LastName, 0, 3)) . date("Y") . str_pad($residentCount, 3, "0", STR_PAD_LEFT);
+    $Resident_ID = strtoupper(substr($LastName, 0, 3)) . date("Y") . str_pad($residentCount, 4, "0", STR_PAD_LEFT);
 
     // ✅ Calculate Age
     $dob = new DateTime($Date_of_Birth);
@@ -87,7 +87,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resultFam = mysqli_query($conn, $queryFam);
     $rowFam = mysqli_fetch_assoc($resultFam);
     $familyCount = ($rowFam['totalFam'] ?? 0) + 1;
-    $Family_Name_ID = strtoupper(substr($FamilyName, 0, 3)) . date("Y") . str_pad($familyCount, 3, "0", STR_PAD_LEFT);
+    $shortenedName = strtoupper(strlen($FamilyName) >= 3 ? substr($FamilyName, 0, 3) : str_pad($FamilyName, 3, "X"));
+    $Family_Name_ID = "FAM" . $shortenedName . date("Y") . str_pad($familyCount, 3, "0", STR_PAD_LEFT);
 
     // ✅ Insert into `family_name_tbl`
     $sqlFamily = "INSERT INTO family_name_tbl (Family_Name_ID, Resident_ID, Account_ID, Family_Name, Status) 
@@ -104,7 +105,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error inserting into family_name_tbl: " . $stmtFamily->error);
     }
 
-    echo "<script>alert('Registration successful!'); window.location.href = '../index.php';</script>";
+    
     exit();
 }
 ?>
