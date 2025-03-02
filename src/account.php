@@ -43,12 +43,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     move_uploaded_file($_FILES['idBack']['tmp_name'] ?? '', $idBackPath);
     move_uploaded_file($_FILES['2x2pic']['tmp_name'] ?? '', $picPath);
 
-    $query = "SELECT MAX(Resident_ID) AS max_id FROM residents_information_tbl";
+    $query = "SELECT MAX(CAST(SUBSTRING(Resident_ID, -3) AS UNSIGNED)) AS max_id FROM residents_information_tbl";
     $result = mysqli_query($conn, $query);
     $row = mysqli_fetch_assoc($result);
-    $autoIncrement = ((int) ($row['max_id'] ?? 0)) + 1;
+    $autoIncrement = ($row['max_id'] ?? 0) + 1;
 
-    $Resident_ID = strtoupper(substr($famName, 0, 3)) . date("Y") . "000" . $autoIncrement;
+    // Ensure the increment is always 3 digits (e.g., 001, 002, 010, 100)
+    $formattedIncrement = str_pad($autoIncrement, 3, "0", STR_PAD_LEFT);
+
+    // Handle short last names (1 or 2 letters)
+    if (strlen($LastName) <= 2) {
+        $Resident_ID = strtoupper($LastName) . "X" . date("Y") . "000" . $formattedIncrement; // DY → DYX2025001
+    } else {
+        $Resident_ID = strtoupper(substr($famName, 0, 3)) . date("Y") . "000" . $formattedIncrement; // DEL2025001
+    }
+
+    
+
+
+
+    
     $today = new DateTime();
     $Age = $today->diff($Date_of_Birth)->y;
     $Date_Created = date("Y-m-d H:i");
@@ -94,6 +108,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $Age,
         $Date_Created
     );
+ 
 
     if ($stmtAdd->execute()) {
         if ($stmt->execute()) {
