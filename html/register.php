@@ -147,7 +147,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
              
             </div>
    
-            <form id="registrationForm" action="../src/account.php" method="POST">
+            <form id="registrationForm" action="../src/residentInfo.php" method="POST">
           <!-- Login Details -->
             <div class="container " style="text-align: left;">
 

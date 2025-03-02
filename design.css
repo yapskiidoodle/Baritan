@@ -118,13 +118,25 @@ a {
     cursor: pointer;
   }
 
-  .modal-header {
-    background-color: #1C3A5B; 
-    color: white;
-    border-top-left-radius: 0;  /* Remove rounded corners */
-    border-top-right-radius: 0;
-    padding: 1rem;  /* Adjust padding if needed */
-    button {
-      filter: invert(1);
-    }
+  .modal-content {
+    border-radius: 10px;
 }
+
+.modal-header {
+    background-color: #1C3A5B;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+
+
+
