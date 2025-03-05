@@ -1,17 +1,9 @@
 <?php
-// Database connection settings
-$host = "localhost"; // Change if needed
-$username = "root"; // Change if needed
-$password = ""; // Change if needed
-$database = "Barangay_Baritan"; // Change to your actual database name
+require ('../src/connect.php');
+require ('../src/account.php');
 
-// Create connection
-$conn = new mysqli($host, $username, $password, $database);
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -299,7 +291,7 @@ if ($conn->connect_error) {
                     <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
                     <li><hr class="dropdown-divider"></li> -->
-                    <li><a class="dropdown-item" href="index .php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><form action="../src/logout.php"><a class="dropdown-item" href="index.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li></form>
                 </ul>
             </div>
         </div>
@@ -514,6 +506,10 @@ if ($conn->connect_error) {
             </table>
         </div>
     </div>
+    <?php
+   
+    echo "<h1>Session started for user: KUMAG " . $_SESSION['userEmail'] . "</h1>";
+    ?>
 
     <script>
        document.addEventListener("DOMContentLoaded", function () {
