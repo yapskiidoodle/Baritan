@@ -3,6 +3,7 @@
 <head>
 <?php
 require 'src/connect.php'; // Use 'include' or 'require' to load the file
+require 'src/account.php';
 
 ?>
     <meta charset="UTF-8">
@@ -159,6 +160,7 @@ require 'src/connect.php'; // Use 'include' or 'require' to load the file
         </div>
         
      </div>
+    
      <div class="faq container mt-5 display-6 ">
         <span style="color: #70A0D7;">-</span>Frequenly Ask Questions (FAQs)
         

@@ -1,12 +1,22 @@
 <?php
 require 'connect.php'; // Use 'include' or 'require' to load the file
+require 'account.php';
 
-session_destroy();
 
-// Redirect to login or another page (optional)
-header("Location: ../"); 
-echo "<script>alert('nakalogout ka na');</script>";
-exit();
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['logoutButton'])) { 
+
+    session_destroy();
+
+
+    // Redirect to login or another page (optional)
+    header("Location: ../"); 
+
+    exit();
+
+}
+
+
+
 
 
 ?>

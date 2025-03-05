@@ -1,6 +1,6 @@
 <?php
 require 'connect.php'; // Use 'include' or 'require' to load the file
-
+session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     $userEmail= $_POST["userEmail"];
     $password = $_POST["password"];
@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     $result = mysqli_stmt_get_result($stmt);
 
     if (mysqli_num_rows($result) == 1) {
-        session_start();
+     
         $row = mysqli_fetch_assoc($result);
     
         // Verify the password (assuming password is hashed in the database)

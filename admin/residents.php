@@ -291,7 +291,7 @@ require ('../src/account.php');
                     <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
                     <li><hr class="dropdown-divider"></li> -->
-                    <li><form action="../src/logout.php"><a class="dropdown-item" href="index.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li></form>
+                    <li><form action="../src/logout.php" method="POST"><button class="dropdown-item" href="index.php" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button></li></form>
                 </ul>
             </div>
         </div>
@@ -506,10 +506,7 @@ require ('../src/account.php');
             </table>
         </div>
     </div>
-    <?php
-   
-    echo "<h1>Session started for user: KUMAG " . $_SESSION['userEmail'] . "</h1>";
-    ?>
+
 
     <script>
        document.addEventListener("DOMContentLoaded", function () {
