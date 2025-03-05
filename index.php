@@ -3,7 +3,7 @@
 <head>
 <?php
 require 'src/connect.php'; // Use 'include' or 'require' to load the file
-//hello
+
 ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -252,15 +252,15 @@ require 'src/connect.php'; // Use 'include' or 'require' to load the file
                     Login
                     <div class="lead pt-2">Login to continue</div>
                 </div>
-                <form style="padding: 1% 10% 5% 10%;" onsubmit="return login(event)">
+                <form style="padding: 1% 10% 5% 10%;" action="src/account.php" method="POST">
                     <div class="form-group">
                         <label for="exampleInputEmail1" class="lead">Email address</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
+                        <input name="userEmail" type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="exampleInputPassword1" class="lead">Password</label>
-                        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
+                        <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
                     </div>
                     <br>
                     <div class="row">
@@ -268,7 +268,7 @@ require 'src/connect.php'; // Use 'include' or 'require' to load the file
                         <button type="button" class="btn btn-danger" style="width: 100%; border-radius: 7px; padding: 10px; font-size: 16px;" onclick="closeModal()">Cancel</button>
                         </div>
                         <div class="col-md-6">
-                            <button type="submit" id="loginBtn" class="btn text-white" style="width: 100%; background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;" data-bs-toggle="modal" data-bs-target="#account">Login</button>
+                            <button name="loginButton" type="submit" id="loginBtn" class="btn text-white" style="width: 100%; background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;" data-bs-toggle="modal" data-bs-target="#account">Login</button>
                         </div>
                     </div>
                 </form>
