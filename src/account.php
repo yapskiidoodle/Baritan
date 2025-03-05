@@ -14,17 +14,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
 
     if (mysqli_num_rows($result) == 1) {
         $row = mysqli_fetch_assoc($result);
-
+    
         // Verify the password (assuming password is hashed in the database)
         if (password_verify($password, $row['password'])) {
             // Set session variables
             $_SESSION['username'] = $username;
             $_SESSION['firstname'] = $row['firstname'];
-            $_SESSION['image_path'] = $row['image_path'];
-
-            // Redirect to dashboard
-            header("Location: dashboard.php");
-            exit();
+            $_SESSION['type'] = $row['type']; // Store the account type in the session
+    
+            // Redirect based on account type
+            if ($row['type'] == "Admin Account") {
+                header("Location: residents.php");
+                exit();
+            } elseif ($row['type'] == "Family Account") {
+                header("Location: index.php");
+                exit();
+            } else {
+                // Handle unexpected account types (optional)
+                echo "<div class='invalid'>
+                        <span>Invalid account type</span>
+                      </div>";
+            }
         } else {
             echo "<div class='invalid'>
                     <span>Invalid username or password</span>

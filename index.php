@@ -268,7 +268,7 @@ require 'src/connect.php'; // Use 'include' or 'require' to load the file
                         <button type="button" class="btn btn-danger" style="width: 100%; border-radius: 7px; padding: 10px; font-size: 16px;" onclick="closeModal()">Cancel</button>
                         </div>
                         <div class="col-md-6">
-                            <button name="loginButton" type="submit" id="loginBtn" class="btn text-white" style="width: 100%; background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;" data-bs-toggle="modal" data-bs-target="#account">Login</button>
+                            <button name="loginButton" type="submit" id="loginBtn" class="btn text-white" style="width: 100%; background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;" >Login</button>
                         </div>
                     </div>
                 </form>
