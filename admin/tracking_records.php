@@ -267,6 +267,15 @@ if ($conn->connect_error) {
             </button>
         </div>
     </form>
+    <form action="sampledocs.php" method="POST">
+        <div class="text-center">
+            <h5>Generate Population Report</h5>
+            <button type="submit" name="format" value="pdf" class="btn btn-danger me-2">
+                <i class="fas fa-file-pdf"></i> Sample Docs
+            </button>
+            
+        </div>
+    </form>
 </div>
 
 

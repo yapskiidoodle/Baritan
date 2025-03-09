@@ -118,7 +118,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
 
 
 
-    <div class="container mt-5 text-center" style=" background-color: white; padding: 3% 0%; margin-bottom:5%;"> 
+    <div class="container mt-5 text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%;"> 
         <div class="display-4 " style="font-weight: 700;">Profile Registration</div>
         <div class="container w-75 mt-5">
 
@@ -388,7 +388,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
              <div class="me-auto">
                 <button type="button" class="learn mt-2"  style="padding: 5px 15px; background-color: rgb(162, 164, 167);" data-bs-dismiss="modal">Close</button>
              </div>
-              <button type="button" class="learn mt-2"  style="padding: 5px 15px;" data-bs-target="#exampleModal" data-bs-toggle="modal" onclick="submitForm()">Yes</button>
+              <button type="button" class="learn mt-2"  style="padding: 5px 15px;" data-bs-target="#exampleModal" data-bs-toggle="modal" >Yes</button>
             </div>
           </div>
         </div>
@@ -415,7 +415,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
             </div>
             <div class="modal-footer">
                <div class="text-center mx-auto">
-                    <button type="button" class="learn" data-bs-toggle="modal"  style="padding: 5px 15px;" onclick="window.location.href='../../'">Okay</button>
+                    <button type="button" class="learn" data-bs-toggle="modal"  style="padding: 5px 15px;" onclick="submitForm()">Okay</button>
                </div>
              
             </div>

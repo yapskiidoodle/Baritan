@@ -4,6 +4,7 @@
 <?php
 require 'src/connect.php'; // Use 'include' or 'require' to load the file
 require 'src/account.php';
+session_start();
 
 ?>
     <meta charset="UTF-8">
@@ -66,6 +67,21 @@ require 'src/account.php';
 
     </style>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var profile = document.getElementById("profile");
+        var start = document.getElementById("start");
+
+        <?php if (isset($_SESSION['userEmail'])) { ?>
+            profile.hidden = false;
+            start.hidden = true;
+        <?php } else { ?>
+            profile.hidden = true;
+            start.hidden = false;
+        <?php } ?>
+    });
+</script>
+
     
 </head>
 <body>
@@ -105,16 +121,20 @@ require 'src/account.php';
                       <a href="#contact">Contact Us</a>
                    </div>
                    <div class="vr"></div>
-                   <div id="profile" hidden style="margin-left: 5%;">
-                    <button type="button" class="dropdown-toggle mb-2" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="pics/profile.jpg" alt="Barangay Baritan Logo" style="width: 38px; border-radius: 50%; ">
-                      </button>
-                      <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="html/profile.php">Profile</a></li>
-                        <li><a class="dropdown-item" onclick="location.reload();">Logout</a></li>
-                      </ul>
-                   </div>
-                   <div id="start">
+                   <div class="dropdown" id="profile" name="profile" hidden>
+                        <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                            <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li> -->
+                            <li><a class="dropdown-item" href="html/profile.php" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Profile</a></li>
+                            <li><form action="src/logout.php" method="POST"><button class="dropdown-item" href="index.php" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button></li></form>
+
+                        </ul>
+                    </div>
+                   <div id="start" name="start">
                         <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
                    </div>
                </div>
@@ -447,7 +467,20 @@ require 'src/account.php';
 
   
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var profile = document.getElementById("profile");
+        var start = document.getElementById("start");
 
+        <?php if (isset($_SESSION['userEmail'])) { ?>
+            profile.hidden = false;
+            start.hidden = true;
+        <?php } else { ?>
+            profile.hidden = true;
+            start.hidden = false;
+        <?php } ?>
+    });
+</script>
       <script src="script.js"></script>
 
 </body>

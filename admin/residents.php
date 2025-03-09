@@ -448,6 +448,8 @@ require ('../src/account.php');
                         <th>Role</th>
                         <th>Address</th>
                         <th>Email</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
                     </tr>
                 </thead>
                 <tbody id="residentsTableBody">
@@ -494,6 +496,8 @@ require ('../src/account.php');
                     <td>{$row['Role']}</td>
                     <td>{$row['Address']}</td> <!-- Address is included here -->
                     <td>{$row['Resident_Email']}</td>
+                    <td><button class='btn btn-warning'>Edit</button></td>
+                    <td><button class='btn btn-danger'>Delete</button></td>
                   </tr>";
         }
     } else {
