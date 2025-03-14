@@ -2,6 +2,8 @@
 require ('../src/connect.php');
 require ('../src/account.php');
 
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -139,7 +141,7 @@ require ('../src/account.php');
         }
 
         .search-button,
-        .register-button {
+        .generate-button {
             padding: 8px 12px;
             border: none;
             border-radius: 5px;
@@ -151,11 +153,11 @@ require ('../src/account.php');
             background-color: #2a4d6e;
         }
 
-        .register-button:hover {
+        .generate-button:hover {
             background-color: #2a4d6e;
         }
 
-        .register-button {
+        .generate-button {
             padding: 8px 12px;
             border: none;
             border-radius: 5px;
@@ -165,7 +167,7 @@ require ('../src/account.php');
         }
 
         .search-button:hover,
-        .register-button:hover {
+        .generate-button:hover {
             background-color: #2a4d6e;
         }
 
@@ -335,6 +337,76 @@ require ('../src/account.php');
     </div>
 
     <!-- Main Content -->
+
+    
+
+    <!-- Generate List Modal -->
+<div class="modal fade" id="generateListModal" tabindex="-1" aria-labelledby="generateListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header" style="background-color: #1C3A5B; color: white;">
+                <h5 class="modal-title" id="generateListModalLabel">Generate Resident List</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="generateListForm" action="../src/generate_list.php" method="POST" target="_blank">
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Select Resident Type:</strong></label>
+                        <select class="form-select" id="residentType" name="resident_type" required>
+                            <option value="" selected disabled>Select a type</option>
+                            <option value="Senior Citizen">Senior Citizen</option>
+                            <option value="Head of the Family">Head of the Family</option>
+                            <option value="PWD">PWD (Person with Disability)</option>
+                            <option value="Single Parent">Single Parent</option>
+                            <option value="Male Age Range">Male Age Range</option>
+                            <option value="Female Age Range">Female Age Range</option>
+                        </select>
+                    </div>
+
+                    <!-- Age Range for Male -->
+                    <div class="mb-3" id="maleAgeRangeContainer" style="display: none;">
+                        <label class="form-label"><strong>Male Age Range:</strong></label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" class="form-control" id="maleMinAge" name="male_min_age" placeholder="Min Age">
+                            </div>
+                            <div class="col">
+                                <input type="number" class="form-control" id="maleMaxAge" name="male_max_age" placeholder="Max Age">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Age Range for Female -->
+                    <div class="mb-3" id="femaleAgeRangeContainer" style="display: none;">
+                        <label class="form-label"><strong>Female Age Range:</strong></label>
+                        <div class="row">
+                            <div class="col">
+                                <input type="number" class="form-control" id="femaleMinAge" name="female_min_age" placeholder="Min Age">
+                            </div>
+                            <div class="col">
+                                <input type="number" class="form-control" id="femaleMaxAge" name="female_max_age" placeholder="Max Age">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Purpose/Reason Field -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Purpose/Reason for Generating List:</strong></label>
+                        <textarea class="form-control" id="purpose" name="purpose" rows="3" placeholder="Enter the purpose or reason for generating this list..." required></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Generate List</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Edit Resident Modal -->
 <div class="modal fade" id="editResidentModal" tabindex="-1" aria-labelledby="editResidentModalLabel" aria-hidden="true">
@@ -643,11 +715,11 @@ require ('../src/account.php');
 </div>
 
     <div class="main-content">
-        <!-- Register Resident Button -->
+        <!-- Generate Resident Button -->
         <div class="search-filter">
-            <!-- Register Resident Button -->
-            <button class="register-button" onclick="window.open('../html/register.php', '_blank')">
-                <i class="fas fa-user-plus"></i> Register Resident
+            <!-- generate Resident Button -->
+            <button class="generate-button" data-bs-toggle="modal" data-bs-target="#generateListModal">
+                <i class="fas fa-file-export me-1"></i> Generate a List
             </button>
 
             <!-- Search Bar -->
@@ -670,130 +742,64 @@ require ('../src/account.php');
                         <th>Role</th>
                         <th>Address</th>
                         <th>Email</th>
-                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="residentsTableBody">
     <?php
-        $sql = "SELECT 
-            r.Resident_ID,
-            r.Address,
-            r.FirstName,
-            r.MiddleName,
-            r.LastName,
-            r.Sex,
-            r.Date_of_Birth,
-            r.Role,
-            r.Contact_Number,
-            r.Resident_Email,
-            r.Religion,
-            r.Eligibility_Status,
-            r.Civil_Status,
-            r.Emergency_Person,
-            r.Emergency_Contact_No,
-            r.Relationship_to_Person,
-            TIMESTAMPDIFF(YEAR, r.Date_of_Birth, CURDATE()) AS Age,
-            a.Account_ID,  -- ✅ Ensure this column is selected
-            a.Status AS Account_Status
-            FROM Residents_information_tbl r
-            JOIN family_name_tbl f ON r.Family_Name_ID = f.Family_Name_ID
-            JOIN account_tbl a ON f.Account_ID = a.Account_ID"; // ✅ Ensure this JOIN works
+    $sql = "SELECT 
+                Resident_ID,
+                Address,
+                FirstName,
+                MiddleName,
+                LastName,
+                Sex,
+                Date_of_Birth,
+                Role,
+                Contact_Number,
+                Resident_Email,
+                Religion,
+                Eligibility_Status,
+                Civil_Status,
+                Emergency_Person,
+                Emergency_Contact_No,
+                Relationship_to_Person,
+                TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) AS Age
+            FROM Residents_information_tbl";
 
-        $result = $conn->query($sql);
-        if (!$result) {
-            die("SQL Error: " . $conn->error);
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr data-resident-id='{$row['Resident_ID']}'
+                      data-last-name='{$row['LastName']}'
+                      data-first-name='{$row['FirstName']}'
+                      data-middle-name='{$row['MiddleName']}'
+                      data-dob='{$row['Date_of_Birth']}'
+                      data-religion='{$row['Religion']}'
+                      data-eligibility='{$row['Eligibility_Status']}'
+                      data-emergency-person='{$row['Emergency_Person']}'
+                      data-emergency-contact='{$row['Emergency_Contact_No']}'
+                      data-relationship='{$row['Relationship_to_Person']}'>
+                    <td>{$row['LastName']} {$row['FirstName']} </td>
+                    <td>{$row['Age']}</td>
+                    <td>{$row['Contact_Number']}</td>
+                    <td>{$row['Sex']}</td>
+                    <td>{$row['Civil_Status']}</td>
+                    <td>{$row['Role']}</td>
+                    <td>{$row['Address']}</td>
+                    <td>{$row['Resident_Email']}</td>
+                    <td>
+                        <i class='fas fa-eye view-icon' style='cursor: pointer; margin-right: 10px; color: #1C3A5B;' title='View'></i>
+                        <i class='fas fa-edit edit-icon' style='cursor: pointer; margin-right: 10px; color: #1C3A5B;' title='Edit' data-bs-toggle='modal' data-bs-target='#editResidentModal'></i>
+                        <i class='fas fa-trash delete-icon' style='cursor: pointer; color: #dc3545;' title='Delete'></i>
+                    </td>
+                  </tr>";
         }
-       
-   
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        // Determine button class and text based on status
-        $buttonClass = ($row['Account_Status'] === 'Activated') ? 'btn-success' : 'btn-danger';
-        $buttonText = $row['Account_Status']; // "Activated" or "Deactivated"
-
-        echo "<tr data-resident-id='{$row['Resident_ID']}'
-                  data-last-name='{$row['LastName']}'
-                  data-first-name='{$row['FirstName']}'
-                  data-middle-name='{$row['MiddleName']}'
-                  data-dob='{$row['Date_of_Birth']}'
-                  data-religion='{$row['Religion']}'
-                  data-eligibility='{$row['Eligibility_Status']}'
-                  data-emergency-person='{$row['Emergency_Person']}'
-                  data-emergency-contact='{$row['Emergency_Contact_No']}'
-                  data-relationship='{$row['Relationship_to_Person']}'>
-                <td>{$row['LastName']} {$row['FirstName']}</td>
-                <td>{$row['Age']}</td>
-                <td>{$row['Contact_Number']}</td>
-                <td>{$row['Sex']}</td>
-                <td>{$row['Civil_Status']}</td>
-                <td>{$row['Role']}</td>
-                <td>{$row['Address']}</td>
-                <td>{$row['Resident_Email']}</td>
-                <td>
-                    <!-- Only one button per account -->
-                    <button id='status-btn-{$row['Account_ID']}' 
-                            class='btn status-btn {$buttonClass}'
-                            data-account-id='{$row['Account_ID']}'
-                            data-current-status='{$row['Account_Status']}'>
-                        {$buttonText}
-                    </button>
-                </td>
-                <td>
-                    <i class='fas fa-eye view-icon' 
-                        style='cursor: pointer; margin-right: 10px; color: #1C3A5B;' 
-                        title='View'></i>
-                    
-                    <i class='fas fa-edit edit-icon' 
-                        style='cursor: pointer; margin-right: 10px; color: #1C3A5B;' 
-                        title='Edit' 
-                        data-bs-toggle='modal' 
-                        data-bs-target='#editResidentModal'></i>
-                    
-                    <i class='fas fa-trash delete-icon' 
-                        style='cursor: pointer; color: #dc3545;' 
-                        title='Delete'></i>
-                </td>
-              </tr>";
-            }
-        } else {
-            echo "<tr><td colspan='10'>No residents found</td></tr>";
-        }
-
-    
+    } else {
+        echo "<tr><td colspan='9'>No residents found</td></tr>";
+    }
     ?>
-    <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".status-btn").forEach(button => {
-        button.addEventListener("click", function () {
-            let accountID = this.getAttribute("data-account-id");
-            let currentStatus = this.getAttribute("data-current-status");
-            let newStatus = (currentStatus === "Activated") ? "Deactivated" : "Activated";
-
-            let clickedButton = this; // Reference to the clicked button
-
-            fetch("../src/update_status.php", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: `accountID=${encodeURIComponent(accountID)}&newStatus=${encodeURIComponent(newStatus)}`
-            })
-            .then(response => response.text())
-            .then(data => {
-                if (data.trim() === "success") {
-                    clickedButton.innerText = newStatus;
-                    clickedButton.setAttribute("data-current-status", newStatus);
-                    clickedButton.classList.remove("btn-success", "btn-danger");
-                    clickedButton.classList.add(newStatus === "Activated" ? "btn-success" : "btn-danger");
-                } else {
-                    alert("Failed to update status.");
-                }
-            })
-            .catch(error => console.error("Error:", error));
-        });
-    });
-});
-
-    </script>
 </tbody>
             </table>
         </div>
@@ -801,6 +807,72 @@ if ($result->num_rows > 0) {
 
 
     <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    const generateListForm = document.getElementById("generateListForm");
+
+    generateListForm.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        // Show a loading indicator (optional)
+        const generateButton = generateListForm.querySelector("button[type='submit']");
+        generateButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        generateButton.disabled = true;
+
+        // Submit the form data to generate_list.php
+        const formData = new FormData(generateListForm);
+        fetch("generate_list.php", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => response.blob()) // Get the PDF as a Blob
+        .then(blob => {
+            // Create a URL for the Blob
+            const url = window.URL.createObjectURL(blob);
+
+            // Open the PDF in a new tab
+            window.open(url, "_blank");
+
+            // Revoke the Blob URL after opening
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("An error occurred while generating the list.");
+        })
+        .finally(() => {
+            // Reset the button text and enable it
+            generateButton.innerHTML = '<i class="fas fa-user-plus"></i> Generate List';
+            generateButton.disabled = false;
+
+            // Close the modal
+            const generateListModal = bootstrap.Modal.getInstance(document.getElementById("generateListModal"));
+            generateListModal.hide();
+        });
+    });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const residentTypeDropdown = document.getElementById("residentType");
+    const maleAgeRangeContainer = document.getElementById("maleAgeRangeContainer");
+    const femaleAgeRangeContainer = document.getElementById("femaleAgeRangeContainer");
+
+    residentTypeDropdown.addEventListener("change", function () {
+        const selectedValue = this.value;
+
+        // Show/hide age range fields based on selection
+        if (selectedValue === "Male Age Range") {
+            maleAgeRangeContainer.style.display = "block";
+            femaleAgeRangeContainer.style.display = "none";
+        } else if (selectedValue === "Female Age Range") {
+            femaleAgeRangeContainer.style.display = "block";
+            maleAgeRangeContainer.style.display = "none";
+        } else {
+            maleAgeRangeContainer.style.display = "none";
+            femaleAgeRangeContainer.style.display = "none";
+        }
+    });
+});
 
 function redirectToResidents() {
     // Close the modal (if not already closed by data-bs-dismiss)
