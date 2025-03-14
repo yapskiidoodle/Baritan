@@ -6,6 +6,17 @@ require 'src/connect.php'; // Use 'include' or 'require' to load the file
 require 'src/account.php';
 session_start();
 
+
+if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var myModal = new bootstrap.Modal(document.getElementById('deactivatedModal'));
+            myModal.show();
+        });
+    </script>";
+    unset($_SESSION['deactivated']); // Clear the session variable
+}
+
 ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -315,6 +326,8 @@ session_start();
   </div>
 </div>
 
+
+
 <script>
 //         document.addEventListener('hidden.bs.modal', function () {
 //     document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
@@ -413,6 +426,36 @@ document.addEventListener('hidden.bs.modal', function () {
       </div>
     </div>
   </div>
+<!-- Bootstrap 5 Deactivated Account Modal -->
+<div class="modal fade" id="deactivatedModal" tabindex="-1" aria-labelledby="deactivatedModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deactivatedModalLabel">Account Deactivated</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p>Your account has been deactivated. Please contact support for assistance.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap 5 JS (Ensure this is included) -->
+
+
+
+
+
+
+
+
+
+
+
 
     <script> 
       document.addEventListener("DOMContentLoaded", function () {

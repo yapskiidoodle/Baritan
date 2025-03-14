@@ -49,7 +49,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
 
         // ✅ Check if the account is deactivated
         if ($accountStatus === "Deactivated") {
-            echo "<div class='invalid'><span>Your account is deactivated. Please contact support.</span></div>";
+            $_SESSION['deactivated'] = true; // Set session variable
+            header("Location: ../index.php"); // Redirect to index.php
             exit();
         }
 
