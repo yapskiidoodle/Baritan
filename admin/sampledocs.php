@@ -1,5 +1,5 @@
 <?php
-require('fpdf186/fpdf.php');
+require('fpdf186/fpdf.php'); // Include the FPDF library
 
 class PDF extends FPDF {
     function Header() {
@@ -13,7 +13,7 @@ class PDF extends FPDF {
         $this->Cell(0, 10, 'BARANGAY BARITAN', 0, 1, 'C', true);
         $this->Ln(5);
         $this->SetFont('Arial', 'B', 16);
-        $this->Cell(0, 10, 'CERTIFICATE OF INDIGENCY', 0, 1, 'C', true);
+        $this->Cell(0, 10, 'BARANGAY CLEARANCE', 0, 1, 'C', true);
         $this->Ln(10);
     }
 
@@ -27,38 +27,65 @@ class PDF extends FPDF {
     }
 }
 
-// Create a new PDF instance
-$pdf = new PDF();
-$pdf->AddPage();
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['format'])) {
+    // Retrieve form data
+    $name = 'name';
+    $address = 'address';
+    $purpose = 'purpose';
+    $date_issued = date('F j, Y'); // Current date
 
-// Set font for the body
-$pdf->SetFont('Arial', '', 12);
+    // Create a new PDF instance
+    $pdf = new PDF();
+    $pdf->AddPage();
 
-// Add content with some styling
-$pdf->SetTextColor(0, 0, 0); // Black text
-$pdf->Cell(0, 10, 'To whom it may concern,', 0, 1);
-$pdf->Ln(5);
+    // Set font for the body
+    $pdf->SetFont('Arial', '', 12);
 
-$pdf->SetTextColor(0, 0, 128); // Navy blue text
-$pdf->SetFont('Arial', 'B', 12);
-$pdf->Cell(0, 10, 'This is to certify that I, [Name],', 0, 1);
-$pdf->SetFont('Arial', '', 12);
-$pdf->SetTextColor(0, 0, 0); // Black text
-$pdf->MultiCell(0, 10, 'born on [Date of Birth], a resident of [Address], Sta. Am Ext. St., Brgy. Barangay, Partner, certifies also that the above-named person belongs to an indigent family of this Barangay.', 0, 'L');
-$pdf->Ln(5);
+    // Add content with some styling
+    $pdf->SetTextColor(0, 0, 0); // Black text
+    $pdf->Cell(0, 10, 'To whom it may concern,', 0, 1);
+    $pdf->Ln(5);
 
-$pdf->SetTextColor(0, 0, 128); // Navy blue text
-$pdf->SetFont('Arial', 'B', 12);
-$pdf->Cell(0, 10, 'This Certification is Being Issued upon request of the above-named person', 0, 1);
-$pdf->SetFont('Arial', '', 12);
-$pdf->SetTextColor(0, 0, 0); // Black text
-$pdf->MultiCell(0, 10, 'for FINANCIAL ASSISTANCE FOR [Purpose].', 0, 'L');
+    $pdf->SetTextColor(0, 0, 128); // Navy blue text
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Cell(0, 10, "This is to certify that $name,", 0, 1);
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->SetTextColor(0, 0, 0); // Black text
+    $pdf->MultiCell(0, 10, "of legal age, and a resident of $address, has been cleared by this Barangay from any derogatory record as of this date.", 0, 'L');
+    $pdf->Ln(5);
 
-// Add a simple border or line for design
-$pdf->SetDrawColor(0, 0, 128); // Navy blue line
-$pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
-$pdf->Ln(10);
+    $pdf->SetTextColor(0, 0, 128); // Navy blue text
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Cell(0, 10, 'This Barangay Clearance is issued for the purpose of:', 0, 1);
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->SetTextColor(0, 0, 0); // Black text
+    $pdf->MultiCell(0, 10, "$purpose.", 0, 'L');
+    $pdf->Ln(5);
 
-// Output the PDF
-$pdf->Output('I', 'Certificate_of_Indigency.pdf');
+    $pdf->SetTextColor(0, 0, 128); // Navy blue text
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Cell(0, 10, 'Issued this ' . $date_issued . ' at Barangay Baritan, Malabon City.', 0, 1);
+    $pdf->Ln(10);
+
+    // Add a simple border or line for design
+    $pdf->SetDrawColor(0, 0, 128); // Navy blue line
+    $pdf->Line(10, $pdf->GetY(), 200, $pdf->GetY());
+    $pdf->Ln(10);
+
+    // Add signature section
+    $pdf->SetFont('Arial', 'B', 12);
+    $pdf->Cell(0, 10, 'Certified by:', 0, 1);
+    $pdf->Ln(10);
+    $pdf->SetFont('Arial', 'U', 12);
+    $pdf->Cell(0, 10, '_________________________', 0, 1, 'C');
+    $pdf->SetFont('Arial', '', 12);
+    $pdf->Cell(0, 10, 'Barangay Captain', 0, 1, 'C');
+
+    // Output the PDF to the browser
+    $pdf->Output('I', 'Barangay_Clearance.pdf');
+} else {
+    // Handle invalid request
+    echo "Invalid request.";
+}
 ?>

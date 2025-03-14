@@ -245,39 +245,14 @@ if ($conn->connect_error) {
     <!-- Sidebar -->
     <div class="sidebar">
         <a href="residents.php"><i class="fas fa-users"></i>Residents</a>
-        <a href="announcement.php"><i class="fas fa-bullhorn"></i>Announcement</a>
+        <a href="announcement.php" class="active"><i class="fas fa-bullhorn"></i>Announcement</a>
         <a href="document.php"><i class="fas fa-file-alt"></i>Documents</a>
         <a href="approved_document.php"><i class="fas fa-file-signature"></i>Approved Documents</a>
-        <a href="blotter_report.php"><i class="fas fa-clipboard-list"></i>Blotter Report</a>
+        <a href="blotter_report.php" ><i class="fas fa-clipboard-list"></i>Blotter Report</a>
         <a href="complaint_report.php"><i class="fas fa-exclamation-circle"></i>Complaint Report</a>
         <a href="reservation.php"><i class="fas fa-calendar-alt"></i>Reservations</a>
-        <a href="tracking_records.php" class="active"><i class="fas fa-calendar-alt"></i>Tracking Records</a>
+        <a href="tracking_records.php"><i class="fas fa-calendar-alt"></i>Tracking Records</a>
     </div>
-
-
-    <div class="main-content d-flex justify-content-center align-items-center" style="height: 80vh;">
-    <form action="generate_pdf.php" method="POST">
-        <div class="text-center">
-            <h5>Generate Population Report</h5>
-            <button type="submit" name="format" value="pdf" class="btn btn-danger me-2">
-                <i class="fas fa-file-pdf"></i> Generate PDF File
-            </button>
-            <button type="submit" name="format" value="csv" class="btn btn-success">
-                <i class="fas fa-file-csv"></i> Generate CSV File
-            </button>
-        </div>
-    </form>
-    <form action="sampledocs.php" method="POST" target="_blank">
-        <div class="text-center">
-            <h5>Generate Population Report</h5>
-            <button type="submit" name="format" value="pdf" class="btn btn-danger me-2">
-                <i class="fas fa-file-pdf"></i> Sample Docs
-            </button>
-            
-        </div>
-    </form>
-</div>
-
 
 
 

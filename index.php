@@ -430,14 +430,14 @@ document.addEventListener('hidden.bs.modal', function () {
 <div class="modal fade" id="deactivatedModal" tabindex="-1" aria-labelledby="deactivatedModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="deactivatedModalLabel">Account Deactivated</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-header text-white">
+        <h5 class="modal-title" id="deactivatedModalLabel" >Account Deactivated</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
       </div>
       <div class="modal-body text-center">
-        <p>Your account has been deactivated. Please contact support for assistance.</p>
+        <p>Your account is currently deactivated. Please wait for the administrator to activate/reactivate your account.</p>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer text-left">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
     </div>

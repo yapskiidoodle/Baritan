@@ -2,8 +2,6 @@
 require ('../src/connect.php');
 require ('../src/account.php');
 
-
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -198,6 +196,7 @@ require ('../src/account.php');
             position: sticky;
             top: 0;
             z-index: 1;
+            text-align: center;
         }
 
         .residents-table tr:nth-child(even) {
@@ -263,11 +262,37 @@ require ('../src/account.php');
 /* Make table rows clickable */
 #residentsTableBody tr {
     cursor: pointer;
+    font-size: 14px;
     transition: background-color 0.2s;
 }
 
 #residentsTableBody tr:hover {
     background-color: #f1f1f1;
+}
+.edit-icon:hover {
+    color: #2a4d6e; /* Darker blue on hover */
+}
+.delete-icon:hover {
+    color: #c82333; /* Darker red on hover */
+}
+
+/* Add this to your existing CSS */
+#deleteConfirmationModal .modal-header {
+    background-color: #1C3A5B;
+    color: white;
+}
+
+#deleteConfirmationModal .modal-footer .btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+#deleteConfirmationModal .modal-footer .btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+.view-icon:hover {
+    color: #2a4d6e; /* Darker blue on hover */
 }
     </style>
 </head>
@@ -292,7 +317,7 @@ require ('../src/account.php');
                     <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
                     <li><hr class="dropdown-divider"></li> -->
                     <li><form action="../src/logout.php" method="POST"><button class="dropdown-item" href="index.php" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button></li></form>
-                </ul>
+                </ul>   
             </div>
         </div>
     </div>
@@ -310,6 +335,203 @@ require ('../src/account.php');
     </div>
 
     <!-- Main Content -->
+
+    <!-- Edit Resident Modal -->
+<div class="modal fade" id="editResidentModal" tabindex="-1" aria-labelledby="editResidentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header" style="background-color: #1C3A5B; color: white;">
+                <h5 class="modal-title text-center" id="editResidentModalLabel">Edit Resident Information</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="redirectToResidents()" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <form id="editResidentForm" action="update_resident.php" method="POST">
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Resident ID:</strong></label>
+                                <input type="text" class="form-control" id="editResidentId" name="resident_id" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>First Name:</strong></label>
+                                <input type="text" class="form-control" id="editResidentFirstName" name="first_name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Middle Name:</strong></label>
+                                <input type="text" class="form-control" id="editResidentMiddleName" name="middle_name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Last Name:</strong></label>
+                                <input type="text" class="form-control" id="editResidentLastName" name="last_name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Age:</strong></label>
+                                <input type="text" class="form-control" id="editResidentAge" name="age" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Sex:</strong></label>
+                                <select class="form-select" id="editResidentSex" name="sex">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Date of Birth:</strong></label>
+                                <input type="date" class="form-control" id="editResidentDob" name="dob">
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Role:</strong></label>
+                                <!-- <input type="text" class="form-control" id="editResidentRole" name="role"> -->
+                                <select class="form-control" id="editResidentRole" name="role">
+                                    <option value="Head">Head of the Family</option>
+                                    <option value="Father">Father</option>
+                                    <option value="Mother">Mother</option>
+                                    <option value="Daughter">Daughter</option>
+                                    <option value="Son">Son</option>
+                                    <option value="Grandfather">Grandfather</option>
+                                    <option value="Grandmother">Grandmother</option>
+                                    <option value="Uncle">Uncle</option>
+                                    <option value="Aunt">Aunt</option>
+                                    <option value="Cousin">Cousin</option>
+                                    <option value="Guardian">Guardian</option>
+                                    <option value="Tenant">Tenant</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Address:</strong></label>
+                                <input type="text" class="form-control" id="editResidentAddress" name="address">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Contact Number:</strong></label>
+                                <input type="text" class="form-control" id="editResidentContact" name="contact_number">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Email:</strong></label>
+                                <input type="email" class="form-control" id="editResidentEmail" name="email">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Religion:</strong></label>
+                                <!-- <input type="text" class="form-control" id="editResidentReligion" name="religion"> -->
+                                <select class="form-control" id="editResidentReligion" name="religion">
+                                    <option value="Roman Catholic" >Roman Catholic</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Jehovah’s Witnesses">Jehovah’s Witnesses</option>
+                                    <option value="Christian">Christian</option>
+                                    <option value="Iglesia ni Cristo (INC)">Iglesia ni Cristo (INC)</option>
+                                    
+                                  </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Eligibility Status:</strong></label>
+                                <!-- <input type="text" class="form-control" id="editResidentEligibility" name="eligibility_status"> -->
+                                <select class="form-control" id="editResidentEligibility" name="eligibility_status">
+                                  <option value="Person with Disability">PWD (Person with Disability)</option>
+                                  <option value="Single Parent">Single Parent</option>
+                                  <option value="Employed">Employed</option>
+                                  <option value="Unemployed">Unemployed</option>
+                                  <option value="Student">Student</option>
+                                  <option value="Senior Citizen">Senior Citizen</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Civil Status:</strong></label>
+                                <select class="form-select" id="editResidentCivilStatus" name="civil_status">
+                                    <option value="Single">Single</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Divorced">Divorced</option>
+                                    <option value="Widowed">Widowed</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emergency Contact Section -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h6 class="mb-3 text-center" style="color: #1C3A5B; font-weight: bold;"><strong>Emergency Contact Information</strong></h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label"><strong>Emergency Contact Person:</strong></label>
+                                        <input type="text" class="form-control" id="editResidentEmergencyPerson" name="emergency_person">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label"><strong>Emergency Contact Number:</strong></label>
+                                        <input type="text" class="form-control" id="editResidentEmergencyContact" name="emergency_contact">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label"><strong>Relationship to Person:</strong></label>
+                                        <input type="text" class="form-control" id="editResidentRelationship" name="relationship">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #1C3A5B; color: white;">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size: 17px; text-align: center;">Are you sure you want to delete this resident's data?</p>
+                <p style="font-size: 17px; text-align: center;">This action cannot be undone.</p>
+                <div class="mb-3">
+                    <label for="deleteReason" class="form-label"><strong>Reason for Deletion:</strong></label>
+                    <select class="form-select" id="deleteReasonDropdown" name="delete_reason" required>
+                        <option value="" selected disabled>Select a reason</option>
+                        <option value="No longer residing in the barangay">No longer residing in the barangay</option>
+                        <option value="Deceased">Deceased</option>
+                        <option value="Duplicate record">Duplicate record</option>
+                        <option value="Incorrect or fake entry">Incorrect or fake entry</option>
+                        <option value="Resident requested deletion">Resident requested deletion</option>
+                        <option value="Long-term absence">Long-term absence</option>
+                        <option value="Legal or administrative reasons">Legal or administrative reasons</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
+                <div class="mb-3" id="otherReasonContainer" style="display: none;">
+                    <label for="otherReason" class="form-label"><strong>Specify Reason:</strong></label>
+                    <textarea class="form-control" id="otherReason" name="other_reason" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="../src/delete.php" method="POST">
+                    <input type="hidden" id="deleteResidentId" name="resident_id">
+                    <input type="hidden" id="finalDeleteReason" name="delete_reason">
+                    <button type="submit" name="delete_resident" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
        
 <!-- Resident Information Modal -->
 <div class="modal fade" id="residentInfoModal" tabindex="-1" aria-labelledby="residentInfoModalLabel" aria-hidden="true">
@@ -424,7 +646,7 @@ require ('../src/account.php');
         <!-- Register Resident Button -->
         <div class="search-filter">
             <!-- Register Resident Button -->
-            <button class="register-button" onclick="window.open('register.php', '_blank')">
+            <button class="register-button" onclick="window.open('../html/register.php', '_blank')">
                 <i class="fas fa-user-plus"></i> Register Resident
             </button>
 
@@ -448,122 +670,324 @@ require ('../src/account.php');
                         <th>Role</th>
                         <th>Address</th>
                         <th>Email</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="residentsTableBody">
-                <?php
-                $sql = "SELECT 
-                Resident_ID,
-                Address,
-                FirstName,
-                MiddleName,
-                LastName,
-                Sex,
-                Date_of_Birth,
-                Role,
-                Contact_Number,
-                Resident_Email,
-                Religion,
-                Eligibility_Status,
-                Civil_Status,
-                Emergency_Person,
-                Emergency_Contact_No,
-                Relationship_to_Person,
-                TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) AS Age
-            FROM Residents_information_tbl";
-    
-    $result = $conn->query($sql);
-    
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr data-resident-id='{$row['Resident_ID']}'
-                      data-last-name='{$row['LastName']}'
-                      data-first-name='{$row['FirstName']}'
-                      data-middle-name='{$row['MiddleName']}'
-                      data-dob='{$row['Date_of_Birth']}'
-                      data-religion='{$row['Religion']}'
-                      data-eligibility='{$row['Eligibility_Status']}'
-                      data-emergency-person='{$row['Emergency_Person']}'
-                      data-emergency-contact='{$row['Emergency_Contact_No']}'
-                      data-relationship='{$row['Relationship_to_Person']}'>
-                    <td>{$row['LastName']} {$row['FirstName']} </td>
-                    <td>{$row['Age']}</td>
-                    <td>{$row['Contact_Number']}</td>
-                    <td>{$row['Sex']}</td>
-                    <td>{$row['Civil_Status']}</td>
-                    <td>{$row['Role']}</td>
-                    <td>{$row['Address']}</td> <!-- Address is included here -->
-                    <td>{$row['Resident_Email']}</td>
-                    <td><button class='btn btn-warning'>Edit</button></td>
-                    <td><button class='btn btn-danger'>Delete</button></td>
-                  </tr>";
+    <?php
+        $sql = "SELECT 
+            r.Resident_ID,
+            r.Address,
+            r.FirstName,
+            r.MiddleName,
+            r.LastName,
+            r.Sex,
+            r.Date_of_Birth,
+            r.Role,
+            r.Contact_Number,
+            r.Resident_Email,
+            r.Religion,
+            r.Eligibility_Status,
+            r.Civil_Status,
+            r.Emergency_Person,
+            r.Emergency_Contact_No,
+            r.Relationship_to_Person,
+            TIMESTAMPDIFF(YEAR, r.Date_of_Birth, CURDATE()) AS Age,
+            a.Account_ID,  -- ✅ Ensure this column is selected
+            a.Status AS Account_Status
+            FROM Residents_information_tbl r
+            JOIN family_name_tbl f ON r.Family_Name_ID = f.Family_Name_ID
+            JOIN account_tbl a ON f.Account_ID = a.Account_ID"; // ✅ Ensure this JOIN works
+
+        $result = $conn->query($sql);
+        if (!$result) {
+            die("SQL Error: " . $conn->error);
         }
-    } else {
-        echo "<tr><td colspan='8'>No residents found</td></tr>";
-    }
-            
-        ?>
+       
    
-                </tbody>
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        // Determine button class and text based on status
+        $buttonClass = ($row['Account_Status'] === 'Activated') ? 'btn-success' : 'btn-danger';
+        $buttonText = $row['Account_Status']; // "Activated" or "Deactivated"
+
+        echo "<tr data-resident-id='{$row['Resident_ID']}'
+                  data-last-name='{$row['LastName']}'
+                  data-first-name='{$row['FirstName']}'
+                  data-middle-name='{$row['MiddleName']}'
+                  data-dob='{$row['Date_of_Birth']}'
+                  data-religion='{$row['Religion']}'
+                  data-eligibility='{$row['Eligibility_Status']}'
+                  data-emergency-person='{$row['Emergency_Person']}'
+                  data-emergency-contact='{$row['Emergency_Contact_No']}'
+                  data-relationship='{$row['Relationship_to_Person']}'>
+                <td>{$row['LastName']} {$row['FirstName']}</td>
+                <td>{$row['Age']}</td>
+                <td>{$row['Contact_Number']}</td>
+                <td>{$row['Sex']}</td>
+                <td>{$row['Civil_Status']}</td>
+                <td>{$row['Role']}</td>
+                <td>{$row['Address']}</td>
+                <td>{$row['Resident_Email']}</td>
+                <td>
+                    <!-- Only one button per account -->
+                    <button id='status-btn-{$row['Account_ID']}' 
+                            class='btn status-btn {$buttonClass}'
+                            data-account-id='{$row['Account_ID']}'
+                            data-current-status='{$row['Account_Status']}'>
+                        {$buttonText}
+                    </button>
+                </td>
+                <td>
+                    <i class='fas fa-eye view-icon' 
+                        style='cursor: pointer; margin-right: 10px; color: #1C3A5B;' 
+                        title='View'></i>
+                    
+                    <i class='fas fa-edit edit-icon' 
+                        style='cursor: pointer; margin-right: 10px; color: #1C3A5B;' 
+                        title='Edit' 
+                        data-bs-toggle='modal' 
+                        data-bs-target='#editResidentModal'></i>
+                    
+                    <i class='fas fa-trash delete-icon' 
+                        style='cursor: pointer; color: #dc3545;' 
+                        title='Delete'></i>
+                </td>
+              </tr>";
+            }
+        } else {
+            echo "<tr><td colspan='10'>No residents found</td></tr>";
+        }
+
+    
+    ?>
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".status-btn").forEach(button => {
+        button.addEventListener("click", function () {
+            let accountID = this.getAttribute("data-account-id");
+            let currentStatus = this.getAttribute("data-current-status");
+            let newStatus = (currentStatus === "Activated") ? "Deactivated" : "Activated";
+
+            let clickedButton = this; // Reference to the clicked button
+
+            fetch("../src/update_status.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `accountID=${encodeURIComponent(accountID)}&newStatus=${encodeURIComponent(newStatus)}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.trim() === "success") {
+                    clickedButton.innerText = newStatus;
+                    clickedButton.setAttribute("data-current-status", newStatus);
+                    clickedButton.classList.remove("btn-success", "btn-danger");
+                    clickedButton.classList.add(newStatus === "Activated" ? "btn-success" : "btn-danger");
+                } else {
+                    alert("Failed to update status.");
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+});
+
+    </script>
+</tbody>
             </table>
         </div>
     </div>
 
 
     <script>
-       document.addEventListener("DOMContentLoaded", function () {
+
+function redirectToResidents() {
+    // Close the modal (if not already closed by data-bs-dismiss)
+    const modal = bootstrap.Modal.getInstance(document.getElementById('editResidentModal'));
+    modal.hide(); // Ensure the modal is closed
+
+    // Redirect to resident.php after a short delay (optional)
+    setTimeout(() => {
+        window.location.href = 'residents.php';
+    }, 100); // 100ms delay to ensure the modal is fully closed
+}
+
+document.addEventListener("DOMContentLoaded", function () {
     const tableRows = document.querySelectorAll("#residentsTableBody tr");
 
     tableRows.forEach((row) => {
-        row.addEventListener("click", function () {
-            const cells = row.querySelectorAll("td");
-            const residentData = {
-                id: row.getAttribute("data-resident-id"),
-                firstName: row.getAttribute("data-first-name"),
-                middleName: row.getAttribute("data-middle-name"),
-                lastName: row.getAttribute("data-last-name"),
-                sex: cells[3].textContent,
-                dob: row.getAttribute("data-dob"),
-                role: cells[5].textContent,
-                contactNumber: cells[2].textContent,
-                email: cells[7].textContent,
-                religion: row.getAttribute("data-religion"),
-                eligibility: row.getAttribute("data-eligibility"),
-                civilStatus: cells[4].textContent,
-                emergencyPerson: row.getAttribute("data-emergency-person"),
-                emergencyContact: row.getAttribute("data-emergency-contact"),
-                relationship: row.getAttribute("data-relationship"),
-                age: cells[1].textContent,
-                address: cells[6].textContent,
-            };
+        // Add click event for the edit icon only
+        const editIcon = row.querySelector(".edit-icon");
+        editIcon.addEventListener("click", function (event) {
+            event.stopPropagation(); // Prevent the row click event from firing
+            populateAndShowEditModal(row);
+        });
+    });
 
-            // Populate the modal
-            document.getElementById("residentId").textContent = residentData.id;
-            document.getElementById("residentFirstName").textContent = residentData.firstName;
-            document.getElementById("residentMiddleName").textContent = residentData.middleName || "N/A";
-            document.getElementById("residentLastName").textContent = residentData.lastName;
-            document.getElementById("residentSex").textContent = residentData.sex;
-            document.getElementById("residentDob").textContent = residentData.dob;
-            document.getElementById("residentRole").textContent = residentData.role;
-            document.getElementById("residentContact").textContent = residentData.contactNumber;
-            document.getElementById("residentEmail").textContent = residentData.email;
-            document.getElementById("residentReligion").textContent = residentData.religion;
-            document.getElementById("residentEligibility").textContent = residentData.eligibility;
-            document.getElementById("residentCivilStatus").textContent = residentData.civilStatus;
-            document.getElementById("residentEmergencyPerson").textContent = residentData.emergencyPerson;
-            document.getElementById("residentEmergencyContact").textContent = residentData.emergencyContact;
-            document.getElementById("residentRelationship").textContent = residentData.relationship;
-            document.getElementById("residentAge").textContent = residentData.age;
-            document.getElementById("residentAddress").textContent = residentData.address;
+    // Function to populate and show the edit modal
+    function populateAndShowEditModal(row) {
+        const cells = row.querySelectorAll("td");
+        const residentData = {
+            id: row.getAttribute("data-resident-id"),
+            firstName: row.getAttribute("data-first-name"),
+            middleName: row.getAttribute("data-middle-name"),
+            lastName: row.getAttribute("data-last-name"),
+            sex: cells[3].textContent,
+            dob: row.getAttribute("data-dob"),
+            role: cells[5].textContent,
+            contactNumber: cells[2].textContent,
+            email: cells[7].textContent,
+            religion: row.getAttribute("data-religion"),
+            eligibility: row.getAttribute("data-eligibility"),
+            civilStatus: cells[4].textContent,
+            emergencyPerson: row.getAttribute("data-emergency-person"),
+            emergencyContact: row.getAttribute("data-emergency-contact"),
+            relationship: row.getAttribute("data-relationship"),
+            age: cells[1].textContent,
+            address: cells[6].textContent,
+        };
 
-            // Show the modal
-            const residentInfoModal = new bootstrap.Modal(document.getElementById("residentInfoModal"));
-            residentInfoModal.show();
+        // Populate the edit modal
+        document.getElementById("editResidentId").value = residentData.id;
+        document.getElementById("editResidentFirstName").value = residentData.firstName;
+        document.getElementById("editResidentMiddleName").value = residentData.middleName || "";
+        document.getElementById("editResidentLastName").value = residentData.lastName;
+        document.getElementById("editResidentSex").value = residentData.sex;
+        document.getElementById("editResidentDob").value = residentData.dob;
+        document.getElementById("editResidentRole").value = residentData.role;
+        document.getElementById("editResidentContact").value = residentData.contactNumber;
+        document.getElementById("editResidentEmail").value = residentData.email;
+        document.getElementById("editResidentReligion").value = residentData.religion;
+        document.getElementById("editResidentEligibility").value = residentData.eligibility;
+        document.getElementById("editResidentCivilStatus").value = residentData.civilStatus;
+        document.getElementById("editResidentEmergencyPerson").value = residentData.emergencyPerson;
+        document.getElementById("editResidentEmergencyContact").value = residentData.emergencyContact;
+        document.getElementById("editResidentRelationship").value = residentData.relationship;
+        document.getElementById("editResidentAge").value = residentData.age;
+        document.getElementById("editResidentAddress").value = residentData.address;
+
+        // Show the edit modal
+        const editResidentModal = new bootstrap.Modal(document.getElementById("editResidentModal"));
+        editResidentModal.show();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const tableRows = document.querySelectorAll("#residentsTableBody tr");
+
+    tableRows.forEach((row) => {
+        // Add click event for the view icon only
+        const viewIcon = row.querySelector(".view-icon");
+        viewIcon.addEventListener("click", function (event) {
+            event.stopPropagation(); // Prevent the row click event from firing
+            populateAndShowModal(row);
+        });
+    });
+
+    // Function to populate and show the modal
+    function populateAndShowModal(row) {
+        const cells = row.querySelectorAll("td");
+        const residentData = {
+            id: row.getAttribute("data-resident-id"),
+            firstName: row.getAttribute("data-first-name"),
+            middleName: row.getAttribute("data-middle-name"),
+            lastName: row.getAttribute("data-last-name"),
+            sex: cells[3].textContent,
+            dob: row.getAttribute("data-dob"),
+            role: cells[5].textContent,
+            contactNumber: cells[2].textContent,
+            email: cells[7].textContent,
+            religion: row.getAttribute("data-religion"),
+            eligibility: row.getAttribute("data-eligibility"),
+            civilStatus: cells[4].textContent,
+            emergencyPerson: row.getAttribute("data-emergency-person"),
+            emergencyContact: row.getAttribute("data-emergency-contact"),
+            relationship: row.getAttribute("data-relationship"),
+            age: cells[1].textContent,
+            address: cells[6].textContent,
+        };
+
+        // Populate the modal
+        document.getElementById("residentId").textContent = residentData.id;
+        document.getElementById("residentFirstName").textContent = residentData.firstName;
+        document.getElementById("residentMiddleName").textContent = residentData.middleName || "N/A";
+        document.getElementById("residentLastName").textContent = residentData.lastName;
+        document.getElementById("residentSex").textContent = residentData.sex;
+        document.getElementById("residentDob").textContent = residentData.dob;
+        document.getElementById("residentRole").textContent = residentData.role;
+        document.getElementById("residentContact").textContent = residentData.contactNumber;
+        document.getElementById("residentEmail").textContent = residentData.email;
+        document.getElementById("residentReligion").textContent = residentData.religion;
+        document.getElementById("residentEligibility").textContent = residentData.eligibility;
+        document.getElementById("residentCivilStatus").textContent = residentData.civilStatus;
+        document.getElementById("residentEmergencyPerson").textContent = residentData.emergencyPerson;
+        document.getElementById("residentEmergencyContact").textContent = residentData.emergencyContact;
+        document.getElementById("residentRelationship").textContent = residentData.relationship;
+        document.getElementById("residentAge").textContent = residentData.age;
+        document.getElementById("residentAddress").textContent = residentData.address;
+
+        // Show the modal
+        const residentInfoModal = new bootstrap.Modal(document.getElementById("residentInfoModal"));
+        residentInfoModal.show();
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteIcons = document.querySelectorAll(".delete-icon");
+    deleteIcons.forEach((icon) => {
+        icon.addEventListener("click", function () {
+            console.log("Delete icon clicked!"); // Debugging
+            const row = this.closest("tr");
+            const residentId = row.getAttribute("data-resident-id");
+
+            // Set the Resident_ID in the hidden input field
+            document.getElementById("deleteResidentId").value = residentId;
+
+            // Show the delete confirmation modal
+            const deleteModal = new bootstrap.Modal(document.getElementById("deleteConfirmationModal"));
+            deleteModal.show();
         });
     });
 });
+
+// Delete Confirmation Modal
+document.addEventListener("DOMContentLoaded", function () {
+    const deleteReasonDropdown = document.getElementById("deleteReasonDropdown");
+    const otherReasonContainer = document.getElementById("otherReasonContainer");
+    const otherReasonTextarea = document.getElementById("otherReason");
+    const finalDeleteReasonInput = document.getElementById("finalDeleteReason");
+
+    // Handle dropdown change
+    deleteReasonDropdown.addEventListener("change", function () {
+        if (this.value === "Others") {
+            otherReasonContainer.style.display = "block"; // Show the textbox
+            otherReasonTextarea.setAttribute("required", "required"); // Make it required
+        } else {
+            otherReasonContainer.style.display = "none"; // Hide the textbox
+            otherReasonTextarea.removeAttribute("required"); // Remove the required attribute
+            finalDeleteReasonInput.value = this.value; // Set the selected reason
+        }
+    });
+
+    // Handle form submission
+    const deleteForm = document.querySelector("#deleteConfirmationModal form");
+    deleteForm.addEventListener("submit", function (event) {
+        if (deleteReasonDropdown.value === "Others") {
+            finalDeleteReasonInput.value = otherReasonTextarea.value; // Use the custom reason
+        } else {
+            finalDeleteReasonInput.value = deleteReasonDropdown.value; // Use the selected reason
+        }
+
+        // Validate the reason
+        if (!finalDeleteReasonInput.value) {
+            event.preventDefault(); // Prevent form submission
+            alert("Please provide a reason for deletion.");
+        }
+    });
+});
+
+// Search Functionality
 function searchResidents() {
     const searchInput = document.getElementById("searchBar").value.toLowerCase();
     const tableBody = document.getElementById("residentsTableBody");

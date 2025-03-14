@@ -1,5 +1,8 @@
 <?php
+
 require 'connect.php';
+require 'account.php';
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve Form Data
@@ -29,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Secure Password Hashing
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-    // Insert into `account_tbl` FIRST
+    // Insert into `account_tbl`
     $queryAcc = "SELECT MAX(CAST(SUBSTRING(Account_ID, -3) AS UNSIGNED)) AS max_id FROM account_tbl";
     $resultAcc = mysqli_query($conn, $queryAcc);
     $rowAcc = mysqli_fetch_assoc($resultAcc);
@@ -42,6 +45,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Account_Type = "Family Account";
     $AccountStatus = "Deactivated";
     $stmtAccount->bind_param("ssssss", $Account_ID, $Role, $Account_Type, $userEmail, $hashedPassword, $AccountStatus);
+    
     if (!$stmtAccount->execute()) {
         die("Error inserting into account_tbl: " . $stmtAccount->error);
     }
@@ -78,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $today = new DateTime();
     $Age = $today->diff($dob)->y;
 
-    // Insert into `residents_information_tbl` LAST
+    // Insert into `residents_information_tbl`
     $sqlAddInfo = "INSERT INTO residents_information_tbl 
         (Resident_ID, Family_Name_ID, FirstName, MiddleName, LastName, Sex, Date_of_Birth, Role, Contact_Number, 
         Resident_Email, Occupation, Religion, Eligibility_Status, Civil_Status, Emergency_Person, 
@@ -100,8 +104,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error inserting into residents_information_tbl: " . $stmtAddInfo->error);
     }
 
-    // Redirect to profile
-    header("Location: ../index.php"); 
+    // Store user session data
+    $_SESSION['Account_ID'] = $Account_ID;
+    $_SESSION['Role'] = $Role;
+    $_SESSION['User_Email'] = $userEmail;
+
+    // Redirect based on role
+    $_SESSION['type'] = $_SESSION['type'] ?? ''; // Ensure it exists
+
+    if ($_SESSION['type'] === "Admin Account") {
+        header("Location: ../admin/residents.php");
+    } else {
+        header("Location: ../index.php");
+    }
     exit();
 }
 ?>
