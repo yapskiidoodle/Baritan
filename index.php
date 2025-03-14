@@ -17,6 +17,13 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
     unset($_SESSION['deactivated']); // Clear the session variable
 }
 
+if (isset($_SESSION['error_message'])) {
+  $errorMessage = $_SESSION['error_message'];
+  unset($_SESSION['error_message']); // Clear the error message after displaying it
+} else {
+  $errorMessage = ""; // No error message
+}
+
 ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -113,7 +120,7 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                         </ul>
                     </div>
                    <div id="start" name="start">
-                        <button  class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Log In</button>
+                        <button  class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;"role="button" onclick="window.location.href='html/login.php'">Log In</button>
                    </div>
                </div>
            </div>
@@ -287,7 +294,7 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
       </div>
       
-      <div class="modal-body p-0 " style="overflow-y: hidden;" >
+      <div class="modal-body p-0 ">
         <div class="container text-center" style="padding: 5% 10%; font-weight: 600; color: #00264d; font-size: 28px;">
           Login
           <div class="lead pt-2">Login to continue</div>
@@ -295,10 +302,13 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
 
         <form style="padding: 1% 10%;" action="src/account.php" method="POST">
           <div class="mb-3">
-            <label for="exampleInputEmail1" class="lead">Email address</label>
+            <label for="exampleInputEmail1" class="lead">Username</label>
             <input name="userEmail" type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email" 
               style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;" required>
           </div>
+          <small id="emailError" style="color: red; display: <?php echo ($errorMessage ? 'block' : 'none'); ?>; margin-top: -1px;">
+            <?php echo $errorMessage; ?>
+          </small>
 
           <div class="mb-3">
             <label for="exampleInputPassword1" class="lead">Password</label>
@@ -317,9 +327,11 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
               <button name="loginButton" type="submit" class="btn text-white w-100" 
                 style="background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;">
                 Login
+               
               </button>
             </div>
           </div>
+          
         </form>
       </div>
     </div>

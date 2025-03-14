@@ -1,8 +1,7 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 require 'connect.php'; // Load the database connection
+
+session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     $userEmail = trim($_POST["userEmail"] ?? '');
@@ -48,6 +47,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
             echo "<div class='invalid'><span>Invalid password</span></div>";
             exit();
         }
+
+        session_regenerate_id(true);
 
         // ✅ Check if the account is deactivated
         if ($accountStatus === "Deactivated") {
@@ -98,13 +99,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
         } elseif ($accountType === "Family Account") {
             header("Location: ../index.php");
             exit();
-        } else {
-            echo "<div class='invalid'><span>Invalid account type</span></div>";
-            exit();
         }
     } else {
-        echo "<div class='invalid'><span>Invalid username or password</span></div>";
+        $_SESSION['error_message'] = "Wrong Username or Password, please try again.";
+        header("Location: ../index.php#exampleModalToggle2&modal=1");
         exit();
+
     }
 
     // ✅ Close statement
