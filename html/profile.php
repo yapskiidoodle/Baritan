@@ -7,8 +7,12 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
 require '../src/account.php';
 require '../src/residentInfo.php';
 
-$FirstName = $_SESSION['FirstName'] ?? '' ;
-$LastName = $_SESSION['LastName']?? '';
+$userData = $_SESSION['User_Data'] ?? [];
+
+$FirstName = $userData['FirstName'] ?? 's' ;
+$LastName = $userData['LastName']?? '';
+$Address = $userData['Address']?? '';
+$userEmail = $_SESSION['userEmail'] ?? ''; 
 
 ?>
     <meta charset="UTF-8">
@@ -150,9 +154,7 @@ $LastName = $_SESSION['LastName']?? '';
             </div>
             <div class="col-md-6" style=" text-align: left;">
                 <div class="container d-inline ">
-                    <h4 class="mt-4 "><?php echo '<pre>';
-print_r($_SESSION);
-echo '</pre>'; ?>
+                    <h4 class="mt-4 "><?php echo sprintf("%s %s", $FirstName, $LastName); ?>
                         <button class="button" style="margin-left: 10%;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart-fill" viewBox="0 0 16 16" style="color: rgb(238, 255, 4);">
                                 <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1"/>
@@ -168,12 +170,13 @@ echo '</pre>'; ?>
                        
 
 
-                        Dela Cruz <div class="lead d-inline"> Family</div>
+                        <?php echo sprintf("%s", $LastName); ?> <div class="lead d-inline"> Family</div>
                         <div class="lead" style="font-size: 16px;">
-                            juandelacruz@gmail.com
+                            <?php echo sprintf("%s", $userEmail); ?>
                         </div>
                         <div class="lead" style="font-size: 16px;">
-                            123, Barangay Baritan, Malabon City
+                            <?php echo sprintf("%s", $Address); ?>
+
                         </div>
                     </div>
                    

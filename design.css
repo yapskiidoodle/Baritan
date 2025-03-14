@@ -120,6 +120,11 @@ a {
   overflow-y: auto; /* Makes it scrollable if content is too long */
 }
 
+.modal-body button:hover {
+  filter: brightness(1.2); /* Makes it 20% lighter */
+  transition: 0.1s ease-in-out; /* Smooth transition */
+}
+
 /* Fix footer alignment */
 .modal-footer {
   border-top: none;
@@ -151,19 +156,3 @@ a {
     object-fit: cover; /* Ensures the image scales properly */
 }
 
-#modalLogin {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%; /* Adjusted width */
-  max-width: 79%;
-  background: white; /* Changed to white, as the backdrop is black */
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  z-index: 1050; /* Ensure it's above the backdrop */
-  span {
-    color: white;
-  }
-}

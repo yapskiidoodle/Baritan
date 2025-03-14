@@ -17,49 +17,16 @@ session_start();
     <link rel="stylesheet" href="design.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
 
     <style>
         body {
             overflow-x: hidden;
         }
-        .col{
-            a:hover {
+        
+        
+      
 
-                color: #65a9f1;
-                
-                border-radius: 10px;
-                transition: all 0.1s ease-in-out;
-            }
-        }
-        .modal {
-            z-index: 1055 !important;
-        }
-        .modal-backdrop {
-            z-index: 1045 !important;
-        }
-        .tc_body{
-        height: calc(100% - 170px);
-        overflow: auto;
-        padding-right: 20px;
-        }
-
-        .tc_body ol li{
-        margin-bottom: 15px;
-        }
-
-       .tc_body ol li h3{
-        margin-bottom: 5px;
-        }
-        .modal-body {
-        max-height: 400px; /* Adjust height as needed */
-        overflow-y: auto;  /* Enables vertical scrolling */
-        }
-
-
-       /* Custom CSS for the modal */
-  
-  
 
 
 
@@ -135,7 +102,7 @@ session_start();
                         </ul>
                     </div>
                    <div id="start" name="start">
-                        <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
+                        <button  class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;" data-bs-toggle="modal" href="#exampleModalToggle" role="button">Log In</button>
                    </div>
                </div>
            </div>
@@ -259,83 +226,118 @@ session_start();
 
       </div>
 
-      
-
-   <!--Login Modal Box-->
-   
-   <div id="modalLogin" class="modal" style="margin-top: 2%; height:70%; font-family: sans-serif;">
-    
-    <!-- Modal content -->
-    <div class="modal-content" style=" border: none; border-radius: 10px; height: 100%; overflow: hidden;">
-        <span class="close" style="position: absolute; top: 10px; right: 15px; cursor: pointer; z-index: 3;">&times;</span>
-        <div class="row h-100 g-0">
-            <div class="col-md-7 d-flex flex-column">
-                <div class="container display-5" style="padding: 5% 5% 2% 10%; font-weight: 600; color: #00264d; font-size: 40px; margin-top:50px;">
-                    Login
-                    <div class="lead pt-2">Login to continue</div>
-                </div>
-                <form style="padding: 1% 10% 5% 10%;" action="src/account.php" method="POST">
-                    <div class="form-group">
-                        <label for="exampleInputEmail1" class="lead">Email address</label>
-                        <input name="userEmail" type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1" class="lead">Password</label>
-                        <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-6">
-                        <button type="button" class="btn btn-danger" style="width: 100%; border-radius: 7px; padding: 10px; font-size: 16px;" onclick="closeModal()">Cancel</button>
-                        </div>
-                        <div class="col-md-6">
-                            <button name="loginButton" type="submit" id="loginBtn" class="btn text-white" style="width: 100%; background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;" >Login</button>
-                        </div>
-                    </div>
-                </form>
-                <div style="margin-top: auto;"> </div>
-            </div>
-            <div class="col-md-5" style="position: relative; overflow: hidden; border-top-right-radius:10px;  border-bottom-right-radius:10px; padding: 0; margin: 0; height: 100%;">
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; border-top-right-radius:10px;  border-bottom-right-radius:10px;">
-                    <img src="pics/BarangayBaritan.png" alt="" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; border-top-right-radius:10px;  border-bottom-right-radius:10px;">
-                </div>
-                <div class="text-white text-center display-5" style="position: relative; z-index: 2; padding: 20% 10%; margin-top:50px;">
-                    <div class="div" style="font-weight: 700; font-size: 36px;">
-                        Sign Up
-                    </div>
-                    <div class="lead mt-3">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio velit
-                    </div>
-                    <button type="submit" class="btn text-white learn" 
-            style="width: 50%; background: #1C3A5B; margin-top: 10%;"  
-            data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
+      <!-- Modal Box (revised) -->
+     
+      <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="height: 75vh;"> <!-- Increased height -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalToggleLabel">Modal 1</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0 position-relative overflow-hidden" style="overflow-y: hidden;"> <!-- Hides vertical overflow -->
+        <!-- Background Image -->
+        <img src="pics/BarangayBaritan.png" alt="Barangay Baritan"   
+          style="object-fit: cover; height: 100%; width: 100%;"> 
+        
+        <!-- Overlay Text -->
+        <div class="position-absolute top-50 start-50 translate-middle text-center text-white"
+          style="width: 80%; padding: 20px; border-radius: 10px;">
+          <div style="font-weight: 700; font-size: 36px;">
+            Join Our Community!
+          </div>
+          <div class="lead mt-3">
+            Be part of Barangay Baritan, connect, stay updated, and access services with ease!
+          </div>
+          <button type="submit" class="btn btn- success text-white learn mt-3" id="register" 
+            style="width: 50%;"
+            data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal">
             Register
-        </button>
-                </div>
-            </div>
+          </button>
+          <button type="submit" class="btn text-white learn mt-3" 
+            style="width: 50%;"
+            data-bs-toggle="modal" data-bs-target="#exampleModalToggle2" data-bs-dismiss="modal">
+            Login
+          </button>
         </div>
+      </div>
     </div>
+  </div>
+</div>
+
+
+
+<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="height: 75vh;">
+     
+      <div class="modal-header border-0">
+        <h5 class="modal-title" id="loginModalLabel">Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+      </div>
+      
+      <div class="modal-body p-0 " style="overflow-y: hidden;" >
+        <div class="container text-center" style="padding: 5% 10%; font-weight: 600; color: #00264d; font-size: 28px;">
+          Login
+          <div class="lead pt-2">Login to continue</div>
+        </div>
+
+        <form style="padding: 1% 10%;" action="src/account.php" method="POST">
+          <div class="mb-3">
+            <label for="exampleInputEmail1" class="lead">Email address</label>
+            <input name="userEmail" type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email" 
+              style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;" required>
+          </div>
+
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="lead">Password</label>
+            <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" 
+              style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;" required>
+          </div>
+
+          <div class="row my-5">
+            <div class="col-md-6">
+              <button type="button" class="btn btn-danger w-100" 
+                style="border-radius: 7px; padding: 10px; font-size: 16px;" data-bs-dismiss="modal">
+                Cancel
+              </button>
+            </div>
+            <div class="col-md-6">
+              <button name="loginButton" type="submit" class="btn text-white w-100" 
+                style="background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;">
+                Login
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-        function closeModal() {
-            document.getElementById('modalLogin').style.display = 'none';
-            document.querySelector('.modal-backdrop').style.display = 'none';
-        }
+//         document.addEventListener('hidden.bs.modal', function () {
+//     document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+// });
+
+
+document.addEventListener('hidden.bs.modal', function () {
+    // Remove all modal backdrops
+    document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+    // Ensure the body class is removed
+    document.body.classList.remove('modal-open');
+    // Reset inline styles added by Bootstrap
+    document.body.style.paddingRight = '';
+});
+
 </script>
-
-
-
-
-
 
       <!-- -->
 
 <!-- data privacy -->
 
 <!-- Modal -->
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document" >
       <div class="modal-content"  style="width:  280%;  ">
         <div class="modal-header">
@@ -386,7 +388,7 @@ session_start();
                           
                     </div>
                     <div class="col text-center" >
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.reload();">Close</button>
                         <button type="button" class="btn btn-primary" id="submitBtn" disabled style="background-color: #1C3A5B;" >I Accept</button>
                     
                     </div>
@@ -412,76 +414,30 @@ session_start();
     </div>
   </div>
 
+    <script> 
+      document.addEventListener("DOMContentLoaded", function () {
+    var profile = document.getElementById("profile");
+    var start = document.getElementById("start");
 
-<!-- Modal -->
-<div class="modal fade" id="account" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #1C3A5B; color: white;"> 
-          <h5 class="modal-title" id="exampleModalLabel">Select Account</h5> 
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row " style="text-align: center;">
-            <div class="col-md-6">
-               <a data-bs-dismiss="modal">
-                <img src="pics/profile.jpg" alt="" style="width: 85px;">
-                <div class="lead">Juan </div>
-               </a>
-            </div>
-            <div class="col-md-6">
-                <a data-bs-dismiss="modal">
-                 <img src="pics/profile.jpg" alt="" style="width: 85px;">
-                 <div class="lead">Juan </div>
-                </a>
-             </div>
-             <div class="col-md-6">
-                <a data-bs-dismiss="modal">
-                 <img src="pics/profile.jpg" alt="" style="width: 85px;">
-                 <div class="lead">Juan </div>
-                </a>
-             </div>
-             <div class="col-md-6">
-                <a data-bs-dismiss="modal">
-                 <img src="pics/profile.jpg" alt="" style="width: 85px;">
-                 <div class="lead">Juan </div>
-                </a>
-             </div>
-             <div class="col-md-6">
-                <a data-bs-dismiss="modal">
-                 <img src="pics/profile.jpg" alt="" style="width: 85px;">
-                 <div class="lead">Juan </div>
-                </a>
-             </div>
-          </div>
-          
-         
-        </div>
-        <div class="modal-footer">
-          
-        </div>
-      </div>
-    </div>
-  </div>
+    <?php if (isset($_SESSION['userEmail'])) { ?>
+        profile.hidden = false;
+        start.hidden = true;
+    <?php } else { ?>
+        profile.hidden = true;
+        start.hidden = false;
+    <?php } ?>
+});
 
 
-  
+    </script>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var profile = document.getElementById("profile");
-        var start = document.getElementById("start");
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-        <?php if (isset($_SESSION['userEmail'])) { ?>
-            profile.hidden = false;
-            start.hidden = true;
-        <?php } else { ?>
-            profile.hidden = true;
-            start.hidden = false;
-        <?php } ?>
-    });
-</script>
-      <script src="script.js"></script>
+<!-- Bootstrap Bundle (includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <script src="script.js"></script>
 
 </body>
 </html>
