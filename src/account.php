@@ -1,17 +1,16 @@
 <?php
+
 require 'connect.php'; // Load the database connection
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     $userEmail = trim($_POST["userEmail"] ?? '');
     $password = trim($_POST["password"] ?? '');
 
-    // ✅ Validate input
-    if (empty($userEmail) || empty($password)) {
-        echo "<div class='invalid'><span>Please enter both email and password</span></div>";
-        exit();
-    }
+    
 
     // ✅ Fetch user details securely, including related tables
     $query = "SELECT 
@@ -44,7 +43,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
 
         // ✅ Verify password securely
         if (!password_verify($password, $storedPassword)) {
-            echo "<div class='invalid'><span>Invalid password</span></div>";
+            $_SESSION['error_message'] = "Wrong Username or Password, please try again.";
+            header("Location: ../html/login.php");
             exit();
         }
 
@@ -101,8 +101,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
             exit();
         }
     } else {
-        $_SESSION['error_message'] = "Wrong Username or Password, please try again.";
-        header("Location: ../index.php#exampleModalToggle2&modal=1");
+        $_SESSION['error_message'] = "Wrong Username or password, please try again.";
+        header("Location: ../html/login.php");
         exit();
 
     }

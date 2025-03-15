@@ -156,20 +156,20 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                     <div class="h4 mt-5 text-center" style="font-weight: 700;">Login Details</div>
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Enter valid Email address</label>
-                        <input type="text" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="example@gmail.com">
+                        <input type="text" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="example@gmail.com" required>
                         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Enter Password</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Re-Enter Password</label>
-                        <input type="password" class="form-control" id="rePassword" placeholder="Password">
+                        <input type="password" class="form-control" id="rePassword" placeholder="Password" required>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Enter Family Name</label>
-                        <input type="text" class="form-control" id="famName" name="famName" placeholder="ex. Dela Cruz">
+                        <input type="text" class="form-control" id="famName" name="famName" placeholder="ex. Dela Cruz" required>
                       </div>
                       <br>
 
@@ -178,20 +178,20 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       <div class="row">
                         <div class="col w-25">
                             <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">First Name</label>
-                                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="ex. Juan">
+                                <label for="exampleInputPassword1" >First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="ex. Juan" required>
                               </div>
                         </div>
                         <div class="col w-25">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Last Name</label>
-                                <input type="text" class="form-control" id="lastName" name="lastName"placeholder="ex. Dela Cruz">
+                                <input type="text" class="form-control" id="lastName" name="lastName"placeholder="ex. Dela Cruz" required>
                               </div>
                         </div>
                         <div class="col-auto">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">M.I.</label>
-                                <input type="text" class="form-control" id="middleInitial" name="middleInitial" placeholder="ex. B">
+                                <input type="text" class="form-control" id="middleInitial" name="middleInitial" placeholder="ex. B" required>
                               </div>
                         </div>
                       </div>
@@ -201,7 +201,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Sex</label>
-                                <select class="form-control" id="sex" name="sex">
+                                <select class="form-control" id="sex" name="sex" required>
                                     <option value="Male">Male</option>
                                     <option  value="Female">Female</option>
         
@@ -211,13 +211,13 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Date of Birth</label>
-                                <input type="date" class="form-control" id="birthday" name="birthday" placeholder="ex. Dela Cruz">
+                                <input type="date" class="form-control" id="birthday" name="birthday" placeholder="ex. Dela Cruz" required>
                               </div>
                         </div>
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Role</label>
-                                <select class="form-control" id="role" name="role">
+                                <select class="form-control" id="role" name="role" required>
                                     <option value="Head">Head of the Family</option>
                                     <option value="Father">Father</option>
                                     <option value="Mother">Mother</option>
@@ -230,21 +230,21 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Email address</label>
-                        <input type="text" class="form-control" id="email" name="email"aria-describedby="emailHelp" placeholder="example@gmail.com">
+                        <input type="text" class="form-control" id="email" name="email"aria-describedby="emailHelp" placeholder="example@gmail.com" required>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Contact Number</label>
-                        <input type="number" class="form-control" id="contact" name="contact" aria-describedby="emailHelp" placeholder="(09)">
+                        <input type="number" class="form-control" id="contact" name="contact" aria-describedby="emailHelp" placeholder="(09)" required>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Occupation</label>
-                        <input type="text" class="form-control" id="occupation" name="occupation" aria-describedby="emailHelp" placeholder="example@gmail.com">
+                        <input type="text" class="form-control" id="occupation" name="occupation" aria-describedby="emailHelp" placeholder="" required>
                       </div>
                       <div class="row">
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Religion</label>
-                                <select class="form-control" id="religion" name="religion">
+                                <select class="form-control" id="religion" name="religion" required>
                                     <option value="Roman Catholic" >Roman Catholic</option>
                                     <option value="Islam">Islam</option>
                                     <option value="Jehovah’s Witnesses">Jehovah’s Witnesses</option>
@@ -257,7 +257,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Civil Status</label>
-                                <select class="form-control" id="civilStatus" name="civilStatus">
+                                <select class="form-control" id="civilStatus" name="civilStatus" required>
                                   <option value="Single">Single</option>
                                   <option value="Married">Married</option>
                                   <option value="Widowed">Widowed</option>
@@ -269,7 +269,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         </div>
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800; ">
-                                <label for="exampleInputPassword1">Eligibility Status</label>
+                                <label for="exampleInputPassword1" required>Eligibility Status</label>
                                 <select class="form-control" id="eligibilityStatus" name="eligibilityStatus">
                                   <option value="pwd">PWD (Person with Disability)</option>
                                   <option value="single_parent">Single Parent</option>
@@ -288,22 +288,22 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       <div class="h4 mt-5 text-center" style="font-weight: 700;">Emergency Contact Information</div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Emergency Contact Person</label>
-                        <input type="text" class="form-control" id="emergencyPerson" name="emergencyPerson"placeholder="">
+                        <input type="text" class="form-control" id="emergencyPerson" name="emergencyPerson"placeholder="" required>
                       </div>
 
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Emergency Contact Number</label>
-                        <input type="number" class="form-control" id="emergencyContact" name="emergencyContact" placeholder="09" max="11">
+                        <input type="number" class="form-control" id="emergencyContact" name="emergencyContact" placeholder="09" max="11" required>
                       </div>
 
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Relationship</label>
-                        <input type="text" class="form-control" id="emergencyRelation" name="emergencyRelation" placeholder="">
+                        <input type="text" class="form-control" id="emergencyRelation" name="emergencyRelation" placeholder="" required>
                       </div>
 
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleFormControlTextarea1">Address</label>
-                        <textarea class="form-control" id="emergencyAddress" name="emergencyAddress"rows="3"></textarea>
+                        <textarea class="form-control" id="emergencyAddress" name="emergencyAddress"rows="3" required></textarea>
                       </div>
 
 
@@ -313,11 +313,11 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                     <div class="h4 mt-5 text-center" style="font-weight: 700;">Address</div>
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Block No.</label>
-                        <input type="text" class="form-control" id="block" name="block" placeholder="Enter your Block No.">
+                        <input type="text" class="form-control" id="block" name="block" placeholder="Enter your Block No." required>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Street Name</label>
-                        <input type="text" class="form-control" id="street" name="street" placeholder="Enter your street">
+                        <input type="text" class="form-control" id="street" name="street" placeholder="Enter your street"  required>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Subdivision/Village/Sitio (Optional)</label>
@@ -331,7 +331,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
 
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Type of Identification Card (ID)</label>
-                        <select class="form-control" id="idType" name="idType">
+                        <select class="form-control" id="idType" name="idType" required>
                             <option value="passport">Passport</option>
                             <option value="drivers_license">Driver's License</option>
                             <option value="philhealth">PhilHealth ID</option>
@@ -343,15 +343,15 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Upload Identification Card</label>
                         <div class="lead mt-4" style="font-size: 16px;">Front Side</div>
-                        <input type="file" class="form-control" id="idFront"name="idFront">
+                        <input type="file" class="form-control" id="idFront"name="idFront" required>
                         <div class="lead mt-4" style="font-size: 16px;">Back Side</div>
-                        <input type="file" class="form-control" id="idBack" name="idBack">
+                        <input type="file" class="form-control" id="idBack" name="idBack" required>
                       </div>
 
                       <div class="form-group mt-5" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Upload 2x2 Picture</label>
                         <div class="lead mt-4" style="font-size: 16px;">(With White Background)</div>
-                        <input type="file" class="form-control" id="2x2pic" name="2x2pic">
+                        <input type="file" class="form-control" id="2x2pic" name="2x2pic" required>
                         
                       </div>
                 </div>
@@ -430,61 +430,90 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
 
 
     <script> 
+var current = 0;
+var tabs = $(".tab");
+var tabs_pill = $(".step-circle");
 
-        var current = 0;
-        var tabs = $(".tab");
-        var tabs_pill = $(".step-circle");
-        loadFormData(current);
-        
-        function loadFormData(n) {
-        
-            $(tabs_pill[n]).addClass("active");
-            $(tabs_pill[n]).removeClass("inactive"); 
-            $(tabs[n]).removeClass("d-none");
-          
-        if (n == 0) {
-            $("#back_button").addClass("d-none"); // Hide the Back button
+// Initial load
+loadFormData(current);
+
+function loadFormData(n) {
+    $(tabs_pill[n]).addClass("active").removeClass("inactive"); 
+    $(tabs[n]).removeClass("d-none");
+
+    // Handle Back button visibility
+    if (n === 0) {
+        $("#back_button").addClass("d-none"); // Hide Back button on first tab
+    } else {
+        $("#back_button").removeClass("d-none"); // Show Back button
+    }
+
+    // Handle Next button text and attributes
+    if (n === tabs.length - 1) {
+        $("#next_button")
+            .text("Submit")
+            .removeAttr("onclick")
+            .attr("data-bs-toggle", "modal")
+            .attr("data-bs-target", "#confirmation");
+    } else {
+        $("#next_button")
+            .attr("type", "button")
+            .text("Next")
+            .attr("onclick", "next()");
+    }
+}
+
+function next() {
+    var firstEmptyInput = validateInputs(); // Get the first unfilled input
+    
+    if (firstEmptyInput) {
+        firstEmptyInput.focus(); // Move to first unfilled required input
+        return; // Stop from moving to the next tab
+    }
+
+    $(tabs[current]).addClass("d-none");
+    $(tabs_pill[current]).addClass("inactive");
+
+    current++;
+    loadFormData(current);
+}
+
+function back() {
+    $(tabs[current]).addClass("d-none");
+    $(tabs_pill[current]).addClass("inactive");
+
+    $("#next_button").removeAttr("data-bs-toggle data-bs-target");
+
+    current--;
+    loadFormData(current);
+}
+
+function submitForm() {
+    document.getElementById("registrationForm").submit();
+}
+
+// ✅ Validate required inputs and return the first empty one
+function validateInputs() {
+    var firstEmpty = null;
+
+    $(tabs[current]).find("input[required], select[required]").each(function () {
+        if (!$(this).val()) {
+            $(this).addClass("is-invalid"); // Highlight empty fields
+            if (!firstEmpty) firstEmpty = this; // Store first empty input
         } else {
-            $("#back_button").removeClass("d-none"); // Show the Back button
+            $(this).removeClass("is-invalid"); // Remove highlight when filled
         }
+    });
 
-        n == tabs.length -1
-            ? $("#next_button")
-                .text("Submit")
-                .removeAttr("onclick")
-                .attr("data-bs-toggle", "modal")
-                .attr("data-bs-target","#confirmation")
-            : $("#next_button")
-                .attr("type", "button")
-                .text("Next")
-                .attr("onclick", "next()");
-        
-        
-        }
-        
-        function next() {
-          $(tabs[current]).addClass("d-none");
-          $(tabs_pill[current]).addClass("inactive");
-         
-          current++;
-          loadFormData(current);
-        }
-        
-        function back() {
-          $(tabs[current]).addClass("d-none");
-          $(tabs_pill[current]).addClass("inactive");
-          
-          $("#next_button").removeAttr("data-bs-toggle","data-bs-target")
+    return firstEmpty; // Return the first empty required field (if any)
+}
 
-        
-          current--;
-          loadFormData(current);
-        }
+// ✅ Remove red highlight when user types
+$(document).on("input change", "input[required], select[required]", function () {
+    $(this).removeClass("is-invalid");
+});
 
-        function submitForm() {
-          document.getElementById("registrationForm").submit();
-        }
-        
+
               </script>
 
 

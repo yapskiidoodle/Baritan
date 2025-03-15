@@ -449,9 +449,9 @@ document.addEventListener('hidden.bs.modal', function () {
       <div class="modal-body text-center">
         <p>Your account is currently deactivated. Please wait for the administrator to activate/reactivate your account.</p>
       </div>
-      <div class="modal-footer text-left">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button type="button" class="btn btn-secondary w-50" data-bs-dismiss="modal">Close</button>
+      </div>>
     </div>
   </div>
 </div>
