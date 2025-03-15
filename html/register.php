@@ -202,6 +202,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Sex</label>
                                 <select class="form-control" id="sex" name="sex" required>
+                                    <option value="" selected disabled>Choose an option</option>
                                     <option value="Male">Male</option>
                                     <option  value="Female">Female</option>
         
@@ -218,6 +219,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Role</label>
                                 <select class="form-control" id="role" name="role" required>
+                                    <option value="" selected disabled>Choose an option</option>
                                     <option value="Head">Head of the Family</option>
                                     <option value="Father">Father</option>
                                     <option value="Mother">Mother</option>
@@ -234,7 +236,9 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Contact Number</label>
-                        <input type="number" class="form-control" id="contact" name="contact" aria-describedby="emailHelp" placeholder="(09)" required>
+                        <input type="tel" class="form-control" id="contact" name="contact" 
+                            placeholder="09XXXXXXXXX" required 
+                            pattern="09[0-9]{9}" maxlength="11">
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Occupation</label>
@@ -245,6 +249,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Religion</label>
                                 <select class="form-control" id="religion" name="religion" required>
+                                    <option value="" selected disabled>Choose an option</option>
                                     <option value="Roman Catholic" >Roman Catholic</option>
                                     <option value="Islam">Islam</option>
                                     <option value="Jehovah’s Witnesses">Jehovah’s Witnesses</option>
@@ -258,6 +263,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Civil Status</label>
                                 <select class="form-control" id="civilStatus" name="civilStatus" required>
+                                  <option value="" selected disabled>Choose an option</option>
                                   <option value="Single">Single</option>
                                   <option value="Married">Married</option>
                                   <option value="Widowed">Widowed</option>
@@ -270,7 +276,9 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800; ">
                                 <label for="exampleInputPassword1" required>Eligibility Status</label>
-                                <select class="form-control" id="eligibilityStatus" name="eligibilityStatus">
+                                <select class="form-control" id="eligibilityStatus" name="eligibilityStatus" required>
+                                  <option value="" selected disabled>Choose an option</option>
+                              
                                   <option value="pwd">PWD (Person with Disability)</option>
                                   <option value="single_parent">Single Parent</option>
                                   <option value="employed">Employed</option>
@@ -293,7 +301,9 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
 
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Emergency Contact Number</label>
-                        <input type="number" class="form-control" id="emergencyContact" name="emergencyContact" placeholder="09" max="11" required>
+                        <input type="tel" class="form-control" id="emergencyContact" name="contact" 
+                            placeholder="09XXXXXXXXX" required 
+                            pattern="09[0-9]{9}" maxlength="11">
                       </div>
 
                       <div class="form-group mt-4" style="font-weight: 800;">
@@ -332,6 +342,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Type of Identification Card (ID)</label>
                         <select class="form-control" id="idType" name="idType" required>
+                            <option value="" selected disabled>Choose an option</option>
                             <option value="passport">Passport</option>
                             <option value="drivers_license">Driver's License</option>
                             <option value="philhealth">PhilHealth ID</option>
@@ -430,7 +441,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
 
 
     <script> 
-var current = 0;
+  var current = 0;
 var tabs = $(".tab");
 var tabs_pill = $(".step-circle");
 
@@ -514,7 +525,9 @@ $(document).on("input change", "input[required], select[required]", function () 
 });
 
 
-              </script>
+    </script>
+
+
 
 
 
