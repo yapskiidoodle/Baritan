@@ -10,9 +10,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'] ?? '';
     $FamilyName = $_POST['famName'] ?? '';
 
-    $FirstName = $_POST['firstName'] ?? '';
-    $MiddleName = $_POST['middleInitial'] ?? '';
-    $LastName = $_POST['lastName'] ?? '';
+    $FirstName = isset($_POST['firstName']) ? trim($_POST['firstName']) : '';
+    $FirstName = preg_replace('/[^a-zA-Z ]/', '', $FirstName); // Remove special characters & numbers
+    $FirstName = ucwords(strtolower($FirstName)); // Capitalize first letter of each word
+
+    $MiddleName = isset($_POST['middleInitial']) ? trim($_POST['middleInitial']) : '';
+    $MiddleName  = preg_replace('/[^a-zA-Z ]/', '',  $MiddleName ); // Remove special characters & numbers
+    $MiddleName = ucwords(strtolower($MiddleName)); // Capitalize first letter of each word    
+
+    $LastName  = isset($_POST['lastName']) ? trim($_POST['lastName']) : '';
+    $LastName  = preg_replace('/[^a-zA-Z ]/', '', $LastName ); // Remove special characters & numbers
+    $LastName  = ucwords(strtolower($LastName)); // Capitalize first letter of each word    
+
+
     $Sex = $_POST['sex'] ?? '';
     $Date_of_Birth = $_POST['birthday'] ?? '';
     $Role = $_POST['role'] ?? '';

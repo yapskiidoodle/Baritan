@@ -15,13 +15,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "SELECT * FROM Residents_information_tbl WHERE 1=1";
 
     if ($residentType === "Senior Citizen") {
-        $sql .= " AND Eligibility_Status = 'Senior Citizen'";
+        $sql .= " AND Eligibility_Status = 'senior_citizen'";
     } elseif ($residentType === "Head of the Family") {
         $sql .= " AND Role = 'Head'";
-    } elseif ($residentType === "PWD") {
-        $sql .= " AND Eligibility_Status = 'Person with Disability'";
+    } elseif ($residentType === "pwd") {
+        $sql .= " AND Eligibility_Status = 'pwd'";
     } elseif ($residentType === "Single Parent") {
-        $sql .= " AND Civil_Status = 'Single' AND Role IN ('Mother', 'Father')";
+        $sql .= " AND Eligibility_Status = 'Single Parent'";
     } elseif ($residentType === "Male Age Range") {
         if ($maleMinAge !== null && $maleMaxAge !== null) {
             $sql .= " AND Sex = 'Male' AND TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) BETWEEN $maleMinAge AND $maleMaxAge";
@@ -59,8 +59,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $pdf->SetFont('Arial', 'B', 10);
     $pdf->Cell(0, 10, 'Generated Resident List for: ' . $residentType, 0, 1, 'C');
 
-    if ($residentType === "Male Age Range" || $residentType === "Female Age Range") {
-        $pdf->Cell(0, 10, 'Age Range: ' . ($maleMinAge ?? $femaleMinAge) . ' - ' . ($maleMaxAge ?? $femaleMaxAge), 0, 1, 'C');
+    // Display the correct age range based on the resident type
+    if ($residentType === "Male Age Range") {
+        $pdf->Cell(0, 10, 'Age Range: ' . $maleMinAge . ' - ' . $maleMaxAge, 0, 1, 'C');
+    } elseif ($residentType === "Female Age Range") {
+        $pdf->Cell(0, 10, 'Age Range: ' . $femaleMinAge . ' - ' . $femaleMaxAge, 0, 1, 'C');
     }
 
     // Add the purpose/reason to the PDF

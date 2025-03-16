@@ -13,6 +13,37 @@ $FirstName = $userData['FirstName'] ?? 's' ;
 $LastName = $userData['LastName']?? '';
 $Address = $userData['Address']?? '';
 $userEmail = $_SESSION['userEmail'] ?? ''; 
+echo "<pre>";
+print_r($_POST);
+echo "Resident_ID: " . ($_SESSION['User_Data']['Resident_ID'] ?? 'not set');
+echo "\n";
+echo "Family_: " . ($_SESSION['User_Data']['Family_Name_ID'] ?? 'not set');
+echo "</pre>";
+
+$familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
+
+// Validate session
+if (!$familyID) {
+    echo json_encode(["error" => "Family ID not set"]);
+    exit();
+}
+
+// Fetch residents with the same Family ID
+$query = "SELECT Resident_ID, Resident_Email, Role FROM residents_information_tbl WHERE Family_Name_ID = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("s", $familyID);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$members = [];
+while ($row = $result->fetch_assoc()) {
+    $members[] = $row;
+}
+
+echo json_encode($members);
+?>
+
+
 
 ?>
     <meta charset="UTF-8">
@@ -137,7 +168,15 @@ $userEmail = $_SESSION['userEmail'] ?? '';
     </div>
     <!--END HEADER-->
 
+    <?php if (isset($_SESSION['success'])): ?>
+    <div class="alert alert-success"><?= $_SESSION['success']; ?></div>
+    <?php unset($_SESSION['success']); ?>
+<?php endif; ?>
 
+<?php if (isset($_SESSION['error'])): ?>
+    <div class="alert alert-danger"><?= $_SESSION['error']; ?></div>
+    <?php unset($_SESSION['error']); ?>
+<?php endif; ?>
 
     <div class="container mt-5 text-center" style="background-color: white; padding: 3%; margin-bottom: 5%;"> 
         <div class="container d-flex justify-content-end">
@@ -166,7 +205,7 @@ $userEmail = $_SESSION['userEmail'] ?? '';
                     </h4>
                     
                     <div class="h1 "> 
-                        
+                
                        
 
 
@@ -188,7 +227,7 @@ $userEmail = $_SESSION['userEmail'] ?? '';
                     <button type="button" id="back_button" onclick="" class="button me-auto mt-2" style="padding: 0% 2%; font-size: 20px;" data-bs-toggle="modal" data-bs-target="#account">
                         Switch Account
                     </button>
-                    <button type="button" id="next_button" class="btn btn-warning text-white mt-2" data-bs-toggle="modal" data-bs-target="#confirmation" style="padding: 0% 2%; font-size: 20px;">
+                    <button type="button" id="next_button" class="btn btn-warning text-white mt-2" data-bs-toggle="modal" data-bs-target="#editModal" style="padding: 0% 2%; font-size: 20px;">
                         Edit Profile
                     </button>
                 </div>
@@ -210,116 +249,38 @@ $userEmail = $_SESSION['userEmail'] ?? '';
             </thead>
             <tbody id="tableBody">
               <tr>
-                
+                    <?php
+                    $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
+
+                    if ($familyID) {
+                        $query = "SELECT Resident_ID, Resident_Email, Role 
+                                FROM residents_information_tbl WHERE Family_Name_ID = ?";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("s", $familyID);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        $count = 1; // Row counter
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr>";
+                            echo "<th scope='row'>{$count}</th>";
+                            echo "<td>{$row['Resident_Email']}</td>";
+                            echo "<td>{$row['Role']}</td>";
+                            echo "<td><button class='btn btn-warning btn-sm' onclick=\"window.location.href='edit_member.php?id={$row['Resident_ID']}'\">Edit</button></td>";
+                            echo "<td><button class='btn btn-danger btn-sm' onclick=\"confirmDelete('{$row['Resident_ID']}')\">Delete</button></td>";
+                            echo "</tr>";
+                            $count++;
+                        }
+                    } else {
+                        echo "<tr><td colspan='5' class='text-center'>No family members found.</td></tr>";
+                    }
+                    ?>
                
               </tr>
             </tbody>
           </table>
     </div>
-    <script>
-        // Function to generate a random email
-        function getRandomEmail() {
-            const domains = ["gmail.com", "yahoo.com", "outlook.com", "example.com"];
-            const names = ["john", "jane", "alex", "mike", "sara", "emma", "chris", "lisa"];
-            return names[Math.floor(Math.random() * names.length)] + Math.floor(Math.random() * 100) + "@" + domains[Math.floor(Math.random() * domains.length)];
-        }
     
-        // Function to generate a random relationship
-        function getRandomRelationship() {
-            const relationships = ["Parent", "Sibling", "Friend", "Colleague", "Cousin", "Neighbor"];
-            return relationships[Math.floor(Math.random() * relationships.length)];
-        }
-    
-        // Function to populate the table with random data
-        function populateTable(rows = 5) {
-            const tableBody = document.getElementById("tableBody");
-            tableBody.innerHTML = ""; // Clear previous data
-    
-            for (let i = 1; i <= rows; i++) {
-                const row = document.createElement("tr");
-    
-                row.innerHTML = `
-                    <th scope="row">${i}</th>
-                    <td>${getRandomEmail()}</td>
-                    <td>${getRandomRelationship()}</td>
-                    <td><button class="btn btn-warning btn-sm">Edit</button></td>
-                    <td><button class="btn btn-danger btn-sm">Delete</button></td>
-                `;
-    
-                tableBody.appendChild(row);
-            }
-        }
-    
-        // Call the function to populate table with random data
-        populateTable(10);
-    </script>
-
-<!--Login Modal Box-->
-   
-   <div id="modalLogin" class="modal" style="margin-top: 2%; height:70%; font-family: sans-serif;">
-    
-    <!-- Modal content -->
-    <div class="modal-content" style=" border: none; border-radius: 10px; height: 100%; overflow: hidden;">
-        <span class="close" style="position: absolute; top: 10px; right: 15px; cursor: pointer; z-index: 3;">&times;</span>
-        <div class="row h-100 g-0">
-            <div class="col-md-7 d-flex flex-column">
-                <div class="container display-5" style="padding: 5% 5% 2% 10%; font-weight: 600; color: #00264d; font-size: 40px; margin-top:50px;">
-                    Login
-                    <div class="lead pt-2">Login to continue</div>
-                </div>
-                <form style="padding: 1% 10% 5% 10%;" action="src/account.php" method="POST">
-                    <div class="form-group">
-                        <label for="exampleInputEmail1" class="lead">Email address</label>
-                        <input name="userEmail" type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
-                    </div>
-                    <br>
-                    <div class="form-group">
-                        <label for="exampleInputPassword1" class="lead">Password</label>
-                        <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;">
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-6">
-                        <button type="button" class="btn btn-danger" style="width: 100%; border-radius: 7px; padding: 10px; font-size: 16px;" onclick="closeModal()">Cancel</button>
-                        </div>
-                        <div class="col-md-6">
-                            <button name="loginButton" type="submit" id="loginBtn" class="btn text-white" style="width: 100%; background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;" >Login</button>
-                        </div>
-                    </div>
-                </form>
-                <div style="margin-top: auto;"> </div>
-            </div>
-            <div class="col-md-5" style="position: relative; overflow: hidden; border-top-right-radius:10px;  border-bottom-right-radius:10px; padding: 0; margin: 0; height: 100%;">
-                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; border-top-right-radius:10px;  border-bottom-right-radius:10px;">
-                    <img src="pics/BarangayBaritan.png" alt="" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.7; border-top-right-radius:10px;  border-bottom-right-radius:10px;">
-                </div>
-                <div class="text-white text-center display-5" style="position: relative; z-index: 2; padding: 20% 10%; margin-top:50px;">
-                    <div class="div" style="font-weight: 700; font-size: 36px;">
-                        Sign Up
-                    </div>
-                    <div class="lead mt-3">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio velit
-                    </div>
-                    <button type="submit" class="btn text-white learn" 
-            style="width: 50%; background: #1C3A5B; margin-top: 10%;"  
-            data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
-            Register
-        </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-        function closeModal() {
-            document.getElementById('modalLogin').style.display = 'none';
-            document.querySelector('.modal-backdrop').style.display = 'none';
-        }
-</script>
-
-
-
 
 
 
@@ -384,7 +345,138 @@ $userEmail = $_SESSION['userEmail'] ?? '';
     </div>
   </div>
 
-   
+
+<!-- Edit Profile -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+<form id="editForm" action="../src/editProfile.php" method="POST">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editModalLabel">Edit Personal Information</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                
+                    <div class="container">
+                        <div class="h4 mt-3 text-center fw-bold">Personal Information</div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="firstName">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" value="<?= htmlspecialchars($_SESSION['User_Data']['FirstName'] ?? '') ?>" required>
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" value="<?= htmlspecialchars($_SESSION['User_Data']['LastName'] ?? '') ?>" required>
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="middleInitial">Middle Initial</label>
+                            <input type="text" class="form-control" id="middleInitial" name="middleName" value="<?= htmlspecialchars($_SESSION['User_Data']['MiddleName'] ?? '') ?>" required>
+                        </div>
+
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="sex">Sex</label>
+                            <select class="form-control" id="sex" name="sex" required >
+                                <option value="Male" <?= ($_SESSION['User_Data']['Sex'] ?? '') == 'Male' ? 'selected' : '' ?> >Male</option>
+                                <option value="Female" <?= ($_SESSION['User_Data']['Sex'] ?? '') == 'Female' ? 'selected' : '' ?>>Female</option>
+                            </select>
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="birthday">Date of Birth</label>
+                            <input type="date" class="form-control" id="birthday" name="birthday" value="<?= htmlspecialchars($_SESSION['User_Data']['Date_of_Birth'] ?? '') ?>" required>
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="role">Role</label>
+                            <select class="form-control" id="role" name="role" required >
+                                <option value="Head" <?= ($_SESSION['User_Data']['Resident_Role'] ?? '') == 'Head' ? 'selected' : '' ?>>Head of the Family</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="email">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="residentEmail" value="<?= htmlspecialchars($_SESSION['User_Data']['Resident_Email'] ?? '') ?>" required>
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="contact">Contact Number</label>
+                            <input type="tel" class="form-control" id="contact" name="contact" value="<?= htmlspecialchars($_SESSION['User_Data']['Contact_Number'] ?? '') ?>" required pattern="09[0-9]{9}" maxlength="11">
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="occupation">Occupation</label>
+                            <input type="text" class="form-control" id="occupation" name="occupation" value="<?= htmlspecialchars($_SESSION['User_Data']['Occupation'] ?? '') ?>" required>
+                        </div>
+                        
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="religion">Religion</label>
+                            <select class="form-control" id="religion" name="religion" required >
+                                <option value="Roman Catholic" <?= ($_SESSION['User_Data']['Religion'] ?? '') == 'Roman Catholic' ? 'selected' : '' ?>>Roman Catholic</option>
+                                <option value="Islam" <?= ($_SESSION['User_Data']['Religion'] ?? '') == 'Islam' ? 'selected' : '' ?>>Islam</option>
+                                <option value="Christian" <?= ($_SESSION['User_Data']['Religion'] ?? '') == 'Christian' ? 'selected' : '' ?>>Christian</option>
+                                <option value="Iglesia ni Cristo" <?= ($_SESSION['User_Data']['Religion'] ?? '') == 'Iglesia ni Cristo' ? 'selected' : '' ?>>Iglesia ni Cristo (INC)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mt-3 fw-bold">
+                        <label for="eligibilityStatus">Eligibility Status</label>
+                            <select class="form-control" id="eligibilityStatus" name="eligibilityStatus" required>
+                                <option value="pwd" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'pwd' ? 'selected' : '' ?>>PWD (Person with Disability)</option>
+                                <option value="single parent" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'single parent' ? 'selected' : '' ?>>Single Parent</option>
+                                <option value="employed" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'employed' ? 'selected' : '' ?>>Employed</option>
+                                <option value="unemployed" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'unemployed' ? 'selected' : '' ?>>Unemployed</option>
+                                <option value="student" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'student' ? 'selected' : '' ?>>Student</option>
+                                <option value="senior citizen" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'senior citizen' ? 'selected' : '' ?>>Senior Citizen</option>
+                            </select>
+
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="civilStatus">Civil Status</label>
+                            <select class="form-control" id="civilStatus" name="civilStatus" required >
+                                <option value="Single" <?= ($_SESSION['User_Data']['Civil_Status'] ?? '') == 'Single' ? 'selected' : '' ?>>Single</option>
+                                <option value="Married" <?= ($_SESSION['User_Data']['Civil_Status'] ?? '') == 'Married' ? 'selected' : '' ?>>Married</option>
+                                <option value="Widowed" <?= ($_SESSION['User_Data']['Civil_Status'] ?? '') == 'Widowed' ? 'selected' : '' ?>>Widowed</option>
+                                <option value="Divorced" <?= ($_SESSION['User_Data']['Civil_Status'] ?? '') == 'Divorced' ? 'selected' : '' ?>>Divorced</option>
+                            </select>
+                        </div>
+
+                        <div class="h4 mt-5 text-center fw-bold">Address</div>
+                        <div class="form-group mt-4 fw-bold">
+                            <label for="address">Full Address</label>
+                            <textarea class="form-control" id="address" name="address" required><?= htmlspecialchars($_SESSION['User_Data']['Address'] ?? '') ?></textarea>
+                        </div>
+
+                        <div class="h4 mt-5 text-center fw-bold">Emergency Contact Information</div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="emergencyPerson">Emergency Contact Person</label>
+                            <input type="text" class="form-control" id="emergencyPerson" name="emergencyPerson" value="<?= htmlspecialchars($_SESSION['User_Data']['Emergency_Person'] ?? '') ?>" required>
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="emergencyContact">Emergency Contact Number</label>
+                            <input type="tel" class="form-control" id="emergencyContact" name="emergencyContact" value="<?= htmlspecialchars($_SESSION['User_Data']['Emergency_Contact_No'] ?? '') ?>" required pattern="09[0-9]{9}" maxlength="11">
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="emergencyRelation">Relationship</label>
+                            <input type="text" class="form-control" id="emergencyRelation" name="emergencyRelation" value="<?= htmlspecialchars($_SESSION['User_Data']['Relationship_to_Person'] ?? '') ?>" required>
+                        </div>
+                        <div class="form-group mt-3 fw-bold">
+                            <label for="emergencyAddress">Emergency Address</label>
+                            <textarea class="form-control" id="emergencyAddress" name="emergencyAddress" rows="3" required><?= htmlspecialchars($_SESSION['User_Data']['Emergency_Address'] ?? '') ?></textarea>
+                        </div>
+                    </div>
+
+                    <script> 
+
+                        
+                    </script>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary ms-auto">Save Changes</button>
+               
+            </div>
+        </div>
+    </div>
+</div>
+</form>
+
+
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -400,6 +492,10 @@ $userEmail = $_SESSION['userEmail'] ?? '';
         <?php } ?>
     });
 </script>
+
+
+
+
 
 </body>
 </html>

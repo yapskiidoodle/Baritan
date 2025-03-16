@@ -3,7 +3,6 @@ require ('../src/connect.php');
 require ('../src/account.php');
 
 
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -309,19 +308,6 @@ require ('../src/account.php');
                 <h6 style="font-size: 10.5px; margin: 0;">Malabon City, Metro Manila, Philippines</h6>
             </div>
         </div>
-        <div class="profile-dropdown">
-            <div class="dropdown">
-                <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                    <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                    <li><hr class="dropdown-divider"></li> -->
-                    <li><form action="../src/logout.php" method="POST"><button class="dropdown-item" href="index.php" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button></li></form>
-                </ul>   
-            </div>
-        </div>
     </div>
 
     <!-- Sidebar -->
@@ -334,6 +320,16 @@ require ('../src/account.php');
         <a href="complaint_report.php"><i class="fas fa-exclamation-circle"></i>Complaint Report</a>
         <a href="reservation.php"><i class="fas fa-calendar-alt"></i>Reservations</a>
         <a href="tracking_records.php"><i class="fas fa-calendar-alt"></i>Tracking Records</a>
+        <a href="admin_management.php"><i class="fas fa-tools"></i>Admin Management</a>
+
+        <div style="position: absolute; bottom: 0; width: 100%;">
+        <a href="#" onclick="document.getElementById('logoutForm').submit();" style="color: white; text-decoration: none; display: block; padding: 15px 20px; font-size: 16px;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+        <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
+            <input type="hidden" name="logoutButton" value="1">
+        </form>
+    </div>
     </div>
 
     <!-- Main Content -->
@@ -359,7 +355,7 @@ require ('../src/account.php');
                             <option value="" selected disabled>Select a type</option>
                             <option value="Senior Citizen">Senior Citizen</option>
                             <option value="Head of the Family">Head of the Family</option>
-                            <option value="PWD">PWD (Person with Disability)</option>
+                            <option value="pwd">PWD (Person with Disability)</option>
                             <option value="Single Parent">Single Parent</option>
                             <option value="Male Age Range">Male Age Range</option>
                             <option value="Female Age Range">Female Age Range</option>

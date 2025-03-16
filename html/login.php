@@ -103,9 +103,8 @@ if (isset($_SESSION['error_message'])) {
     <div style="margin-top: -6%;"></div>
     <div class="container content" style="background-color: rgba(255, 255, 255, 0.8); margin-top:15%; width:30%; border-radius:10px; padding-top:1%;">
     <form  action="../src/account.php" method="POST">
-    <div class="container text-center" style=" font-weight: 600; color: #00264d; font-size: 28px;">
+    <div class="container text-center mb-3" style=" font-weight: 600; color: #00264d; font-size: 28px;">
           Login
-          <div class="lead pt-2">Login to continue</div>
         </div>
         <!-- Email input -->
         <div data-mdb-input-init class="form-outline mb-4">

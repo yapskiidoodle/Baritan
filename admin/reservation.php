@@ -227,19 +227,6 @@ if ($conn->connect_error) {
                 <h6 style="font-size: 10.5px; margin: 0;">Malabon City, Metro Manila, Philippines</h6>
             </div>
         </div>
-        <div class="profile-dropdown">
-            <div class="dropdown">
-                <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                    <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                    <li><hr class="dropdown-divider"></li> -->
-                    <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </div>
-        </div>
     </div>
 
     <!-- Sidebar -->
@@ -252,6 +239,16 @@ if ($conn->connect_error) {
         <a href="complaint_report.php"><i class="fas fa-exclamation-circle"></i>Complaint Report</a>
         <a href="reservation.php" class="active"><i class="fas fa-calendar-alt"></i>Reservations</a>
         <a href="tracking_records.php"><i class="fas fa-calendar-alt"></i>Tracking Records</a>
+        <a href="admin_management.php"><i class="fas fa-tools"></i>Admin Management</a>
+
+        <div style="position: absolute; bottom: 0; width: 100%;">
+        <a href="#" onclick="document.getElementById('logoutForm').submit();" style="color: white; text-decoration: none; display: block; padding: 15px 20px; font-size: 16px;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+        <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
+            <input type="hidden" name="logoutButton" value="1">
+        </form>
+    </div>
     </div>
 
 

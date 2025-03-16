@@ -156,17 +156,42 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                     <div class="h4 mt-5 text-center" style="font-weight: 700;">Login Details</div>
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Enter valid Email address</label>
-                        <input type="text" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="example@gmail.com" required>
+                        <input type="email" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="example@gmail.com" required>
                         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
-                        <label for="exampleInputPassword1">Enter Password</label>
+                        <label for="exampleInputPassword1">Enter Password </label>
                         <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        <small id="emailHelp" class="form-text text-muted">(must be 8 characters long and containts Capital letters and special character).</small>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Re-Enter Password</label>
                         <input type="password" class="form-control" id="rePassword" placeholder="Password" required>
                       </div>
+                      <script>
+                      document.addEventListener("DOMContentLoaded", function () {
+                          var password = document.getElementById("password");
+                          var rePassword = document.getElementById("rePassword");
+
+                          function validatePasswords() {
+                              var feedback = rePassword.nextElementSibling; // Gets the invalid-feedback div
+                              if (password.value === rePassword.value && password.value !== "") {
+                                  rePassword.classList.remove("is-invalid");
+                                  rePassword.classList.add("is-valid");
+                                  feedback.style.display = "none";
+                              } else {
+                                  rePassword.classList.remove("is-valid");
+                                  rePassword.classList.add("is-invalid");
+                                  feedback.style.display = "block";
+                              }
+                          }
+
+                          // Listen for input changes in both password fields
+                          password.addEventListener("input", validatePasswords);
+                          rePassword.addEventListener("input", validatePasswords);
+                      });
+                      </script>
+
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Enter Family Name</label>
                         <input type="text" class="form-control" id="famName" name="famName" placeholder="ex. Dela Cruz" required>
@@ -190,8 +215,8 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         </div>
                         <div class="col-auto">
                             <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">M.I.</label>
-                                <input type="text" class="form-control" id="middleInitial" name="middleInitial" placeholder="ex. B" required>
+                                <label for="exampleInputPassword1">Middle Initial</label>
+                                <input type="text" class="form-control" id="middleInitial" name="middleInitial" placeholder="ex. Banaga" required >
                               </div>
                         </div>
                       </div>
@@ -219,20 +244,15 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Role</label>
                                 <select class="form-control" id="role" name="role" required>
-                                    <option value="" selected disabled>Choose an option</option>
-                                    <option value="Head">Head of the Family</option>
-                                    <option value="Father">Father</option>
-                                    <option value="Mother">Mother</option>
-                                    <option value="Daughter">Daughter</option>
-                                    <option value="Son">Son</option>
-                                    <option value="otherRole">Other</option>
+                                    <option value="Head" selected disabled>Head of the Family</option>
+                                    
                                   </select>
                               </div>
                         </div>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Email address</label>
-                        <input type="text" class="form-control" id="email" name="email"aria-describedby="emailHelp" placeholder="example@gmail.com" required>
+                        <input type="email" class="form-control" id="email" name="email"aria-describedby="emailHelp" placeholder="example@gmail.com" required>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Contact Number</label>
@@ -252,9 +272,9 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                                     <option value="" selected disabled>Choose an option</option>
                                     <option value="Roman Catholic" >Roman Catholic</option>
                                     <option value="Islam">Islam</option>
-                                    <option value="Jehovah’s Witnesses">Jehovah’s Witnesses</option>
+                                    <option value="Jehovahs Witnesses">Jehovah’s Witnesses</option>
                                     <option value="Christian">Christian</option>
-                                    <option value="Iglesia ni Cristo (INC)">Iglesia ni Cristo (INC)</option>
+                                    <option value="Iglesia ni Cristo">Iglesia ni Cristo (INC)</option>
                                     
                                   </select>
                               </div>
@@ -280,11 +300,11 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                                   <option value="" selected disabled>Choose an option</option>
                               
                                   <option value="pwd">PWD (Person with Disability)</option>
-                                  <option value="single_parent">Single Parent</option>
+                                  <option value="single parent">Single Parent</option>
                                   <option value="employed">Employed</option>
                                   <option value="unemployed">Unemployed</option>
                                   <option value="student">Student</option>
-                                  <option value="senior_citizen">Senior Citizen</option>
+                                  <option value="senior citizen">Senior Citizen</option>
                                 </select>
                               </div>
                         </div>
@@ -504,27 +524,94 @@ function submitForm() {
 }
 
 // ✅ Validate required inputs and return the first empty one
+// ✅ Validate required inputs and return the first empty one
+// ✅ Validate required inputs and return the first empty one
 function validateInputs() {
-    var firstEmpty = null;
+    var firstInvalid = null;
+    var specialCharRegex = /[^a-zA-Z0-9ñ ]/; // Blocks all special characters except space (for general fields)
+    var specialCharRegexEmail = /[^a-zA-Z0-9@.]/; // Allows only letters, numbers, @, and .
+    var passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/; // Password: 8+ chars, 1 uppercase, 1 special char
 
     $(tabs[current]).find("input[required], select[required]").each(function () {
-        if (!$(this).val()) {
-            $(this).addClass("is-invalid"); // Highlight empty fields
-            if (!firstEmpty) firstEmpty = this; // Store first empty input
-        } else {
-            $(this).removeClass("is-invalid"); // Remove highlight when filled
+        var value = $(this).val().trim();
+        var inputType = $(this).attr("type");
+        var inputId = $(this).attr("id");
+        var isEmail = inputType === "email";
+        var isDate = inputType === "date";
+        var isPassword = inputId === "password" || inputId === "rePassword";
+        var feedbackSpan = $(this).next(".invalid-feedback"); 
+
+        // Empty input field
+        if (!value) {
+            showError(this, "This field is required.");
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        // Email validation
+        else if (isEmail && specialCharRegexEmail.test(value)) {
+            showError(this, "Only letters, numbers, @, and . are allowed.");
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        // Password validation
+        else if (inputId === "password" && !passwordRegex.test(value)) {
+            showError(this, "Password must be at least 8 characters, contain an uppercase letter, and a special character.");
+            if (!firstInvalid) firstInvalid = this;
+        }
+        // Non-email, non-date, non-password fields validation
+        else if (!isEmail && !isDate && !isPassword && specialCharRegex.test(value)) {
+            showError(this, "Special characters are not allowed.");
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        // Password confirmation validation
+        else if (inputId === "rePassword") {
+            validatePasswords();
+        }
+        // Valid input
+        else {
+            removeError(this);
         }
     });
 
-    return firstEmpty; // Return the first empty required field (if any)
+    return firstInvalid;
 }
 
-// ✅ Remove red highlight when user types
+// ✅ Live password validation (ensures both passwords match)
+function validatePasswords() {
+    var password = $("#password").val();
+    var rePassword = $("#rePassword").val();
+    var rePasswordField = $("#rePassword");
+
+    if (!password || !rePassword) return; // If empty, skip check
+
+    if (password === rePassword) {
+        removeError(rePasswordField);
+    } else {
+        showError(rePasswordField, "Passwords do not match.");
+    }
+}
+
+// ✅ Show error message
+function showError(element, message) {
+    $(element).addClass("is-invalid").removeClass("is-valid");
+    $(element).next(".invalid-feedback").remove();
+    $(element).after('<div class="invalid-feedback">' + message + '</div>');
+}
+
+// ✅ Remove error message
+function removeError(element) {
+    $(element).removeClass("is-invalid").addClass("is-valid");
+    $(element).next(".invalid-feedback").remove();
+}
+
+// ✅ Live validation
 $(document).on("input change", "input[required], select[required]", function () {
-    $(this).removeClass("is-invalid");
+    var inputId = $(this).attr("id");
+
+    removeError(this);
+
+    if (inputId === "password" || inputId === "rePassword") {
+        validatePasswords();
+    }
 });
-
-
     </script>
 
 
