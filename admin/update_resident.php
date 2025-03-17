@@ -1,6 +1,8 @@
 <?php
 // update_resident.php
 require ('../src/connect.php');
+session_start();
+$_SESSION['Account_ID'];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resident_id = $_POST['resident_id'];
@@ -20,34 +22,54 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $relationship = $_POST['relationship'];
     $address = $_POST['address'];
 
+    // Prepare the SQL statement
     $sql = "UPDATE Residents_information_tbl SET
-            FirstName = '$first_name',
-            MiddleName = '$middle_name',
-            LastName = '$last_name',
-            Sex = '$sex',
-            Date_of_Birth = '$dob',
-            Role = '$role',
-            Contact_Number = '$contact_number',
-            Resident_Email = '$email',
-            Religion = '$religion',
-            Eligibility_Status = '$eligibility_status',
-            Civil_Status = '$civil_status',
-            Emergency_Person = '$emergency_person',
-            Emergency_Contact_No = '$emergency_contact',
-            Relationship_to_Person = '$relationship',
-            Address = '$address'
-            WHERE Resident_ID = '$resident_id'";
+            FirstName = ?, MiddleName = ?, LastName = ?, Sex = ?, 
+            Date_of_Birth = ?, Role = ?, Contact_Number = ?, Resident_Email = ?, 
+            Religion = ?, Eligibility_Status = ?, Civil_Status = ?, 
+            Emergency_Person = ?, Emergency_Contact_No = ?, Relationship_to_Person = ?, 
+            Address = ? 
+            WHERE Resident_ID = ?";
 
-    if ($conn->query($sql) === TRUE) {
-        echo "<script>
-                alert('Resident updated successfully');
-                window.location.href = 'residents.php';
-              </script>";
+    if ($stmt = $conn->prepare($sql)) {
+        // Bind parameters
+        $stmt->bind_param(
+            "ssssssssssssssss",
+            $first_name, $middle_name, $last_name, $sex, 
+            $dob, $role, $contact_number, $email, 
+            $religion, $eligibility_status, $civil_status, 
+            $emergency_person, $emergency_contact, $relationship, 
+            $address, $resident_id
+        );
+
+        // Execute the statement
+        if ($stmt->execute()) {
+          if ($stmt->affected_rows > 0) {
+            // Success: Resident updated
+            $message = "Resident Information updated successfully!";
+        } else {
+            // No changes made
+            $message = "There are no changes!";
+        }
+        } else {
+            // Error: Failed to execute query
+        $message = "Error updating resident: " . $stmt->error;
+        }
+
+        // Close the statement
+        $stmt->close();
+
+        // Pass the message to residents.php using a query parameter
+        header("Location: residents.php?message=" . urlencode($message));
+        exit;
     } else {
-        echo "<script>
-                alert('Error updating resident: " . $conn->error . "');
-                window.history.back(); // Go back to the previous page
-              </script>";
+         // Invalid request method
+          $message = "Invalid request method.";
+          header("Location: residents.php?message=" . urlencode($message));
+          exit;
     }
+
+    // Close the connection
+    $conn->close();
 }
 ?>

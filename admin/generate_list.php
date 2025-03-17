@@ -86,9 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $pdf->Cell(30, 8, 'Last Name', 1, 0, 'C'); // Adjusted width
         $pdf->Cell(30, 8, 'First Name', 1, 0, 'C'); // Adjusted width
         $pdf->Cell(15, 8, 'Age', 1, 0, 'C'); // Adjusted width
-        $pdf->Cell(20, 8, 'Sex', 1, 0, 'C'); // Adjusted width
-        $pdf->Cell(45, 8, 'Address', 1, 0, 'C'); // Adjusted width
-        $pdf->Cell(30, 8, 'Contact', 1, 1, 'C'); // Adjusted width
+        $pdf->Cell(15, 8, 'Sex', 1, 0, 'C'); // Adjusted width
+        $pdf->Cell(55, 8, 'Address', 1, 0, 'C'); // Adjusted width
+        $pdf->Cell(25, 8, 'Contact', 1, 1, 'C'); // Adjusted width
 
         // Set font for the table content
         $pdf->SetFont('Arial', '', 8);
@@ -99,12 +99,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $pdf->SetX($start_x); // Ensure each row starts at the center position
 
             // Add table row data
-            $pdf->Cell(30, 5, $row['LastName'], 1, 0);
-            $pdf->Cell(30, 5, $row['FirstName'], 1, 0);
+            $pdf->Cell(30, 5, $row['LastName'], 1, 0, 'C');
+            $pdf->Cell(30, 5, $row['FirstName'], 1, 0, 'C');
             $pdf->Cell(15, 5, date_diff(date_create($row['Date_of_Birth']), date_create('today'))->y, 1, 0, 'C');
-            $pdf->Cell(20, 5, $row['Sex'], 1, 0, 'C');
-            $pdf->Cell(45, 5, $row['Address'], 1, 0);
-            $pdf->Cell(30, 5, $row['Contact_Number'], 1, 1);
+            $pdf->Cell(15, 5, $row['Sex'], 1, 0, 'C');
+            $pdf->Cell(55, 5, $row['Address'], 1, 0, 'C');
+            $pdf->Cell(25, 5, $row['Contact_Number'], 1, 1, 'C');
 
             $totalResidents++;
         }

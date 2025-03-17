@@ -1,6 +1,8 @@
 <?php
 require ('../src/connect.php');
 require ('../src/account.php');
+session_start();
+$_SESSION['Account_Role'];
 
 
 ?>
@@ -104,7 +106,7 @@ require ('../src/account.php');
         .main-content {
             margin-left: 250px; /* Adjust for sidebar width */
             padding: 20px;
-            margin-top: 80px; /* Adjust for header height */
+            margin-top: 40px; /* Reduced from 80px to 40px */
         }
 
         /* Search bar and filter styling */
@@ -295,20 +297,53 @@ require ('../src/account.php');
 .view-icon:hover {
     color: #2a4d6e; /* Darker blue on hover */
 }
+#resultModal .modal-header {
+    background-color: #1C3A5B;
+    color: white;
+    text-align: center;
+}
+
+#resultModal .modal-body {
+    font-size: 16px;
+    padding: 20px;
+    text-align: center;
+}
     </style>
 </head>
 <body>
 
     <!-- Header -->
     <div class="header">
-        <div class="logo-section">
-            <img src="pics/logo.png" alt="Barangay Baritan Logo">
-            <div>
-                <h4 style="margin: 0;">Barangay Baritan</h4>
-                <h6 style="font-size: 10.5px; margin: 0;">Malabon City, Metro Manila, Philippines</h6>
-            </div>
+    <div class="logo-section">
+        <img src="pics/logo.png" alt="Barangay Baritan Logo">
+        <div>
+            <h4 style="margin: 0;">Barangay Baritan</h4>
+            <h6 style="font-size: 10.5px; margin: 0;">Malabon City, Metro Manila, Philippines</h6>
         </div>
     </div>
+    <div class="profile-dropdown">
+        <div class="dropdown">
+            <!-- Display Account Role next to the profile icon -->
+            <?php if (isset($_SESSION['Account_Role'])): ?>
+                <span style="margin-right: 10px; color: white; font-size: 15px; font-weight: Semi-Bold;">
+                    <?php echo $_SESSION['Account_Role']; ?>
+                </span>
+            <?php endif; ?>
+            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><hr class="dropdown-divider"></li> -->
+                <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
+                    <input type="hidden" name="logoutButton" value="1">
+                </form>
+            </ul>
+        </div>
+    </div>
+</div>
 
     <!-- Sidebar -->
     <div class="sidebar">
@@ -321,20 +356,30 @@ require ('../src/account.php');
         <a href="reservation.php"><i class="fas fa-calendar-alt"></i>Reservations</a>
         <a href="tracking_records.php"><i class="fas fa-calendar-alt"></i>Tracking Records</a>
         <a href="admin_management.php"><i class="fas fa-tools"></i>Admin Management</a>
-
-        <div style="position: absolute; bottom: 0; width: 100%;">
-        <a href="#" onclick="document.getElementById('logoutForm').submit();" style="color: white; text-decoration: none; display: block; padding: 15px 20px; font-size: 16px;">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </a>
-        <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
-            <input type="hidden" name="logoutButton" value="1">
-        </form>
-    </div>
     </div>
 
     <!-- Main Content -->
 
-    
+    <!-- Success/Failure Modal -->
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultModalLabel">Action Completed</h5>
+                
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body" id="resultModalBody">
+                <!-- Message will be inserted here -->
+            </div>
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Generate List Modal -->
 <div class="modal fade" id="generateListModal" tabindex="-1" aria-labelledby="generateListModalLabel" aria-hidden="true">
@@ -420,10 +465,8 @@ require ('../src/account.php');
                     <div class="row">
                         <!-- Left Column -->
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label"><strong>Resident ID:</strong></label>
-                                <input type="text" class="form-control" id="editResidentId" name="resident_id" readonly>
-                            </div>
+                            <input type="hidden" class="form-control" id="editResidentAge" name="age" readonly>
+                            <input type="hidden" class="form-control" id="editResidentId" name="resident_id" readonly>
                             <div class="mb-3">
                                 <label class="form-label"><strong>First Name:</strong></label>
                                 <input type="text" class="form-control" id="editResidentFirstName" name="first_name">
@@ -437,10 +480,6 @@ require ('../src/account.php');
                                 <input type="text" class="form-control" id="editResidentLastName" name="last_name">
                             </div>
                             <div class="mb-3">
-                                <label class="form-label"><strong>Age:</strong></label>
-                                <input type="text" class="form-control" id="editResidentAge" name="age" readonly>
-                            </div>
-                            <div class="mb-3">
                                 <label class="form-label"><strong>Sex:</strong></label>
                                 <select class="form-select" id="editResidentSex" name="sex">
                                     <option value="Male">Male</option>
@@ -450,6 +489,15 @@ require ('../src/account.php');
                             <div class="mb-3">
                                 <label class="form-label"><strong>Date of Birth:</strong></label>
                                 <input type="date" class="form-control" id="editResidentDob" name="dob">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Civil Status:</strong></label>
+                                <select class="form-select" id="editResidentCivilStatus" name="civil_status">
+                                    <option value="Single">Single</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Divorced">Divorced</option>
+                                    <option value="Widowed">Widowed</option>
+                                </select>
                             </div>
                         </div>
 
@@ -510,38 +558,30 @@ require ('../src/account.php');
                                   <option value="Senior Citizen">Senior Citizen</option>
                                 </select>
                             </div>
-                            <div class="mb-3">
-                                <label class="form-label"><strong>Civil Status:</strong></label>
-                                <select class="form-select" id="editResidentCivilStatus" name="civil_status">
-                                    <option value="Single">Single</option>
-                                    <option value="Married">Married</option>
-                                    <option value="Divorced">Divorced</option>
-                                    <option value="Widowed">Widowed</option>
-                                </select>
-                            </div>
+                            
                         </div>
                     </div>
 
                     <!-- Emergency Contact Section -->
-                    <div class="row mt-4">
+                    <div class="row mt-3">
                         <div class="col-12">
                             <h6 class="mb-3 text-center" style="color: #1C3A5B; font-weight: bold;"><strong>Emergency Contact Information</strong></h6>
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label class="form-label"><strong>Emergency Contact Person:</strong></label>
+                                        <label class="form-label"><strong>Contact Person:</strong></label>
                                         <input type="text" class="form-control" id="editResidentEmergencyPerson" name="emergency_person">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label class="form-label"><strong>Emergency Contact Number:</strong></label>
+                                        <label class="form-label"><strong>Contact Number:</strong></label>
                                         <input type="text" class="form-control" id="editResidentEmergencyContact" name="emergency_contact">
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="mb-3">
-                                        <label class="form-label"><strong>Relationship to Person:</strong></label>
+                                        <label class="form-label"><strong>Relationship:</strong></label>
                                         <input type="text" class="form-control" id="editResidentRelationship" name="relationship">
                                     </div>
                                 </div>
@@ -551,7 +591,7 @@ require ('../src/account.php');
 
                     <!-- Modal Footer -->
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" name="saveChanges" class="btn btn-primary">Save changes</button>
                     </div>
                 </form>
             </div>
@@ -564,14 +604,14 @@ require ('../src/account.php');
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #1C3A5B; color: white;">
-                <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Deletion</h5>
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Remove</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <p style="font-size: 17px; text-align: center;">Are you sure you want to delete this resident's data?</p>
+                <p style="font-size: 17px; text-align: center;">Are you sure you want to Remove this resident's data?</p>
                 <p style="font-size: 17px; text-align: center;">This action cannot be undone.</p>
                 <div class="mb-3">
-                    <label for="deleteReason" class="form-label"><strong>Reason for Deletion:</strong></label>
+                    <label for="deleteReason" class="form-label"><strong>Reason for Removing:</strong></label>
                     <select class="form-select" id="deleteReasonDropdown" name="delete_reason" required>
                         <option value="" selected disabled>Select a reason</option>
                         <option value="No longer residing in the barangay">No longer residing in the barangay</option>
@@ -594,7 +634,7 @@ require ('../src/account.php');
                 <form action="../src/delete.php" method="POST">
                     <input type="hidden" id="deleteResidentId" name="resident_id">
                     <input type="hidden" id="finalDeleteReason" name="delete_reason">
-                    <button type="submit" name="delete_resident" class="btn btn-danger">Delete</button>
+                    <button type="submit" name="delete_resident" class="btn btn-danger">Remove</button>
                 </form>
             </div>
         </div>
@@ -803,6 +843,25 @@ require ('../src/account.php');
 
 
     <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Get the message from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+
+    if (message) {
+        // Set the modal body content
+        document.getElementById("resultModalBody").textContent = message;
+
+        // Show the modal
+        const resultModal = new bootstrap.Modal(document.getElementById("resultModal"));
+        resultModal.show();
+
+        // Clear the message parameter from the URL
+        const newUrl = window.location.pathname; // Get the URL without query parameters
+        history.replaceState({}, document.title, newUrl); // Update the URL
+    }
+});
 
 document.addEventListener("DOMContentLoaded", function () {
     const generateListForm = document.getElementById("generateListForm");

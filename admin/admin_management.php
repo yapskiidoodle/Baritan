@@ -11,7 +11,7 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Management - Barangay Baritan</title>
+    <title>Barangay Baritan Official Website</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="pics/logo.png">
@@ -79,6 +79,29 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
             margin-right: 10px;
         }
 
+        .header .profile-dropdown {
+            margin-right: 20px;
+        }
+
+        .header .profile-dropdown .btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0; /* Remove padding to align icon properly */
+        }
+
+        .header .profile-dropdown .dropdown-menu {
+            right: 0;
+            left: auto;
+        }
+
+        /* Remove the dropdown icon */
+        .header .profile-dropdown .btn::after {
+            display: none;
+        }
+
         /* Main content styling */
         .main-content {
             margin-left: 250px; /* Adjust for sidebar width */
@@ -86,7 +109,48 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
             margin-top: 80px; /* Adjust for header height */
         }
 
-        /* Table styling */
+        /* Search bar and filter styling */
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            width: 250px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .search-button,
+        .register-button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #1C3A5B;
+            color: white;
+            cursor: pointer;
+        }
+
+        .search-button:hover,
+        .register-button:hover {
+            background-color: #2a4d6e;
+        }
+
+        .sort-by {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .sort-by select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
         .table-container {
             max-height: 490px; /* Adjust height as needed */
             overflow-y: auto;
@@ -123,6 +187,34 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
             background-color: #f1f1f1;
         }
 
+        .residents-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .residents-table th,
+        .residents-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .residents-table th {
+            background-color: #1C3A5B;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .residents-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .residents-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
         /* Modal styling */
         .modal-content {
             border-radius: 10px;
@@ -155,6 +247,22 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
                 <h6 style="font-size: 10.5px; margin: 0;">Malabon City, Metro Manila, Philippines</h6>
             </div>
         </div>
+        <div class="profile-dropdown">
+            <div class="dropdown">
+                <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle"></i>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                    <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                    <li><hr class="dropdown-divider"></li> -->
+                    <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
+                        <input type="hidden" name="logoutButton" value="1">
+                    </form>
+                </ul>
+            </div>
+        </div>
     </div>
 
     <!-- Sidebar -->
@@ -168,20 +276,9 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
         <a href="reservation.php"><i class="fas fa-calendar-alt"></i>Reservations</a>
         <a href="tracking_records.php"><i class="fas fa-calendar-alt"></i>Tracking Records</a>
         <a href="admin_management.php" class="active"><i class="fas fa-tools"></i>Admin Management</a>
-
-        <!-- Logout at the Bottom -->
-        <div style="position: absolute; bottom: 0; width: 100%;">
-            <a href="#" onclick="document.getElementById('logoutForm').submit();" style="color: white; text-decoration: none; display: block; padding: 15px 20px; font-size: 16px;">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </a>
-            <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
-                <input type="hidden" name="logoutButton" value="1">
-            </form>
-        </div>
     </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
+<!-- Main Content -->
+<div class="main-content">
         <h2>Admin Management</h2>
 
         <!-- Add New Admin Button -->

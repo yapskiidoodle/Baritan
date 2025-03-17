@@ -40,6 +40,8 @@ $pdf = new FPDF();
 $pdf->AddPage();
 $pdf->SetFont('Arial', 'B', 12);
 
+$pdf->SetTitle("Official Barangay Population Report");
+
 // Add Logo
 $pdf->Image('pics/logo.png', 90, 5, 25); // (x, y, width)
 
@@ -64,8 +66,8 @@ $pdf->Cell(25, 6, 'Last Name', 1, 0, 'C');
 $pdf->Cell(25, 6, 'First Name', 1, 0, 'C');
 $pdf->Cell(12, 6, 'Sex', 1, 0, 'C');
 $pdf->Cell(15, 6, 'Age', 1, 0, 'C');
-$pdf->Cell(30, 6, 'Contact', 1, 0, 'C');
-$pdf->Cell(30, 6, 'Address', 1, 1, 'C');
+$pdf->Cell(20, 6, 'Contact', 1, 0, 'C');
+$pdf->Cell(40, 6, 'Address', 1, 1, 'C');
 
 // Table Data (Auto Page Break)
 $pdf->SetFont('Arial', '', 7);
@@ -80,19 +82,19 @@ if ($total_population > 0) {
             $pdf->Cell(25, 6, 'First Name', 1, 0, 'C');
             $pdf->Cell(12, 6, 'Sex', 1, 0, 'C');
             $pdf->Cell(15, 6, 'Age', 1, 0, 'C');
-            $pdf->Cell(30, 6, 'Contact', 1, 0, 'C');
-            $pdf->Cell(30, 6, 'Address', 1, 1, 'C');
+            $pdf->Cell(20, 6, 'Contact', 1, 0, 'C');
+            $pdf->Cell(40, 6, 'Address', 1, 1, 'C');
             $pdf->SetFont('Arial', '', 7);
         }
 
         $pdf->SetX($start_x); // Align data rows to table center
         $pdf->Cell(30, 6, $row['Resident_ID'], 1, 0, 'C');
-        $pdf->Cell(25, 6, $row['LastName'], 1, 0, 'L');
-        $pdf->Cell(25, 6, $row['FirstName'], 1, 0, 'L');
+        $pdf->Cell(25, 6, $row['LastName'], 1, 0, 'C');
+        $pdf->Cell(25, 6, $row['FirstName'], 1, 0, 'C');
         $pdf->Cell(12, 6, $row['Sex'], 1, 0, 'C');
         $pdf->Cell(15, 6, $row['Age'], 1, 0, 'C');
-        $pdf->Cell(30, 6, $row['Contact_Number'], 1, 0, 'L');
-        $pdf->Cell(30, 6, $row['Address'], 1, 1, 'L');
+        $pdf->Cell(20, 6, $row['Contact_Number'], 1, 0, 'C');
+        $pdf->Cell(40, 6, $row['Address'], 1, 1, 'C');
     }
 } else {
     $pdf->Cell(0, 6, 'No records found.', 1, 1, 'C');
@@ -109,5 +111,5 @@ $pdf->MultiCell(0, 5, "This document serves as an official report of the current
 // Close connection & Output PDF
 $conn->close();
 ob_end_clean();
-$pdf->Output('D', 'Barangay_Baritan_Resident_Report.pdf');
+$pdf->Output('I', 'Barangay_Baritan_Resident_Report.pdf');
 exit();

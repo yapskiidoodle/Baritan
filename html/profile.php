@@ -7,12 +7,12 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
 require '../src/account.php';
 require '../src/residentInfo.php';
 
-$userData = $_SESSION['User_Data'] ?? [];
 
-$FirstName = $userData['FirstName'] ?? 's' ;
-$LastName = $userData['LastName']?? '';
+
+$FirstName = $_SESSION['User_Data']['FirstName'] ?? '';
+$LastName = $_SESSION['User_Data']['LastName'] ?? '';
 $Address = $userData['Address']?? '';
-$userEmail = $_SESSION['userEmail'] ?? ''; 
+$userEmail =  $_SESSION['User_Data']['Resident_Email'] ?? '';
 
 
 $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
@@ -217,12 +217,12 @@ while ($row = $result->fetch_assoc()) {
         data-bs-toggle="modal" data-bs-target="#account">
         Switch Account
     </button>
-
+<!-- 
     <button type="button" id="edit_button" class="btn btn-warning text-white mt-2" 
         style="padding: 0% 2%; font-size: 20px;" 
         data-bs-toggle="modal" data-bs-target="#editModal">
         Edit Profile
-    </button>
+    </button> -->
 
     <button type="button" id="add_account_button" class="button mt-2" 
         style="padding: 0% 2%; font-size: 20px;" 
@@ -249,36 +249,103 @@ while ($row = $result->fetch_assoc()) {
               </tr>
             </thead>
             <tbody id="tableBody">
-              <tr>
-                    <?php
-                    $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
+    <?php
+    require '../src/connect.php';
 
-                    if ($familyID) {
-                        $query = "SELECT Resident_ID, FirstName, MiddleName, LastName, Role 
-                                FROM residents_information_tbl WHERE Family_Name_ID = ?";
-                        $stmt = $conn->prepare($query);
-                        $stmt->bind_param("s", $familyID);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
+    $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
 
-                        $count = 1; // Row counter
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<th scope='row'>{$count}</th>";
-                            echo "<td>{$row['FirstName']} " . (!empty($row['MiddleName']) ? $row['MiddleName'][0] . ". " : "") . "{$row['LastName']}</td>";
-                            echo "<td>{$row['Role']}</td>";
-                            echo "<td><button class='btn btn-warning btn-sm' onclick=\"window.location.href='edit_member.php?id={$row['Resident_ID']}'\">Edit</button></td>";
-                            echo "<td><button class='btn btn-danger btn-sm' onclick=\"confirmDelete('{$row['Resident_ID']}')\">Delete</button></td>";
-                            echo "</tr>";
-                            $count++;
-                        }
-                    } else {
-                        echo "<tr><td colspan='5' class='text-center'>No family members found.</td></tr>";
-                    }
-                    ?>
-               
-              </tr>
-            </tbody>
+    if ($familyID) {
+        $query = "SELECT 
+            Resident_ID,
+            Address,
+            FirstName,
+            COALESCE(MiddleName, '') AS MiddleName,
+            LastName,
+            COALESCE(Suffix, '') AS Suffix,  -- ✅ ADDED Suffix
+            Sex,
+            Date_of_Birth,
+            Role,
+            Contact_Number,
+            Resident_Email,
+            Religion,
+            Eligibility_Status,
+            Civil_Status,
+            Emergency_Person,
+            Emergency_Contact_No,
+            Relationship_to_Person,
+            Emergency_Address,
+            Occupation,
+            TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) AS Age
+        FROM Residents_information_tbl
+        WHERE Family_Name_ID = ?";
+
+        $stmt = $conn->prepare($query);
+        if (!$stmt) {
+            die("Query preparation failed: " . $conn->error);
+        }
+        $stmt->bind_param("s", $familyID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $count = 0; // Row counter
+        while ($row = $result->fetch_assoc()) {
+            $count++;
+            ?>
+            <tr>
+                <th scope="row"><?= $count ?></th>
+                <td><?= htmlspecialchars($row['FirstName']) ?> 
+                    <?= !empty($row['MiddleName']) ? htmlspecialchars(substr($row['MiddleName'], 0, 1)) . "." : "" ?>
+                    <?= htmlspecialchars($row['LastName']) ?>
+                    <?= !empty($row['Suffix']) ? htmlspecialchars($row['Suffix']) : "" ?>  <!-- ✅ SHOW SUFFIX -->
+                </td>
+                <td><?= htmlspecialchars($row['Role']) ?></td>
+                <td>
+                    <button class="btn btn-warning btn-sm" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#editModal"
+                        onclick="populateEditModal(
+                            '<?= htmlspecialchars($row['Resident_ID']) ?>', 
+                            '<?= htmlspecialchars($row['FirstName']) ?>', 
+                            '<?= htmlspecialchars($row['MiddleName']) ?>', 
+                            '<?= htmlspecialchars($row['LastName']) ?>', 
+                            '<?= htmlspecialchars($row['Suffix']) ?>',  /* ✅ ADDED SUFFIX */
+                            '<?= htmlspecialchars($row['Sex']) ?>', 
+                            '<?= htmlspecialchars($row['Date_of_Birth']) ?>', 
+                            '<?= htmlspecialchars($row['Resident_Email']) ?>', 
+                            '<?= htmlspecialchars($row['Contact_Number']) ?>', 
+                            '<?= htmlspecialchars($row['Occupation']) ?>', 
+                            '<?= htmlspecialchars($row['Religion']) ?>', 
+                            '<?= htmlspecialchars($row['Eligibility_Status']) ?>', 
+                            '<?= htmlspecialchars($row['Civil_Status']) ?>', 
+                            '<?= htmlspecialchars($row['Address']) ?>', 
+                            '<?= htmlspecialchars($row['Emergency_Person']) ?>', 
+                            '<?= htmlspecialchars($row['Emergency_Contact_No']) ?>', 
+                            '<?= htmlspecialchars($row['Relationship_to_Person']) ?>', 
+                            '<?= htmlspecialchars($row['Emergency_Address']) ?>', 
+                            '<?= htmlspecialchars($row['Role']) ?>'
+                        )">
+                        Edit
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="confirmDelete('<?= htmlspecialchars($row['Resident_ID']) ?>')">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+            <?php
+        }
+
+        if ($count === 0) {  
+            echo "<tr><td colspan='5' class='text-center'>No family members found.</td></tr>";
+        }
+
+        $stmt->close();
+    } else {
+        echo "<tr><td colspan='5' class='text-center'>No family members found.</td></tr>";
+    }
+    ?>
+</tbody>
           </table>
     </div>
     
@@ -346,136 +413,227 @@ while ($row = $result->fetch_assoc()) {
     </div>
   </div>
 
-
-<!-- Edit Profile -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-<form id="editForm" action="../src/editProfile.php" method="POST">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+<!-- Edit Resident Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editResidentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="editModalLabel">Edit Personal Information</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-header" style="background-color: #1C3A5B; color: white;">
+                <h5 class="modal-title text-center" id="editResidentModalLabel">Edit Resident Information</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <div class="modal-body">
-                
-                    <div class="container">
-                        <div class="h4 mt-3 text-center fw-bold">Personal Information</div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="firstName">First Name</label>
-                            <input type="text" class="form-control" id="firstName" name="firstName" value="<?= htmlspecialchars($_SESSION['User_Data']['FirstName'] ?? '') ?>" required>
+                <form id="editResidentForm" action="../src/editProfile.php" method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Resident ID:</strong></label>
+                                <input type="text" class="form-control" id="editResidentId" name="residentID" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>First Name:</strong></label>
+                                <input type="text" class="form-control" id="editResidentFirstName" name="first_name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Middle Name:</strong></label>
+                                <input type="text" class="form-control" id="editResidentMiddleName" name="middle_name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Last Name:</strong></label>
+                                <input type="text" class="form-control" id="editResidentLastName" name="last_name">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Suffix:</strong></label>
+                                <input type="text" class="form-control" id="editResidentSuffix" name="suffix">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Age:</strong></label>
+                                <input type="text" class="form-control" id="editResidentAge" name="age" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Sex:</strong></label>
+                                <select class="form-select" id="editResidentSex" name="sex">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Date of Birth:</strong></label>
+                                <input type="date" class="form-control" id="editResidentDob" name="dob">
+                            </div>
                         </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="lastName">Last Name</label>
-                            <input type="text" class="form-control" id="lastName" name="lastName" value="<?= htmlspecialchars($_SESSION['User_Data']['LastName'] ?? '') ?>" required>
-                        </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="middleInitial">Middle Initial</label>
-                            <input type="text" class="form-control" id="middleInitial" name="middleName" value="<?= htmlspecialchars($_SESSION['User_Data']['MiddleName'] ?? '') ?>" required>
-                        </div>
-
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="sex">Sex</label>
-                            <select class="form-control" id="sex" name="sex" required >
-                                <option value="Male" <?= ($_SESSION['User_Data']['Sex'] ?? '') == 'Male' ? 'selected' : '' ?> >Male</option>
-                                <option value="Female" <?= ($_SESSION['User_Data']['Sex'] ?? '') == 'Female' ? 'selected' : '' ?>>Female</option>
-                            </select>
-                        </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="birthday">Date of Birth</label>
-                            <input type="date" class="form-control" id="birthday" name="birthday" value="<?= htmlspecialchars($_SESSION['User_Data']['Date_of_Birth'] ?? '') ?>" required>
-                        </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="role">Role</label>
-                            <select class="form-control" id="role" name="role" required >
-                                <option value="Head" <?= ($_SESSION['User_Data']['Resident_Role'] ?? '') == 'Head' ? 'selected' : '' ?>>Head of the Family</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="email">Email Address</label>
-                            <input type="email" class="form-control" id="email" name="residentEmail" value="<?= htmlspecialchars($_SESSION['User_Data']['Resident_Email'] ?? '') ?>" required>
-                        </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="contact">Contact Number</label>
-                            <input type="tel" class="form-control" id="contact" name="contact" value="<?= htmlspecialchars($_SESSION['User_Data']['Contact_Number'] ?? '') ?>" required pattern="09[0-9]{9}" maxlength="11">
-                        </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="occupation">Occupation</label>
-                            <input type="text" class="form-control" id="occupation" name="occupation" value="<?= htmlspecialchars($_SESSION['User_Data']['Occupation'] ?? '') ?>" required>
-                        </div>
-                        
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="religion">Religion</label>
-                            <select class="form-control" id="religion" name="religion" required >
-                                <option value="Roman Catholic" <?= ($_SESSION['User_Data']['Religion'] ?? '') == 'Roman Catholic' ? 'selected' : '' ?>>Roman Catholic</option>
-                                <option value="Islam" <?= ($_SESSION['User_Data']['Religion'] ?? '') == 'Islam' ? 'selected' : '' ?>>Islam</option>
-                                <option value="Christian" <?= ($_SESSION['User_Data']['Religion'] ?? '') == 'Christian' ? 'selected' : '' ?>>Christian</option>
-                                <option value="Iglesia ni Cristo" <?= ($_SESSION['User_Data']['Religion'] ?? '') == 'Iglesia ni Cristo' ? 'selected' : '' ?>>Iglesia ni Cristo (INC)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group mt-3 fw-bold">
-                        <label for="eligibilityStatus">Eligibility Status</label>
-                            <select class="form-control" id="eligibilityStatus" name="eligibilityStatus" required>
-                                <option value="pwd" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'pwd' ? 'selected' : '' ?>>PWD (Person with Disability)</option>
-                                <option value="single parent" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'single parent' ? 'selected' : '' ?>>Single Parent</option>
-                                <option value="employed" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'employed' ? 'selected' : '' ?>>Employed</option>
-                                <option value="unemployed" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'unemployed' ? 'selected' : '' ?>>Unemployed</option>
-                                <option value="student" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'student' ? 'selected' : '' ?>>Student</option>
-                                <option value="senior citizen" <?= ($_SESSION['User_Data']['Eligibility_Status'] ?? '') == 'senior citizen' ? 'selected' : '' ?>>Senior Citizen</option>
-                            </select>
-
-                        </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="civilStatus">Civil Status</label>
-                            <select class="form-control" id="civilStatus" name="civilStatus" required >
-                                <option value="Single" <?= ($_SESSION['User_Data']['Civil_Status'] ?? '') == 'Single' ? 'selected' : '' ?>>Single</option>
-                                <option value="Married" <?= ($_SESSION['User_Data']['Civil_Status'] ?? '') == 'Married' ? 'selected' : '' ?>>Married</option>
-                                <option value="Widowed" <?= ($_SESSION['User_Data']['Civil_Status'] ?? '') == 'Widowed' ? 'selected' : '' ?>>Widowed</option>
-                                <option value="Divorced" <?= ($_SESSION['User_Data']['Civil_Status'] ?? '') == 'Divorced' ? 'selected' : '' ?>>Divorced</option>
-                            </select>
-                        </div>
-
-                        <div class="h4 mt-5 text-center fw-bold">Address</div>
-                        <div class="form-group mt-4 fw-bold">
-                            <label for="address">Full Address</label>
-                            <textarea class="form-control" id="address" name="address" required><?= htmlspecialchars($_SESSION['User_Data']['Address'] ?? '') ?></textarea>
-                        </div>
-
-                        <div class="h4 mt-5 text-center fw-bold">Emergency Contact Information</div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="emergencyPerson">Emergency Contact Person</label>
-                            <input type="text" class="form-control" id="emergencyPerson" name="emergencyPerson" value="<?= htmlspecialchars($_SESSION['User_Data']['Emergency_Person'] ?? '') ?>" required>
-                        </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="emergencyContact">Emergency Contact Number</label>
-                            <input type="tel" class="form-control" id="emergencyContact" name="emergencyContact" value="<?= htmlspecialchars($_SESSION['User_Data']['Emergency_Contact_No'] ?? '') ?>" required pattern="09[0-9]{9}" maxlength="11">
-                        </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="emergencyRelation">Relationship</label>
-                            <input type="text" class="form-control" id="emergencyRelation" name="emergencyRelation" value="<?= htmlspecialchars($_SESSION['User_Data']['Relationship_to_Person'] ?? '') ?>" required>
-                        </div>
-                        <div class="form-group mt-3 fw-bold">
-                            <label for="emergencyAddress">Emergency Address</label>
-                            <textarea class="form-control" id="emergencyAddress" name="emergencyAddress" rows="3" required><?= htmlspecialchars($_SESSION['User_Data']['Emergency_Address'] ?? '') ?></textarea>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Role:</strong></label>
+                                <select class="form-control" id="editResidentRole" name="role">
+                                    <option value="Head">Head of the Family</option>
+                                    <option value="Father">Father</option>
+                                    <option value="Mother">Mother</option>
+                                    <option value="Daughter">Daughter</option>
+                                    <option value="Son">Son</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Address:</strong></label>
+                                <input type="text" class="form-control" id="editResidentAddress" name="address">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Occupation:</strong></label>
+                                <input type="text" class="form-control" id="editResidentOccupation" name="occupation">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Eligibility Status:</strong></label>
+                                <!-- <input type="text" class="form-control" id="editResidentEligibility" name="eligibility_status"> -->
+                                <select class="form-control" id="editResidentEligibility" name="eligibility_status">
+                                  <option value="Person with Disability">PWD (Person with Disability)</option>
+                                  <option value="Single Parent">Single Parent</option>
+                                  <option value="Employed">Employed</option>
+                                  <option value="Unemployed">Unemployed</option>
+                                  <option value="Student">Student</option>
+                                  <option value="Senior Citizen">Senior Citizen</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Civil Status:</strong></label>
+                                <select class="form-select" id="editResidentCivilStatus" name="civil_status">
+                                    <option value="Single">Single</option>
+                                    <option value="Married">Married</option>
+                                    <option value="Divorced">Divorced</option>
+                                    <option value="Widowed">Widowed</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Contact Number:</strong></label>
+                                <input type="text" class="form-control" id="editResidentContact" name="contact_number">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Email:</strong></label>
+                                <input type="email" class="form-control" id="editResidentEmail" name="email">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Religion:</strong></label>
+                                <!-- <input type="text" class="form-control" id="editResidentReligion" name="religion"> -->
+                                <select class="form-control" id="editResidentReligion" name="religion">
+                                    <option value="Roman Catholic" >Roman Catholic</option>
+                                    <option value="Islam">Islam</option>
+                                    <option value="Jehovah’s Witnesses">Jehovah’s Witnesses</option>
+                                    <option value="Christian">Christian</option>
+                                    <option value="Iglesia ni Cristo (INC)">Iglesia ni Cristo (INC)</option>
+                                    
+                                  </select>
+                            </div>
                         </div>
                     </div>
-
-                    <script> 
-
-                        
-                    </script>
-                
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary ms-auto" id="saveChanges">Save Changes</button>
-               
+                    <div class="row mt-4">
+                        <h6 class="text-center" style="color: #1C3A5B; font-weight: bold;">Emergency Contact</h6>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Emergency Contact Person:</strong></label>
+                                <input type="text" class="form-control" id="editResidentEmergencyPerson" name="emergency_person">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Emergency Contact Number:</strong></label>
+                                <input type="text" class="form-control" id="editResidentEmergencyContact" name="emergency_contact">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Relationship:</strong></label>
+                                <input type="text" class="form-control" id="editResidentRelationship" name="relationship">
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label class="form-label"><strong>Address of the Emergency Contact:</strong></label>
+                                <input type="text" class="form-control" id="editResidentEmergencyAddress" name="emergencyAddress">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
-</form>
+
+<script>
+function setInputValue(id, value) {
+    let input = document.getElementById(id);
+    if (input) {
+        input.value = value || "";
+    } else {
+        console.warn(`Element not found: ${id}`);
+    }
+}
+
+function setSelectValue(id, value) {
+    let select = document.getElementById(id);
+    if (select) {
+        let optionExists = [...select.options].some(option => option.value === value);
+        select.value = optionExists ? value : select.options[0].value;
+    } else {
+        console.warn(`Dropdown not found: ${id}`);
+    }
+}
+
+function calculateAge(dob) {
+    if (!dob) return 'N/A';
+    let birthDate = new Date(dob);
+    let today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    if (today.getMonth() < birthDate.getMonth() || 
+        (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+}
+function populateEditModal(
+    residentId, firstName, middleName, lastName, suffix,  
+    sex, dob, email, contact, occupation, religion, 
+    eligibility, civilStatus, address, emergencyPerson, 
+    emergencyContact, relationship, emergencyAddress, role
+) {
+    document.getElementById('editResidentId').value = residentId;
+    document.getElementById('editResidentFirstName').value = firstName;
+    document.getElementById('editResidentMiddleName').value = middleName;
+    document.getElementById('editResidentLastName').value = lastName;
+    document.getElementById('editResidentSuffix').value = suffix || "";  
+    document.getElementById('editResidentSex').value = sex;
+    document.getElementById('editResidentDob').value = dob;
+    document.getElementById('editResidentEmail').value = email;
+    document.getElementById('editResidentContact').value = contact;
+    document.getElementById('editResidentOccupation').value = occupation;
+    document.getElementById('editResidentReligion').value = religion;
+    document.getElementById('editResidentEligibility').value = eligibility;
+    document.getElementById('editResidentCivilStatus').value = civilStatus;
+    document.getElementById('editResidentAddress').value = address;
+    document.getElementById('editResidentEmergencyPerson').value = emergencyPerson;
+    document.getElementById('editResidentEmergencyContact').value = emergencyContact;
+    document.getElementById('editResidentRelationship').value = relationship;
+    document.getElementById('editResidentEmergencyAddress').value = emergencyAddress;
+    document.getElementById('editResidentRole').value = role;
+
+    // ✅ Calculate and set Age  
+    document.getElementById('editResidentAge').value = calculateAge(dob);
+}
+
+function setSelectValue(id, value) {
+    let select = document.getElementById(id);
+    if (select) {
+        select.value = value || select.options[0].value; // Default to the first option if empty
+    }
+}
+
+
+</script>
+
+
+
 
 
 <div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalTitle">
