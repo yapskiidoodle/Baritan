@@ -13,12 +13,7 @@ $FirstName = $userData['FirstName'] ?? 's' ;
 $LastName = $userData['LastName']?? '';
 $Address = $userData['Address']?? '';
 $userEmail = $_SESSION['userEmail'] ?? ''; 
-echo "<pre>";
-print_r($_POST);
-echo "Resident_ID: " . ($_SESSION['User_Data']['Resident_ID'] ?? 'not set');
-echo "\n";
-echo "Family_: " . ($_SESSION['User_Data']['Family_Name_ID'] ?? 'not set');
-echo "</pre>";
+
 
 $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
 
@@ -40,12 +35,9 @@ while ($row = $result->fetch_assoc()) {
     $members[] = $row;
 }
 
-echo json_encode($members);
-?>
-
-
 
 ?>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -168,14 +160,14 @@ echo json_encode($members);
     </div>
     <!--END HEADER-->
 
-    <?php if (isset($_SESSION['success'])): ?>
-    <div class="alert alert-success"><?= $_SESSION['success']; ?></div>
-    <?php unset($_SESSION['success']); ?>
+    <?php if (isset($_SESSION['success_message'])): ?>
+    <div class="alert alert-success m-3" ><?= $_SESSION['success_message']; ?></div>
+    <?php unset($_SESSION['success_message']); ?>
 <?php endif; ?>
 
-<?php if (isset($_SESSION['error'])): ?>
-    <div class="alert alert-danger"><?= $_SESSION['error']; ?></div>
-    <?php unset($_SESSION['error']); ?>
+<?php if (isset($_SESSION['error_message'])): ?>
+    <div class="alert alert-danger m-3"><?= $_SESSION['error_message']; ?></div>
+    <?php unset($_SESSION['error_message']); ?>
 <?php endif; ?>
 
     <div class="container mt-5 text-center" style="background-color: white; padding: 3%; margin-bottom: 5%;"> 
@@ -191,17 +183,10 @@ echo json_encode($members);
             <div class="col-md-2 mt-4" >
                 <img src="../pics/profile.jpg" style="border-radius: 50%; width: 150px;">
             </div>
-            <div class="col-md-6" style=" text-align: left;">
+            <div class="col-md-10" style=" text-align: left;">
                 <div class="container d-inline ">
                     <h4 class="mt-4 "><?php echo sprintf("%s %s", $FirstName, $LastName); ?>
-                        <button class="button" style="margin-left: 10%;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart-fill" viewBox="0 0 16 16" style="color: rgb(238, 255, 4);">
-                                <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1"/>
-                              </svg>
-                              <div class="lead d-inline ">
-                                Change Head of the family
-                              </div>
-                        </button>
+                       
                     </h4>
                     
                     <div class="h1 "> 
@@ -220,18 +205,37 @@ echo json_encode($members);
                     </div>
                    
                 </div>
- 
+                <!-- <button class="button" style="margin-left: 10%;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart-fill" viewBox="0 0 16 16" style="color: rgb(238, 255, 4);">
+                                <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1"/>
+                              </svg>
+                              <div class="lead d-inline ">
+                                Change Head of the family
+                              </div>
+                        </button> -->
             </div>
-            <div class="col-md-4" style="height: 100%; margin-top: 15%;">
-                <div class="d-flex mt-auto">
-                    <button type="button" id="back_button" onclick="" class="button me-auto mt-2" style="padding: 0% 2%; font-size: 20px;" data-bs-toggle="modal" data-bs-target="#account">
-                        Switch Account
-                    </button>
-                    <button type="button" id="next_button" class="btn btn-warning text-white mt-2" data-bs-toggle="modal" data-bs-target="#editModal" style="padding: 0% 2%; font-size: 20px;">
-                        Edit Profile
-                    </button>
-                </div>
-            </div>
+            <div class="col" style="height: 100%;">
+            <div class="d-flex justify-content-end mt-auto gap-2">
+    <button type="button" id="switch_button" class="button mt-2" 
+        style="padding: 0% 2%; font-size: 20px;" 
+        data-bs-toggle="modal" data-bs-target="#account">
+        Switch Account
+    </button>
+
+    <button type="button" id="edit_button" class="btn btn-warning text-white mt-2" 
+        style="padding: 0% 2%; font-size: 20px;" 
+        data-bs-toggle="modal" data-bs-target="#editModal">
+        Edit Profile
+    </button>
+
+    <button type="button" id="add_account_button" class="button mt-2" 
+        style="padding: 0% 2%; font-size: 20px;" 
+        data-bs-toggle="modal" data-bs-target="#account">
+        Add Account
+    </button>
+</div>
+</div>
+
         </div>
         <hr>
         <div class="display-5" style="text-align: left;">
@@ -468,7 +472,7 @@ echo json_encode($members);
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary ms-auto">Save Changes</button>
+                <button type="submit" class="btn btn-primary ms-auto" id="saveChanges">Save Changes</button>
                
             </div>
         </div>
@@ -491,6 +495,110 @@ echo json_encode($members);
             start.hidden = false;
         <?php } ?>
     });
+
+    $(document).ready(function () {
+    $("#saveChanges").click(function (event) {
+        var firstInvalid = validateInputs();
+
+        if (firstInvalid) {
+            event.preventDefault(); // Prevent form submission if there are errors
+            firstInvalid.focus(); // Focus on the first invalid field
+        }
+    });
+});
+
+$(document).ready(function () {
+    $("#saveChanges").click(function (event) {
+        var firstInvalid = validateInputs();
+
+        if (firstInvalid) {
+            event.preventDefault(); // Prevent form submission if there are errors
+            firstInvalid.focus(); // Focus on the first invalid field
+        }
+    });
+});
+
+function validateInputs() {
+    var firstInvalid = null;
+    var specialCharRegex = /[^a-zA-Z0-9ñ ]/; // Allows only letters, numbers, and space
+    var specialCharRegexEmail = /[^a-zA-Z0-9@.]/; // Allows only letters, numbers, @, and .
+    var passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/; // Password: 8+ chars, 1 uppercase, 1 special char
+    var allValid = true;
+
+    $("input[required], select[required]").each(function () {
+        var value = $(this).val().trim();
+        var inputType = $(this).attr("type");
+        var inputId = $(this).attr("id");
+        var isEmail = inputType === "email";
+        var isPassword = inputId === "password" || inputId === "rePassword";
+        var isDate = inputType === "date" || inputId.toLowerCase().includes("date");
+        var feedbackSpan = $(this).next(".invalid-feedback");
+
+        // Empty field
+        if (!value) {
+            showError(this, "This field is required.");
+            allValid = false;
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        // Email validation
+        else if (isEmail && specialCharRegexEmail.test(value)) {
+            showError(this, "Only letters, numbers, @, and . are allowed.");
+            allValid = false;
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        // Password validation
+        else if (isPassword && !passwordRegex.test(value)) {
+            showError(this, "Password must be at least 8 characters, contain an uppercase letter, and a special character.");
+            allValid = false;
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        // Allow dates to have special characters
+        else if (!isEmail && !isPassword && !isDate && specialCharRegex.test(value)) {
+            showError(this, "Special characters are not allowed.");
+            allValid = false;
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        // Password confirmation
+        else if (inputId === "rePassword") {
+            validatePasswords();
+        } 
+        // Valid input
+        else {
+            removeError(this);
+        }
+    });
+
+    return allValid ? null : firstInvalid;
+}
+
+// ✅ Password matching check
+function validatePasswords() {
+    var password = $("#password").val();
+    var rePassword = $("#rePassword").val();
+    var rePasswordField = $("#rePassword");
+
+    if (!password || !rePassword) return;
+
+    if (password !== rePassword) {
+        showError(rePasswordField, "Passwords do not match.");
+    } else {
+        removeError(rePasswordField);
+    }
+}
+
+// ✅ Show error message
+function showError(element, message) {
+    $(element).addClass("is-invalid").removeClass("is-valid");
+    $(element).next(".invalid-feedback").remove();
+    $(element).after('<div class="invalid-feedback">' + message + '</div>');
+}
+
+// ✅ Remove error message
+function removeError(element) {
+    $(element).removeClass("is-invalid").addClass("is-valid");
+    $(element).next(".invalid-feedback").remove();
+}
+    
 </script>
 
 

@@ -1,10 +1,9 @@
 <?php
-
-require 'connect.php'; // Load the database connection
-
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
-}
+} 
+require 'connect.php'; // Load the database connection
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     $userEmail = trim($_POST["userEmail"] ?? '');
@@ -16,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     $query = "SELECT 
                 a.Account_ID, a.Role AS Account_Role, a.Type AS Account_Type, a.User_Email, a.Password, a.Status AS Account_Status,
                 f.Family_Name_ID, f.Family_Name, f.Status AS Family_Status,
-                r.Resident_ID, r.FirstName, r.MiddleName, r.LastName, r.Sex, r.Date_of_Birth, r.Role AS Resident_Role,
+                r.Resident_ID, r.FirstName, r.MiddleName, r.LastName, r.Suffix, r.Sex, r.Date_of_Birth, r.Role AS Resident_Role,
                 r.Contact_Number, r.Resident_Email, r.Occupation, r.Religion, r.Civil_Status, r.Address,
                 r.Emergency_Person, r.Emergency_Contact_No, r.Emergency_Address, r.Relationship_to_Person,
                 r.Valid_ID_Type, r.Valid_ID_Picture_Front, r.Valid_ID_Picture_Back, r.Pic_Path, r.Age, r.Date_Created AS Resident_Created
@@ -111,3 +110,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     mysqli_stmt_close($stmt);
 }
 ?>
+
+
+<!-- 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+} 
+    
+-->

@@ -168,29 +168,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <label for="exampleInputPassword1">Re-Enter Password</label>
                         <input type="password" class="form-control" id="rePassword" placeholder="Password" required>
                       </div>
-                      <script>
-                      document.addEventListener("DOMContentLoaded", function () {
-                          var password = document.getElementById("password");
-                          var rePassword = document.getElementById("rePassword");
-
-                          function validatePasswords() {
-                              var feedback = rePassword.nextElementSibling; // Gets the invalid-feedback div
-                              if (password.value === rePassword.value && password.value !== "") {
-                                  rePassword.classList.remove("is-invalid");
-                                  rePassword.classList.add("is-valid");
-                                  feedback.style.display = "none";
-                              } else {
-                                  rePassword.classList.remove("is-valid");
-                                  rePassword.classList.add("is-invalid");
-                                  feedback.style.display = "block";
-                              }
-                          }
-
-                          // Listen for input changes in both password fields
-                          password.addEventListener("input", validatePasswords);
-                          rePassword.addEventListener("input", validatePasswords);
-                      });
-                      </script>
+                      
 
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Enter Family Name</label>
@@ -201,22 +179,28 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                     <!--  Personal Information -->
                       <div class="h4 mt-5 text-center" style="font-weight: 700;">Personal Information</div>
                       <div class="row">
-                        <div class="col w-25">
+                        <div class="col-md-12 ">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1" >First Name</label>
                                 <input type="text" class="form-control" id="firstName" name="firstName" placeholder="ex. Juan" required>
                               </div>
                         </div>
-                        <div class="col w-25">
+                        <div class="col-md-12 ">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Last Name</label>
                                 <input type="text" class="form-control" id="lastName" name="lastName"placeholder="ex. Dela Cruz" required>
                               </div>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-md-12">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Middle Initial</label>
-                                <input type="text" class="form-control" id="middleInitial" name="middleInitial" placeholder="ex. Banaga" required >
+                                <input type="text" class="form-control" id="middleInitial" name="middleInitial" placeholder="ex. Banaga">
+                              </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mt-4" style="font-weight: 800;">
+                                <label for="exampleInputPassword1">Middle Initial</label>
+                                <input type="text" class="form-control" id="suffix" name="suffix" placeholder="ex. Sr. Jr."  >
                               </div>
                         </div>
                       </div>
@@ -243,10 +227,9 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Role</label>
-                                <select class="form-control" id="role" name="role" required>
-                                    <option value="Head" selected disabled>Head of the Family</option>
-                                    
-                                  </select>
+                                <select class="form-control" id="role" name="role" onchange="this.value='Head';">
+                                  <option value="Head" selected>Head of the Family</option>
+                              </select>
                               </div>
                         </div>
                       </div>
@@ -259,6 +242,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         <input type="tel" class="form-control" id="contact" name="contact" 
                             placeholder="09XXXXXXXXX" required 
                             pattern="09[0-9]{9}" maxlength="11">
+                            <div class="invalid-feedback">Must be exactly 11 digits (09XXXXXXXXX).</div>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Occupation</label>
@@ -320,12 +304,35 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       </div>
 
                       <div class="form-group mt-4" style="font-weight: 800;">
-                        <label for="exampleInputPassword1">Emergency Contact Number</label>
-                        <input type="tel" class="form-control" id="emergencyContact" name="contact" 
+                        <label for="emergencyContact">Emergency Contact Number</label>
+                        <input type="tel" class="form-control" id="emergencyContact" name="emergencyContact" 
                             placeholder="09XXXXXXXXX" required 
                             pattern="09[0-9]{9}" maxlength="11">
-                      </div>
+                        <div class="invalid-feedback">Must be exactly 11 digits (09XXXXXXXXX).</div>
+                    </div>
+                    <script>
+                      function enforcePhoneValidation(id) {
+                          var inputField = document.getElementById(id);
+                          
+                          inputField.addEventListener("input", function() {
+                              var input = this.value;
 
+                              // Remove any non-digit characters
+                              this.value = input.replace(/\D/g, "");
+
+                              // Enforce exactly 11-digit rule
+                              if (this.value.length === 11) {
+                                  this.setCustomValidity(""); // ✅ Valid input
+                              } else {
+                                  this.setCustomValidity("Emergency contact must be exactly 11 digits."); // ❌ Error message
+                              }
+                          });
+                      }
+
+                      // Apply validation to both fields
+                      enforcePhoneValidation("contact");
+                      enforcePhoneValidation("emergencyContact");
+                    </script>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Relationship</label>
                         <input type="text" class="form-control" id="emergencyRelation" name="emergencyRelation" placeholder="" required>
@@ -461,7 +468,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
 
 
     <script> 
-  var current = 0;
+var current = 0;
 var tabs = $(".tab");
 var tabs_pill = $(".step-circle");
 
@@ -524,22 +531,20 @@ function submitForm() {
 }
 
 // ✅ Validate required inputs and return the first empty one
-// ✅ Validate required inputs and return the first empty one
-// ✅ Validate required inputs and return the first empty one
 function validateInputs() {
     var firstInvalid = null;
-    var specialCharRegex = /[^a-zA-Z0-9ñ ]/; // Blocks all special characters except space (for general fields)
-    var specialCharRegexEmail = /[^a-zA-Z0-9@.]/; // Allows only letters, numbers, @, and .
+    var generalRegex = /[^a-zA-Z0-9ñ ]/; // Blocks special characters except space (for general fields)
+    var lastNameRegex = /^[a-zA-Zñ -]+$/; // ✅ Allows letters, spaces, and hyphens for last name
+    var emailRegex = /[^a-zA-Z0-9@.]/; // Allows only letters, numbers, @, and .
     var passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/; // Password: 8+ chars, 1 uppercase, 1 special char
 
     $(tabs[current]).find("input[required], select[required]").each(function () {
-        var value = $(this).val().trim();
+        var value = $(this).val() ? $(this).val().trim() : ''; // ✅ Fix: Avoid `.trim()` on null
         var inputType = $(this).attr("type");
         var inputId = $(this).attr("id");
         var isEmail = inputType === "email";
         var isDate = inputType === "date";
         var isPassword = inputId === "password" || inputId === "rePassword";
-        var feedbackSpan = $(this).next(".invalid-feedback"); 
 
         // Empty input field
         if (!value) {
@@ -547,7 +552,7 @@ function validateInputs() {
             if (!firstInvalid) firstInvalid = this;
         } 
         // Email validation
-        else if (isEmail && specialCharRegexEmail.test(value)) {
+        else if (isEmail && emailRegex.test(value)) {
             showError(this, "Only letters, numbers, @, and . are allowed.");
             if (!firstInvalid) firstInvalid = this;
         } 
@@ -556,8 +561,13 @@ function validateInputs() {
             showError(this, "Password must be at least 8 characters, contain an uppercase letter, and a special character.");
             if (!firstInvalid) firstInvalid = this;
         }
-        // Non-email, non-date, non-password fields validation
-        else if (!isEmail && !isDate && !isPassword && specialCharRegex.test(value)) {
+        // Last name validation (✅ Allows hyphens)
+        else if (inputId === "lastName" && !lastNameRegex.test(value)) {
+            showError(this, "Only letters, spaces, and hyphens are allowed.");
+            if (!firstInvalid) firstInvalid = this;
+        }
+        // General fields validation (Prevents special characters)
+        else if (!isEmail && !isDate && !isPassword && inputId !== "lastName" && inputId !== "famName" && generalRegex.test(value)) {
             showError(this, "Special characters are not allowed.");
             if (!firstInvalid) firstInvalid = this;
         } 
@@ -574,20 +584,22 @@ function validateInputs() {
     return firstInvalid;
 }
 
-// ✅ Live password validation (ensures both passwords match)
 function validatePasswords() {
     var password = $("#password").val();
     var rePassword = $("#rePassword").val();
     var rePasswordField = $("#rePassword");
 
-    if (!password || !rePassword) return; // If empty, skip check
+    if (!password || !rePassword) return true; // If empty, don't block
 
     if (password === rePassword) {
         removeError(rePasswordField);
+        return true;
     } else {
         showError(rePasswordField, "Passwords do not match.");
+        return false;
     }
 }
+
 
 // ✅ Show error message
 function showError(element, message) {
@@ -611,10 +623,26 @@ $(document).on("input change", "input[required], select[required]", function () 
     if (inputId === "password" || inputId === "rePassword") {
         validatePasswords();
     }
+    if (inputId === "emergencyContact") {
+        var phoneNumber = $(this).val();
+        var phonePattern = /^09[0-9]{9}$/;  // Matches exactly 11 digits starting with 09
+
+        if (!phonePattern.test(phoneNumber)) {
+            showError(this, "Must be exactly 11 digits (09XXXXXXXXX).");
+        }
+    }
+
+    if (inputId === "contact") {
+        var phoneNumber = $(this).val();
+        var phonePattern = /^09[0-9]{9}$/;  // Matches exactly 11 digits starting with 09
+
+        if (!phonePattern.test(phoneNumber)) {
+            showError(this, "Must be exactly 11 digits (09XXXXXXXXX).");
+        }
+    }
 });
-    </script>
 
-
+</script>
 
 
 

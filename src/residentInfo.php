@@ -8,19 +8,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve Form Data
     $userEmail = $_POST['userEmail'] ?? '';
     $password = $_POST['password'] ?? '';
-    $FamilyName = $_POST['famName'] ?? '';
+   
+    $FamilyName = isset($_POST['famName']) ? trim($_POST['famName']) : '';
+    $FamilyName = preg_replace('/[^a-zA-Zñ ]/', '', $FamilyName); // Remove special characters & numbers
+    $FamilyName = ucwords(strtolower($FamilyName)); // Capitalize first letter of each word 
+
 
     $FirstName = isset($_POST['firstName']) ? trim($_POST['firstName']) : '';
-    $FirstName = preg_replace('/[^a-zA-Z ]/', '', $FirstName); // Remove special characters & numbers
+    $FirstName = preg_replace('/[^a-zA-Zñ ]/', '', $FirstName); // Remove special characters & numbers
     $FirstName = ucwords(strtolower($FirstName)); // Capitalize first letter of each word
 
     $MiddleName = isset($_POST['middleInitial']) ? trim($_POST['middleInitial']) : '';
-    $MiddleName  = preg_replace('/[^a-zA-Z ]/', '',  $MiddleName ); // Remove special characters & numbers
+    $MiddleName  = preg_replace('/[^a-zA-Zñ ]/', '',  $MiddleName ); // Remove special characters & numbers
     $MiddleName = ucwords(strtolower($MiddleName)); // Capitalize first letter of each word    
 
     $LastName  = isset($_POST['lastName']) ? trim($_POST['lastName']) : '';
-    $LastName  = preg_replace('/[^a-zA-Z ]/', '', $LastName ); // Remove special characters & numbers
-    $LastName  = ucwords(strtolower($LastName)); // Capitalize first letter of each word    
+    $LastName  = preg_replace('/[^a-zA-Zñ ]/', '', $LastName ); // Remove special characters & numbers
+    $LastName  = ucwords(strtolower($LastName)); // Capitalize first letter of each word   
+    
+    $Suffix = isset($_POST['suffix']) ? trim($_POST['suffix']) : '';
+    $Suffix = preg_replace('/[^a-zA-Z0-9. ]/', '', $Suffix); // Allows letters, numbers, space, and period
+    $Suffix = ucwords(strtolower($Suffix)); // Capitalize first letter of each word
 
 
     $Sex = $_POST['sex'] ?? '';
@@ -94,18 +102,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Insert into `residents_information_tbl`
     $sqlAddInfo = "INSERT INTO residents_information_tbl 
-        (Resident_ID, Family_Name_ID, FirstName, MiddleName, LastName, Sex, Date_of_Birth, Role, Contact_Number, 
+        (Resident_ID, Family_Name_ID, FirstName, MiddleName, LastName,Suffix, Sex, Date_of_Birth, Role, Contact_Number, 
         Resident_Email, Occupation, Religion, Eligibility_Status, Civil_Status, Emergency_Person, 
         Emergency_Contact_No, Emergency_Address, Relationship_to_Person, Address, Valid_ID_Type, Age) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmtAddInfo = $conn->prepare($sqlAddInfo);
     if (!$stmtAddInfo) {
         die("Error preparing SQL: " . $conn->error);
     }
     
-    $stmtAddInfo->bind_param("sssssssssssssssssssss", 
-        $Resident_ID, $Family_Name_ID, $FirstName, $MiddleName, $LastName, $Sex, $Date_of_Birth, $Role, $Contact_Number,
+    $stmtAddInfo->bind_param("ssssssssssssssssssssss", 
+        $Resident_ID, $Family_Name_ID, $FirstName, $MiddleName, $LastName, $Suffix, $Sex, $Date_of_Birth, $Role, $Contact_Number,
         $Resident_Email, $Occupation, $Religion, $Eligibility_Status, $Civil_Status, $Emergency_Person,
         $Emergency_Contact_No, $Emergency_Address, $Relationship_to_Person, $Address, $Valid_ID_Type, $Age
     );

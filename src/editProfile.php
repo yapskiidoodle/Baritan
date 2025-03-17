@@ -18,9 +18,19 @@ if (!$userID) {
 }
 
 // Retrieve form data safely
-$firstName = $_POST['firstName'] ?? '';
-$middleName = $_POST['middleName'] ?? '';
-$lastName = $_POST['lastName'] ?? '';
+$firstName = isset($_POST['firstName']) ? trim($_POST['firstName']) : '';
+$firstName = preg_replace('/[^a-zA-Zñ ]/', '', $firstName); // Remove special characters & numbers
+$firstName = ucwords(strtolower($firstName)); // Capitalize first letter of each word
+
+$middleName = isset($_POST['middleName']) ? trim($_POST['middleName']) : '';
+$middleName = preg_replace('/[^a-zA-ñ ]/', '', $middleName); // Remove special characters & numbers
+$middleName = ucwords(strtolower($middleName)); // Capitalize first letter of each word    
+
+$lastName = isset($_POST['lastName']) ? trim($_POST['lastName']) : '';
+$lastName = preg_replace('/[^a-zA-Zñ ]/', '', $lastName); // Remove special characters & numbers
+$lastName = ucwords(strtolower($lastName)); // Capitalize first letter of each word  
+
+
 $sex = $_POST['sex'] ?? '';
 $birthday = $_POST['birthday'] ?? '';
 $role = $_POST['role'] ?? '';
