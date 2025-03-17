@@ -17,11 +17,7 @@ $userEmail = $_SESSION['userEmail'] ?? '';
 
 $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
 
-// Validate session
-if (!$familyID) {
-    echo json_encode(["error" => "Family ID not set"]);
-    exit();
-}
+
 
 // Fetch residents with the same Family ID
 $query = "SELECT Resident_ID, Resident_Email, Role FROM residents_information_tbl WHERE Family_Name_ID = ?";
@@ -230,9 +226,10 @@ while ($row = $result->fetch_assoc()) {
 
     <button type="button" id="add_account_button" class="button mt-2" 
         style="padding: 0% 2%; font-size: 20px;" 
-        data-bs-toggle="modal" data-bs-target="#account">
-        Add Account
+        data-bs-toggle="modal" data-bs-target="#registerModal">
+        Add Member
     </button>
+
 </div>
 </div>
 
@@ -257,7 +254,7 @@ while ($row = $result->fetch_assoc()) {
                     $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
 
                     if ($familyID) {
-                        $query = "SELECT Resident_ID, Resident_Email, Role 
+                        $query = "SELECT Resident_ID, FirstName, MiddleName, LastName, Role 
                                 FROM residents_information_tbl WHERE Family_Name_ID = ?";
                         $stmt = $conn->prepare($query);
                         $stmt->bind_param("s", $familyID);
@@ -268,7 +265,7 @@ while ($row = $result->fetch_assoc()) {
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>";
                             echo "<th scope='row'>{$count}</th>";
-                            echo "<td>{$row['Resident_Email']}</td>";
+                            echo "<td>{$row['FirstName']} " . (!empty($row['MiddleName']) ? $row['MiddleName'][0] . ". " : "") . "{$row['LastName']}</td>";
                             echo "<td>{$row['Role']}</td>";
                             echo "<td><button class='btn btn-warning btn-sm' onclick=\"window.location.href='edit_member.php?id={$row['Resident_ID']}'\">Edit</button></td>";
                             echo "<td><button class='btn btn-danger btn-sm' onclick=\"confirmDelete('{$row['Resident_ID']}')\">Delete</button></td>";
@@ -481,8 +478,151 @@ while ($row = $result->fetch_assoc()) {
 </form>
 
 
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalTitle">
+    <div class="modal-dialog modal-dialog-centered" role="document" >
+      <div class="modal-content"  style="width:  280%;  ">
+        <div class="modal-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="40" fill="currentColor" class="bi bi-info" viewBox="0 0 16 16">
+                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+              </svg>
+          <h5 class="modal-title" id="exampleModalLongTitle">Privacy Notice
+            
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class=" tc_body">
+                <ol>
+                  <li>
+                    <h3>Terms of use</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
+                  </li>
+                  <li>
+                    <h3>Intellectual property rights</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
+                  </li>
+                  <li>
+                    <h3>Prohibited activities</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
+                  </li>
+                  <li>
+                    <h3>Termination clause</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
+                  </li>
+                  <li>
+                    <h3>Governing law</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
+                  </li>
+                </ol>
+              </div>
+        </div>
+        <div class="modal-footer">
+         
+                <div class="row">
+                    <div class="col">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="termsCheckbox">
+                            <label class="form-check-label" for="termsCheckbox">
+                              I have read and agree to the <br>  <a href="#" style="text-decoration: none;color: #94c8ff; ">Terms and Conditions</a>
+                            </label>
+                          </div>
+                          
+                    </div>
+                    <div class="col text-center" >
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.reload();">Close</button>
+                        <button type="button" class="btn btn-primary" id="submitBtn" disabled style="background-color: #1C3A5B;" data-bs-dismiss="modal" >I Accept</button>
+                    
+                    </div>
+                </div>
+
+                <script>
+    document.getElementById("termsCheckbox").addEventListener("change", function() {
+        let submitBtn = document.getElementById("submitBtn");
+        submitBtn.disabled = !this.checked;
+    });
+
+    document.getElementById("submitBtn").addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent default behavior (useful in forms)
+   
+        // Close the current modal
+        var registerModal = new bootstrap.Modal(document.getElementById("registerModal"));
+        registerModal.hide();  // Close the register modal
+        
+        // Open the next modal (questionModal)
+        var questionModal = new bootstrap.Modal(document.getElementById("questionModal"));
+        questionModal.show();  // Open the question modal
+    });
+</script>
+        
+                
+ 
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="registerModalTitle">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+   
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="40" fill="currentColor" class="bi bi-info" viewBox="0 0 16 16">
+                    <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                </svg>
+                <h5 class="modal-title" id="exampleModalLongTitle">Add Member</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Initial text showing options -->
+                <p>If you choose "With Account," you will be asked to set a password. If you choose "Without Account," no password will be required.</p>
+            </div>
+            <div class="modal-footer">
+                <div class="text-center">
+                    <!-- Close Button -->
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.reload();">Close</button>
+                </div>
+
+                <div class="text-center mt-3">
+                    <!-- Grouped Buttons for With and Without Account -->
+                   
+                        <div class="btn-group" role="group">
+                        <form action="addMember.php" method="POST" id="accountForm">
+                            <input type="hidden" id="accountTypeField" name="accountType" value="">
+                            <button type="submit" class="btn btn-primary" onclick="setAccountType('with')">With Account</button>
+                            <button type="submit" class="btn btn-primary" onclick="setAccountType('without')">Without Account</button>
+                        </form>
+
+                        <script>
+                            function setAccountType(value) {
+                                document.getElementById('accountTypeField').value = value;
+                            }
+                        </script>
+                        </div>
+              
+
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
 
   <script>
+    document.getElementById("accountForm").addEventListener("submit", function(event) {
+    event.preventDefault(); // Stop default form submission
+    this.submit(); // Manually submit
+});
+
+    function validateForm() {
+    return true; // Ensures the form actually submits
+}
+
+
     document.addEventListener("DOMContentLoaded", function () {
         var profile = document.getElementById("profile");
         var start = document.getElementById("start");

@@ -4,7 +4,7 @@
 <?php
 require 'src/connect.php'; // Use 'include' or 'require' to load the file
 require 'src/account.php';
-session_start();
+
 
 
 if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
@@ -469,22 +469,7 @@ document.addEventListener('hidden.bs.modal', function () {
 
 
 
-    <script> 
-      document.addEventListener("DOMContentLoaded", function () {
-    var profile = document.getElementById("profile");
-    var start = document.getElementById("start");
 
-    <?php if (isset($_SESSION['userEmail'])) { ?>
-        profile.hidden = false;
-        start.hidden = true;
-    <?php } else { ?>
-        profile.hidden = true;
-        start.hidden = false;
-    <?php } ?>
-});
-
-
-    </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 

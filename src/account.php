@@ -64,6 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
 
         // ✅ Store additional user details
         $_SESSION['User_Data'] = [
+            'Account_ID' => $row['Account_ID'],
             'Account_Role' => $row['Account_Role'],
             'Family_Name_ID' => $row['Family_Name_ID'], // ✅ Add this
             'Resident_ID' => $row['Resident_ID'],
