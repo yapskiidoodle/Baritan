@@ -1,39 +1,43 @@
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
-} 
+}
+
 require 'connect.php'; // Load the database connection
 
+// Initialize try count if not set
+if (!isset($_SESSION['try'])) {
+    $_SESSION['try'] = 0;
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     $userEmail = trim($_POST["userEmail"] ?? '');
     $password = trim($_POST["password"] ?? '');
 
-    
-
-    // ✅ Fetch user details securely, including related tables
+    // ✅ Fetch user details securely
     $query = "SELECT 
-                a.Account_ID, a.Role AS Account_Role, a.Type AS Account_Type, a.User_Email, a.Password, a.Status AS Account_Status,
-                f.Family_Name_ID, f.Family_Name, f.Status AS Family_Status,
-                r.Resident_ID, r.FirstName, r.MiddleName, r.LastName, r.Suffix, r.Sex, r.Date_of_Birth, r.Role AS Resident_Role,
-                r.Contact_Number, r.Resident_Email, r.Occupation, r.Religion, r.Civil_Status, r.Address,
-                r.Emergency_Person, r.Emergency_Contact_No, r.Emergency_Address, r.Relationship_to_Person,
-                r.Valid_ID_Type, r.Valid_ID_Picture_Front, r.Valid_ID_Picture_Back, r.Pic_Path, r.Age, r.Date_Created AS Resident_Created
-              FROM account_tbl a
-              LEFT JOIN family_name_tbl f ON a.Account_ID = f.Account_ID
-              LEFT JOIN residents_information_tbl r ON f.Family_Name_ID = r.Family_Name_ID
-              WHERE a.User_Email = ?";
+    a.Account_ID, a.Role AS Account_Role, a.Type AS Account_Type, a.User_Email, a.Password, a.Status AS Account_Status,
+    f.Family_Name_ID, f.Family_Name, f.Status AS Family_Status,
+    r.Resident_ID, r.FirstName, r.MiddleName, r.LastName, r.Suffix, r.Sex, r.Date_of_Birth, r.Role AS Resident_Role,
+    r.Contact_Number, r.Resident_Email, r.Occupation, r.Religion, r.Civil_Status, r.Address,
+    r.Emergency_Person, r.Emergency_Contact_No, r.Emergency_Address, r.Relationship_to_Person,
+    r.Valid_ID_Type, r.Valid_ID_Picture_Front, r.Valid_ID_Picture_Back, r.Pic_Path, r.Age, r.Date_Created AS Resident_Created
+  FROM account_tbl a
+  LEFT JOIN family_name_tbl f ON a.Account_ID = f.Account_ID
+  LEFT JOIN residents_information_tbl r ON f.Family_Name_ID = r.Family_Name_ID
+  WHERE a.User_Email = ?";
 
-    $stmt = mysqli_prepare($conn, $query);
-    if (!$stmt) {
-        die("Query preparation failed: " . mysqli_error($conn));
-    }
+$stmt = mysqli_prepare($conn, $query);
+if (!$stmt) {
+die("Query preparation failed: " . mysqli_error($conn));
+}
+
+
 
     mysqli_stmt_bind_param($stmt, "s", $userEmail);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
 
-    // ✅ Check if user exists
     if ($row = mysqli_fetch_assoc($result)) {
         $storedPassword = $row['Password']; 
         $accountType = $row['Account_Type']; 
@@ -42,17 +46,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
 
         // ✅ Verify password securely
         if (!password_verify($password, $storedPassword)) {
-            $_SESSION['error_message'] = "Wrong Username or Password, please try again.";
-            header("Location: ../html/login.php");
-            exit();
+            $_SESSION['try']++; // Increment try count
+            if ($_SESSION['try'] >= 5) {
+                $_SESSION['error_message'] = "Too many failed attempts. Please try again later.";
+                header("Location: ../html/login.php");
+                exit();
+            } else {
+                $_SESSION['error_message'] = "Wrong Username or Password. Attempt {$_SESSION['try']} of 5.";
+                header("Location: ../html/login.php");
+                exit();
+            }
         }
 
         session_regenerate_id(true);
 
+        // ✅ Reset try count on success
+        $_SESSION['try'] = 0;
+
         // ✅ Check if the account is deactivated
         if ($accountStatus === "Deactivated") {
-            $_SESSION['deactivated'] = true; // Set session variable
-            header("Location: ../index.php"); // Redirect to index.php
+            $_SESSION['deactivated'] = true; 
+            header("Location: ../index.php");
             exit();
         }
 
@@ -101,15 +115,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
             exit();
         }
     } else {
-        $_SESSION['error_message'] = "Wrong Username or password, please try again.";
-        header("Location: ../html/login.php");
-        exit();
-
+        // Handle invalid login attempt
+        $_SESSION['try']++;
+        if ($_SESSION['try'] >= 5) {
+            $_SESSION['error_message'] = "Too many failed attempts. Please try again later.";
+            header("Location: ../html/login.php");
+            exit();
+        } else {
+            $_SESSION['error_message'] = "Wrong Username or Password. Attempt {$_SESSION['try']} of 5.";
+            header("Location: ../html/login.php");
+            exit();
+        }
     }
 
     // ✅ Close statement
     mysqli_stmt_close($stmt);
 }
+
 ?>
 
 
