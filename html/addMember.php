@@ -147,7 +147,6 @@ $showPasswordSection = ($accountType === 'with');
     <!--END HEADER-->
 
 
-
     <div class="container mt-5 text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%;"> 
         <div class="display-4 " style="font-weight: 700;">Profile Registration</div>
         <div class="container w-75 mt-5">
@@ -160,7 +159,8 @@ $showPasswordSection = ($accountType === 'with');
                 </div>
                 <div class="h6">Personal</div>
               </div>
-            
+              <div class="col"><hr></div>
+              
               <div class="col"><hr></div>
               <div class="col">
                 <div class="step-circle inactive" >
@@ -177,9 +177,12 @@ $showPasswordSection = ($accountType === 'with');
 
 
                 <div class="tab d-none" style="background-color: white;">
-                      <!-- Password Section (only shows if 'with' account type is selected) -->
-                    
-                        <div class="pass <?php echo $showPasswordSection ? '' : 'd-none'; ?>">
+                   
+
+
+                    <!-- Password Section (only shows if 'with' account type is selected) -->
+                                        
+                    <div class="pass <?php echo $showPasswordSection ? '' : 'd-none'; ?>">
                         <div class="h4 mt-5 text-center" style="font-weight: 700;">Login Details</div>
 
                         <div class="form-group mt-4" style="font-weight: 800;">
@@ -196,6 +199,7 @@ $showPasswordSection = ($accountType === 'with');
 
                         </div>
                     </div>
+
 
                     <!--  Personal Information -->
                       <div class="h4 mt-5 text-center" style="font-weight: 700;">Personal Information</div>
@@ -220,7 +224,7 @@ $showPasswordSection = ($accountType === 'with');
                         </div>
                         <div class="col-md-12">
                             <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">Middle Initial</label>
+                                <label for="exampleInputPassword1">Suffix</label>
                                 <input type="text" class="form-control" id="suffix" name="suffix" placeholder="ex. Sr. Jr."  >
                               </div>
                         </div>
@@ -246,48 +250,39 @@ $showPasswordSection = ($accountType === 'with');
                               </div>
                         </div>
                         <div class="col">
-                        <div class="form-group mt-4" style="font-weight: 800;">
-                        <label for="role">Role</label>
-                        <select class="form-control" id="role" name="role" onchange="toggleOtherRoleInput()"  required>
-                            <option value="">Select Role</option>
-                            <option value="Father">Father</option>
-                            <option value="Mother">Mother</option>
-                            <option value="Son">Son</option>
-                            <option value="Daughter">Daughter</option>
-                            <option value="Others">Others</option>
-                        </select>
+                            <div class="form-group mt-4" style="font-weight: 800;">
+                                <label for="exampleInputPassword1">Role</label>
+                                <select class="form-control" id="role" name="role" required onchange="toggleOtherRoleInput()">
+                                    <option value="" selected disabled>Choose an option</option>
+                                    <option value="Mother">Mother</option>
+                                    <option value="Father">Father</option>
+                                    <option value="Son">Son</option>
+                                    <option value="Daughter">Daughter</option>
+                                    <option value="Others">Others</option>
+                                </select>
+                              </div>
 
-                        <div class="form-group mt-4 d-none" id="otherRoleGroup" style="font-weight: 800;">
-                            <label for="otherRole">Specify Role</label>
-                            <input type="text" class="form-control" id="otherRole" name="otherRole" placeholder="Enter role">
-                        </div>
+                              <div class="form-group mt-4 d-none" id="otherRoleGroup">
+                                <label for="otherRole">Specify Role</label>
+                                <input type="text" class="form-control" id="otherRole" name="otherRole" placeholder="Enter role">
+                            </div>
+                            
+                            <script>
+                                function toggleOtherRoleInput() {
+                                    let roleSelect = document.getElementById("role");
+                                    let otherRoleGroup = document.getElementById("otherRoleGroup");
+                                    let otherRoleInput = document.getElementById("otherRole");
 
-                        <script>
-                        function toggleOtherRoleInput() {
-                            let roleSelect = document.getElementById("role");
-                            let otherRoleGroup = document.getElementById("otherRoleGroup");
-                            let otherRoleInput = document.getElementById("otherRole");
-
-                            if (roleSelect.value === "Others") {
-                                otherRoleGroup.classList.remove("d-none");
-                                otherRoleInput.required = true;  
-                            } else {
-                                otherRoleGroup.classList.add("d-none");
-                                otherRoleInput.required = false;
-                                otherRoleInput.value = "";  // Clear input if not used
-                            }
-                        }
-
-                        // Ensure the correct role is submitted
-                        document.querySelector("form").addEventListener("submit", function() {
-                            let roleSelect = document.getElementById("role");
-                            let otherRoleInput = document.getElementById("otherRole");
-
-                            if (roleSelect.value === "Others" && otherRoleInput.value.trim() !== "") {
-                                roleSelect.value = otherRoleInput.value;  // Replace select value with custom role
-                            }
-                        });
-                        </script>
+                                    if (roleSelect.value === "Others") {
+                                        otherRoleGroup.classList.remove("d-none");
+                                        otherRoleInput.required = true;
+                                    } else {
+                                        otherRoleGroup.classList.add("d-none");
+                                        otherRoleInput.required = false;
+                                        otherRoleInput.value = ""; // Clear input when hidden
+                                    }
+                                }
+                            </script>
                         </div>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
@@ -504,8 +499,6 @@ $showPasswordSection = ($accountType === 'with');
 
 
 
-
-
     <script> 
    document.addEventListener("DOMContentLoaded", function () {
         var profile = document.getElementById("profile");
@@ -520,9 +513,7 @@ $showPasswordSection = ($accountType === 'with');
         <?php } ?>
     });
 
-
-
-var current = 0;
+    var current = 0;
 var tabs = $(".tab");
 var tabs_pill = $(".step-circle");
 

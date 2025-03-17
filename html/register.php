@@ -199,7 +199,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         </div>
                         <div class="col-md-12">
                             <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">Middle Initial</label>
+                                <label for="exampleInputPassword1">Suffix</label>
                                 <input type="text" class="form-control" id="suffix" name="suffix" placeholder="ex. Sr. Jr."  >
                               </div>
                         </div>

@@ -3,11 +3,7 @@ require '../src/connect.php';
 require '../src/account.php'; // Ensures session_start()
 
 
-echo "<pre>";
-var_dump($_POST); // Dumps all POST data
-$Account_ID = $_SESSION['User_Data']['Account_ID'] ?? '';
-echo "</pre>";
-exit();
+
 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -39,8 +35,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Handle Role Input
     $Role = $_POST['role'] ?? '';
     if ($Role === 'Others' && !empty($_POST['otherRole'])) {
-        $Role = $_POST['otherRole']; // Override with the custom role
+        $Role = $_POST['otherRole']; // Override with user input
     }
+
 
     $Contact_Number = $_POST['contact'] ?? '';
     $Resident_Email = $_POST['email'] ?? '';
