@@ -1,7 +1,7 @@
 <?php
 require ('../src/connect.php');
 require ('../src/account.php');
-session_start();
+
 $_SESSION['Account_Role'];
 
 
@@ -106,7 +106,7 @@ $_SESSION['Account_Role'];
         .main-content {
             margin-left: 250px; /* Adjust for sidebar width */
             padding: 20px;
-            margin-top: 40px; /* Reduced from 80px to 40px */
+            margin-top: 5%; /* Reduced from 80px to 40px */
         }
 
         /* Search bar and filter styling */

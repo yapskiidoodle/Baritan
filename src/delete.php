@@ -1,10 +1,12 @@
 <?php
 require 'connect.php';
+require 'account.php';
+
 
 if (isset($_POST['delete_resident']) && isset($_POST['resident_id']) && isset($_POST['delete_reason'])) {
     $residentId = trim($_POST['resident_id']);
     $deleteReason = trim($_POST['delete_reason']);
-    $deletedBy = "Admin"; // Replace with the actual username or session variable
+    $deletedBy = $_SESSION['Account_Role']; // Get the admin's role from the session
 
     // Fetch the resident's data from the main table
     $fetchSql = "SELECT * FROM Residents_information_tbl WHERE Resident_ID = ?";
@@ -92,33 +94,86 @@ if (isset($_POST['delete_resident']) && isset($_POST['resident_id']) && isset($_
                         $deleteStmt->bind_param("s", $residentId);
 
                         if ($deleteStmt->execute()) {
-                            echo "<script>alert('Resident archived and deleted successfully.'); window.location.href = '../admin/residents.php';</script>";
+                            // Generate log_id for admin_activity_log
+                            $logIdPrefix = strtoupper(substr($deletedBy, 0, 3)); // First 3 letters of the admin role
+                            $logIdDateTime = date("YmdHis"); // Current date and time in YYYYMMDDHHMMSS format
+                            $logId = $logIdPrefix . $logIdDateTime; // Combine prefix and date-time
+
+                            // Insert into admin_activity_log
+                            $activityLogSql = "INSERT INTO admin_activity_log (log_id, admin_id, action_by, action, created_at)
+                                              VALUES (?, ?, ?, ?, NOW())";
+                            $activityLogStmt = $conn->prepare($activityLogSql);
+
+                            if ($activityLogStmt) {
+                                $action = "Deleted resident with ID: $residentId"; // Description of the action
+                                $activityLogStmt->bind_param("ssss", $logId, $_SESSION['Account_ID'], $deletedBy, $action);
+
+                                if ($activityLogStmt->execute()) {
+                                    // Redirect with success message
+                                    $message = urlencode("Resident archived and removed successfully.");
+                                    header("Location: ../admin/residents.php?message=" . $message);
+                                    exit();
+                                } else {
+                                    // Redirect with error message
+                                    $message = urlencode("Error logging admin activity: " . $activityLogStmt->error);
+                                    header("Location: ../admin/residents.php?message=" . $message);
+                                    exit();
+                                }
+
+                                $activityLogStmt->close();
+                            } else {
+                                // Redirect with error message
+                                $message = urlencode("Error preparing activity log statement: " . $conn->error);
+                                header("Location: ../admin/residents.php?message=" . $message);
+                                exit();
+                            }
                         } else {
-                            echo "<script>alert('Error deleting resident: " . $deleteStmt->error . "'); window.location.href = '../admin/residents.php';</script>";
+                            // Redirect with error message
+                            $message = urlencode("Error deleting resident: " . $deleteStmt->error);
+                            header("Location: ../admin/residents.php?message=" . $message);
+                            exit();
                         }
 
                         $deleteStmt->close();
                     } else {
-                        echo "<script>alert('Error preparing delete statement: " . $conn->error . "'); window.location.href = '../admin/residents.php';</script>";
+                        // Redirect with error message
+                        $message = urlencode("Error preparing delete statement: " . $conn->error);
+                        header("Location: ../admin/residents.php?message=" . $message);
+                        exit();
                     }
                 } else {
-                    echo "<script>alert('Error archiving resident: " . $archiveStmt->error . "'); window.location.href = '../admin/residents.php';</script>";
+                    // Redirect with error message
+                    $message = urlencode("Error archiving resident: " . $archiveStmt->error);
+                    header("Location: ../admin/residents.php?message=" . $message);
+                    exit();
                 }
 
                 $archiveStmt->close();
             } else {
-                echo "<script>alert('Error preparing archive statement: " . $conn->error . "'); window.location.href = '../admin/residents.php';</script>";
+                // Redirect with error message
+                $message = urlencode("Error preparing archive statement: " . $conn->error);
+                header("Location: ../admin/residents.php?message=" . $message);
+                exit();
             }
         } else {
-            echo "<script>alert('Resident not found.'); window.location.href = '../admin/residents.php';</script>";
+            // Redirect with error message
+            $message = urlencode("Resident not found.");
+            header("Location: ../admin/residents.php?message=" . $message);
+            exit();
         }
 
         $fetchStmt->close();
     } else {
-        echo "<script>alert('Error preparing fetch statement: " . $conn->error . "'); window.location.href = '../admin/residents.php';</script>";
+        // Redirect with error message
+        $message = urlencode("Error preparing fetch statement: " . $conn->error);
+        header("Location: ../admin/residents.php?message=" . $message);
+        exit();
     }
 } else {
-    echo "<script>alert('No Resident ID or reason provided.'); window.location.href = '../admin/residents.php';</script>";
+    // Redirect with error message
+    $message = urlencode("No Resident ID or reason provided.");
+    header("Location: ../admin/residents.php?message=" . $message);
+    exit();
 }
 
 $conn->close();

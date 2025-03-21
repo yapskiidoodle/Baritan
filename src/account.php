@@ -43,6 +43,7 @@ die("Query preparation failed: " . mysqli_error($conn));
         $accountType = $row['Account_Type']; 
         $accountID = $row['Account_ID']; 
         $accountStatus = $row['Account_Status']; 
+        $accountRole =  $row['Account_Role'];
 
         // ✅ Verify password securely
         if (!password_verify($password, $storedPassword)) {
@@ -75,6 +76,7 @@ die("Query preparation failed: " . mysqli_error($conn));
         $_SESSION['type'] = $accountType;
         $_SESSION['Account_ID'] = $accountID;
         $_SESSION['status'] = $accountStatus;
+        $_SESSION['Account_Role'] = $accountRole;
 
         // ✅ Store additional user details
         $_SESSION['User_Data'] = [
@@ -107,7 +109,8 @@ die("Query preparation failed: " . mysqli_error($conn));
         ];
 
         // ✅ Redirect based on account type
-        if ($accountType === "Admin Account") {
+        if (($accountType === "Editor")||($accountType === "Super Admin") || ($accountType === "Admin")) {
+       
             header("Location: ../admin/residents.php");
             exit();
         } elseif ($accountType === "Family Account") {

@@ -1,8 +1,15 @@
 <?php
-require '../src/connect.php';
-require '../src/account.php'; // Ensures session_start()
+require 'connect.php';
+require 'account.php'; // Ensures session_start()
 
 
+// Retrieve Family_Name_ID from the session FIRST
+$Family_Name_ID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
+
+// Validate that Family_Name_ID is not empty before querying
+if (empty($Family_Name_ID)) {
+    die("Error: Family_Name_ID is missing from session.");
+}
 
 
 

@@ -292,7 +292,7 @@ $showPasswordSection = ($accountType === 'with');
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Contact Number</label>
                         <input type="tel" class="form-control" id="contact" name="contact" 
-                            placeholder="09XXXXXXXXX" required 
+                            placeholder="09XXXXXXXXX" 
                             pattern="09[0-9]{9}" maxlength="11">
                             <div class="invalid-feedback">Must be exactly 11 digits (09XXXXXXXXX).</div>
                       </div>

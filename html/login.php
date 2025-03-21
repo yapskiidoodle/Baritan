@@ -52,20 +52,7 @@ if (isset($_SESSION['error_message'])) {
     }
     </style>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var profile = document.getElementById("profile");
-        var start = document.getElementById("start");
 
-        <?php if (isset($_SESSION['userEmail'])) { ?>
-            profile.hidden = false;
-            start.hidden = true;
-        <?php } else { ?>
-            profile.hidden = true;
-            start.hidden = false;
-        <?php } ?>
-    });
-</script>
 
 </head>
 <body style="overflow-y:hidden;">
@@ -100,8 +87,11 @@ if (isset($_SESSION['error_message'])) {
         </div>
     </div>
     <!-- End Header -->
-    <div style="margin-top: -6%;"></div>
-    <div class="container content" style="background-color: rgba(255, 255, 255, 0.8); margin-top:15%; width:30%; border-radius:10px; padding-top:1%;">
+
+
+
+    <div style="margin-top: 2%;"></div>
+    <div class="container content" style="background-color: rgba(255, 255, 255, 0.8); margin-top:15%; width:30%; border-radius:10px; padding-top:1%;padding-bottom:2%;">
     <form  action="../src/account.php" method="POST">
     <div class="container text-center mb-3" style=" font-weight: 600; color: #00264d; font-size: 28px;">
           Login
@@ -151,14 +141,20 @@ if (isset($_SESSION['error_message'])) {
               
         </div>
         <!-- Register buttons -->
-        <div class="text-center">
-            <p class="mt-3" style="margin-bottom:0px;">Not a member? </p>
+        <div class="text-center" style="margin-top: 10%;">
+            <p class="my-3" style="margin-bottom:0px;">Not a member? 
+
+            <a href="#" 
+            style="color:rgb(85, 127, 168);"
+            data-bs-toggle="modal" 
+            data-bs-target="#registerModal" 
+            data-bs-dismiss="modal">
+            Signup Now!
+            </a>
+
+            </p>
          
-            <button type="button" class="btn text-white w-100 mb-3" id="register" 
-            style="background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;"
-            data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal">
-            Register
-          </button>
+
           </form>   
         </div>
     

@@ -122,19 +122,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error inserting into residents_information_tbl: " . $stmtAddInfo->error);
     }
 
-    // Store user session data
-    $_SESSION['Account_ID'] = $Account_ID;
-    $_SESSION['Role'] = $Role;
-    $_SESSION['User_Email'] = $userEmail;
-
-    // Redirect based on role
-    $_SESSION['type'] = $_SESSION['type'] ?? ''; // Ensure it exists
-
-    if ($_SESSION['type'] === "Admin Account") {
-        header("Location: ../admin/residents.php");
-    } else {
-        header("Location: ../index.php");
-    }
+    
+    header("Location: ../index.php");
     exit();
 }
 ?>

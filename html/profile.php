@@ -245,14 +245,15 @@ while ($row = $result->fetch_assoc()) {
                 <th scope="col">Email</th>
                 <th scope="col">Relationship</th>
                 <th scope="col">Edit</th>
-                <th scope="col">Delete</th>
+                <th scope="col">Remove</th>
               </tr>
             </thead>
             <tbody id="tableBody">
     <?php
-    require '../src/connect.php';
+   
 
-    $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
+    
+   
 
     if ($familyID) {
         $query = "SELECT 
@@ -329,7 +330,7 @@ while ($row = $result->fetch_assoc()) {
                 </td>
                 <td>
                     <button class="btn btn-danger btn-sm" onclick="confirmDelete('<?= htmlspecialchars($row['Resident_ID']) ?>')">
-                        Delete
+                        Remove
                     </button>
                 </td>
             </tr>

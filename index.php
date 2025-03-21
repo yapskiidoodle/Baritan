@@ -43,12 +43,7 @@ if (isset($_SESSION['error_message'])) {
         }
         
         
-      
-
-
-
-
-
+  
 
     </style>
 
@@ -126,6 +121,8 @@ if (isset($_SESSION['error_message'])) {
            </div>
         </div>
         </div>
+
+       
         
      <div class="container" style="margin-top:-40%">
         
@@ -138,8 +135,8 @@ if (isset($_SESSION['error_message'])) {
             </div>
         </div>
         <div>
-            <a href="#learn"><button class="btn learn" style="margin-top:5%">
-                Learn More
+            <a href="html/announcements.php"><button class="btn learn" style="margin-top:5%">
+                Announcements
             </button></a>
         </div>
 
