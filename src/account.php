@@ -19,7 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     a.Account_ID, a.Role AS Account_Role, a.Type AS Account_Type, a.User_Email, a.Password, a.Status AS Account_Status,
     f.Family_Name_ID, f.Family_Name, f.Status AS Family_Status,
     r.Resident_ID, r.FirstName, r.MiddleName, r.LastName, r.Suffix, r.Sex, r.Date_of_Birth, r.Role AS Resident_Role,
-    r.Contact_Number, r.Resident_Email, r.Occupation, r.Religion, r.Civil_Status, r.Address,
+    r.Contact_Number, r.Resident_Email, r.Occupation, r.Religion, r.Civil_Status, r.Eligibility_Status, r.Address,
     r.Emergency_Person, r.Emergency_Contact_No, r.Emergency_Address, r.Relationship_to_Person,
     r.Valid_ID_Type, r.Valid_ID_Picture_Front, r.Valid_ID_Picture_Back, r.Pic_Path, r.Age, r.Date_Created AS Resident_Created
   FROM account_tbl a
@@ -77,7 +77,7 @@ die("Query preparation failed: " . mysqli_error($conn));
         $_SESSION['Account_ID'] = $accountID;
         $_SESSION['status'] = $accountStatus;
         $_SESSION['Account_Role'] = $accountRole;
-
+        
         // ✅ Store additional user details
         $_SESSION['User_Data'] = [
             'Account_ID' => $row['Account_ID'],
@@ -95,6 +95,7 @@ die("Query preparation failed: " . mysqli_error($conn));
             'Occupation' => $row['Occupation'],
             'Religion' => $row['Religion'],
             'Civil_Status' => $row['Civil_Status'],
+            'Eligibility_Status' => $row['Eligibility_Status'],
             'Address' => $row['Address'],
             'Emergency_Person' => $row['Emergency_Person'],
             'Emergency_Contact_No' => $row['Emergency_Contact_No'],

@@ -4,12 +4,11 @@ require 'account.php';
 
 session_regenerate_id(true);
 
-
-
 // Check if the request method is POST
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     die("Invalid request method!");
 }
+
 
 // Ensure Resident_ID is provided
 if (!isset($_POST['Resident_ID'])) {
@@ -23,7 +22,7 @@ $enteredPassword = $_POST['passwordMember'] ?? ''; // Get entered password if pr
 $query = "SELECT 
     r.Resident_ID, r.FirstName, r.MiddleName, r.LastName, r.Suffix, 
     r.Sex, r.Date_of_Birth, r.Resident_Email, r.Contact_Number, 
-    r.Occupation, r.Religion, r.Civil_Status, r.Address, r.Age, 
+    r.Occupation, r.Religion, r.Civil_Status, r.Eligibility_Status, r.Address, r.Age, 
     r.Emergency_Person, r.Emergency_Contact_No, r.Emergency_Address, 
     r.Relationship_to_Person, r.Valid_ID_Type, r.Valid_ID_Picture_Front, 
     r.Valid_ID_Picture_Back, r.Pic_Path, r.Role AS Resident_Role, 
@@ -88,6 +87,7 @@ $_SESSION['User_Data'] = [
     'Occupation' => $user['Occupation'],
     'Religion' => $user['Religion'],
     'Civil_Status' => $user['Civil_Status'],
+    'Eligibility_Status' => $user['Eligibility_Status'],
     'Address' => $user['Address'],
     'Emergency_Person' => $user['Emergency_Person'],
     'Emergency_Contact_No' => $user['Emergency_Contact_No'],

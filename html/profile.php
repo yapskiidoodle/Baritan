@@ -15,6 +15,7 @@ $userEmail =  $_SESSION['User_Data']['Resident_Email'] ?? '';
 $isHead = $_SESSION['User_Data']['Resident_Role'] == 'Head';
 
 
+
 $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
 $familyMembers = []; // Initialize an empty array
 
@@ -57,6 +58,8 @@ if ($familyID) {
         $familyMembers[] = $row;
     }
 }
+
+
 
 ?>
 
@@ -244,20 +247,24 @@ if ($familyID) {
         Switch Account
     </button>
 
-    <?php if (!$isHead): ?>  <!-- If NOT Head, show the button -->
-        <button type="button" id="edit_button" class="btn btn-warning text-white mt-2" 
-            style="padding: 0% 2%; font-size: 20px;" 
-            data-bs-toggle="modal" data-bs-target="#editModal">
-            Edit Profile
-        </button> 
-    <?php endif; ?>
+   <!-- Edit Button for Non-Head (outside table) -->
+   <?php if (!$isHead): ?>  
+    <button id="edit_button" class="btn btn-warning text-white mt-2" 
+        style="padding: 0% 2%; font-size: 20px;" 
+        data-bs-toggle="modal" 
+        data-bs-target="#editModal">
+         Edit Profile
+    </button>
+<?php endif; ?>
+
 
     <button type="button" id="add_account_button" class="button mt-2" 
         style="padding: 0% 2%; font-size: 20px;" 
         data-bs-toggle="modal" data-bs-target="#registerModal">
         Add Member
     </button>
-
+<!-- id="edit_button" class="btn btn-warning text-white mt-2" 
+            style="padding: 0% 2%; font-size: 20px;"  -->
 </div>
 </div>
 
@@ -280,39 +287,38 @@ if ($familyID) {
             </thead>
             <tbody id="tableBody">
                 <?php
-                if ($familyID) {
-                    $query = "SELECT 
-                    Resident_ID,
-                    Address,
-                    FirstName,
-                    COALESCE(MiddleName, '') AS MiddleName,
-                    LastName,
-                    COALESCE(Suffix, '') AS Suffix,  -- ✅ ADDED Suffix
-                    Sex,
-                    Date_of_Birth,
-                    Role,
-                    Contact_Number,
-                    Resident_Email,
-                    Religion,
-                    Eligibility_Status,
-                    Civil_Status,
-                    Emergency_Person,
-                    Emergency_Contact_No,
-                    Relationship_to_Person,
-                    Emergency_Address,
-                    Occupation,
-                    TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) AS Age
-                FROM Residents_information_tbl
-                WHERE Family_Name_ID = ?";
-
-                    $stmt = $conn->prepare($query);
-                    if (!$stmt) {
-                        die("Query preparation failed: " . $conn->error);
-                    }
-                    $stmt->bind_param("s", $familyID);
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-
+                     if ($familyID) {
+                        $query = "SELECT 
+                        Resident_ID,
+                        Address,
+                        FirstName,
+                        COALESCE(MiddleName, '') AS MiddleName,
+                        LastName,
+                        COALESCE(Suffix, '') AS Suffix,  -- ✅ ADDED Suffix
+                        Sex,
+                        Date_of_Birth,
+                        Role,
+                        Contact_Number,
+                        Resident_Email,
+                        Religion,
+                        Eligibility_Status,
+                        Civil_Status,
+                        Emergency_Person,
+                        Emergency_Contact_No,
+                        Relationship_to_Person,
+                        Emergency_Address,
+                        Occupation,
+                        TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) AS Age
+                    FROM Residents_information_tbl
+                    WHERE Family_Name_ID = ?";
+    
+                        $stmt = $conn->prepare($query);
+                        if (!$stmt) {
+                            die("Query preparation failed: " . $conn->error);
+                        }
+                        $stmt->bind_param("s", $familyID);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
                     $count = 0;
                     while ($row = $result->fetch_assoc()) {
                         $count++;
@@ -377,14 +383,60 @@ if ($familyID) {
             </tbody>
         </table>
     </div>
-    
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    let editButton = document.getElementById("edit_button"); // This is for non-head users
+
+    if (editButton) {
+        editButton.addEventListener("click", function () {
+            console.log("🟢 Non-head user clicked Edit!");
+
+            // Populate using session data
+            <?php if (isset($_SESSION['User_Data'])): ?>
+                let sessionData = <?php echo json_encode($_SESSION['User_Data'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
+
+
+                console.log("✅ Populating Modal with Session Data:", sessionData);
+
+                populateEditModal(
+                    sessionData.Resident_ID || "",
+                    sessionData.FirstName || "",
+                    sessionData.MiddleName || "",
+                    sessionData.LastName || "",
+                    sessionData.Suffix || "",
+                    sessionData.Sex || "",
+                    sessionData.Date_of_Birth || "",
+                    sessionData.Resident_Email || "",
+                    sessionData.Contact_Number || "",
+                    sessionData.Occupation || "",
+                    sessionData.Religion || "",
+                    sessionData.Eligibility_Status || "",
+                    sessionData.Civil_Status || "",
+                    sessionData.Address || "",
+                    sessionData.Emergency_Person || "",
+                    sessionData.Emergency_Contact_No || "",
+                    sessionData.Relationship_to_Person || "",
+                    sessionData.Emergency_Address || "",
+                    sessionData.Resident_Role || ""
+                );
+            <?php else: ?>
+                console.error("❌ Session data not found!");
+                alert("Error: Could not load user data.");
+            <?php endif; ?>
+        });
+    } else {
+        console.log("ℹ️ No edit button found (possibly for non-head users).");
+    }
+});
+</script>
+
 
 
 
 
 
 <!-- Edit Resident Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editResidentModalLabel" aria-hidden="true">
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editResidentModalLabel">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header" style="background-color: #1C3A5B; color: white;">
@@ -776,34 +828,51 @@ function setSelectValue(id, value) {
 
 
 <script>
- function switchAccount(residentID, role) {
-    if (role.toLowerCase().trim() !== "head") {
-        document.getElementById('residentID').value = residentID;
-        console.log('Resident ID:', residentID);
-        console.log('Role:', role);
-        $('#accountPassword').modal('show');
-    } else {
-        console.log("Redirecting to switch_account.php for Head...");
+function switchAccount(residentID, role) {
+    console.log("🔄 Attempting to switch account...");
+    
+    // Convert role to lowercase and trim whitespace for reliable comparison
+    role = role.toLowerCase().trim();
 
-        // Send an AJAX request to `switch_account.php` for validation
-        fetch('switch_account.php', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ Resident_ID: residentID })
-        })
-        .then(response => response.text()) 
-        .then(data => {
-            console.log("Server Response:", data);  // Debugging response
-            if (data.includes("Error")) {
-                alert("An error occurred: " + data);
-            } else {
-                window.location.href = '../index.php';  // Redirect if successful
-            }
-        })
-        .catch(error => console.error("AJAX Error:", error));
+    console.log("Resident ID:", residentID);
+    console.log("Role:", role);
+
+    if (role !== "head") {
+        // Open the password modal for non-head accounts
+        console.log("🔑 Opening Password Modal...");
+        document.getElementById("residentID").value = residentID;
+        
+        let passwordModal = new bootstrap.Modal(document.getElementById("accountPassword"));
+        passwordModal.show();
+    } else {
+        // ✅ If role is HEAD, submit a POST request instead of GET
+        console.log("✅ Head account detected. Sending POST request...");
+
+        // Create a hidden form dynamically
+        let form = document.createElement("form");
+        form.method = "POST";
+        form.action = "../src/switch_account.php"; // Ensure correct path
+
+        // Create hidden input fields
+        let inputResidentID = document.createElement("input");
+        inputResidentID.type = "hidden";
+        inputResidentID.name = "Resident_ID";
+        inputResidentID.value = residentID;
+
+        let inputRole = document.createElement("input");
+        inputRole.type = "hidden";
+        inputRole.name = "Role";
+        inputRole.value = role;
+
+        // Append inputs to form
+        form.appendChild(inputResidentID);
+        form.appendChild(inputRole);
+
+        // Append form to body and submit
+        document.body.appendChild(form);
+        form.submit();
     }
 }
-
 </script>
 
 

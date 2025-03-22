@@ -108,16 +108,21 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($newData = $result->fetch_assoc()) {
-    if ($_SESSION['Resident_ID'] === $userID) {
-        foreach ($newData as $key => $value) {
-            $_SESSION['User_Data'][$key] = $value;
+            // ✅ Ensure Resident_ID comparison uses the correct session variable
+        if ($_SESSION['User_Data']['Resident_ID'] === $userID) {
+            foreach ($newData as $key => $value) {
+                $_SESSION['User_Data'][$key] = $value;
+            }
         }
-    }
+
+        // ✅ Debugging (Check if session is updated)
+       
+
     $_SESSION['success_message'] = "Profile updated successfully.";
 
-} else {
-    $_SESSION['error_message'] = "Profile updated, but data could not be refreshed.";
-}
+    } else {
+        $_SESSION['error_message'] = "Profile updated, but data could not be refreshed.";
+    }
 
 header("Location: ../html/profile.php");
 exit();
