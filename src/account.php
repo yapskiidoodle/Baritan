@@ -113,8 +113,9 @@ die("Query preparation failed: " . mysqli_error($conn));
        
             header("Location: ../admin/residents.php");
             exit();
-        } elseif ($accountType === "Family Account") {
-            header("Location: ../index.php");
+        } elseif ($accountType === "Family Account") {   
+            $_SESSION['show_modal'] = true;
+            header("Location: ../html/login.php");
             exit();
         }
     } else {

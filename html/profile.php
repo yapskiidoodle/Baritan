@@ -8,15 +8,15 @@ require '../src/account.php';
 require '../src/residentInfo.php';
 
 
-
 $FirstName = $_SESSION['User_Data']['FirstName'] ?? '';
 $LastName = $_SESSION['User_Data']['LastName'] ?? '';
 $Address = $userData['Address']?? '';
 $userEmail =  $_SESSION['User_Data']['Resident_Email'] ?? '';
+$isHead = $_SESSION['User_Data']['Resident_Role'] == 'Head';
 
 
 $familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
-
+$familyMembers = []; // Initialize an empty array
 
 
 // Fetch residents with the same Family ID
@@ -31,6 +31,32 @@ while ($row = $result->fetch_assoc()) {
     $members[] = $row;
 }
 
+
+//for account
+
+if ($familyID) {
+    $query = "SELECT r.Resident_ID, r.FirstName, r.Role 
+              FROM residents_information_tbl r
+              LEFT JOIN family_name_tbl f ON r.Family_Name_ID = f.Family_Name_ID
+              LEFT JOIN account_tbl acc ON f.Account_ID = acc.Account_ID
+              LEFT JOIN account_setting_tbl a ON r.Resident_ID = a.Resident_ID
+              WHERE r.Family_Name_ID = ? 
+              AND (r.Role = 'Head' OR a.Profile_ID IS NOT NULL)";
+    
+    $stmtAccount = $conn->prepare($query);
+
+    if (!$stmtAccount) {
+        die("🔥 SQL Error: " . $conn->error); // Debugging output
+    }
+    
+    $stmtAccount->bind_param("s", $familyID);
+    $stmtAccount->execute();
+    $result = $stmtAccount->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+        $familyMembers[] = $row;
+    }
+}
 
 ?>
 
@@ -217,12 +243,14 @@ while ($row = $result->fetch_assoc()) {
         data-bs-toggle="modal" data-bs-target="#account">
         Switch Account
     </button>
-<!-- 
-    <button type="button" id="edit_button" class="btn btn-warning text-white mt-2" 
-        style="padding: 0% 2%; font-size: 20px;" 
-        data-bs-toggle="modal" data-bs-target="#editModal">
-        Edit Profile
-    </button> -->
+
+    <?php if (!$isHead): ?>  <!-- If NOT Head, show the button -->
+        <button type="button" id="edit_button" class="btn btn-warning text-white mt-2" 
+            style="padding: 0% 2%; font-size: 20px;" 
+            data-bs-toggle="modal" data-bs-target="#editModal">
+            Edit Profile
+        </button> 
+    <?php endif; ?>
 
     <button type="button" id="add_account_button" class="button mt-2" 
         style="padding: 0% 2%; font-size: 20px;" 
@@ -240,71 +268,70 @@ while ($row = $result->fetch_assoc()) {
         </div>
         <table class="table">
             <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Email</th>
-                <th scope="col">Relationship</th>
-                <th scope="col">Edit</th>
-                <th scope="col">Remove</th>
-              </tr>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Relationship</th>
+                    <?php if ($isHead): ?> <!-- Show headers only if Head -->
+                        <th scope="col">Edit</th>
+                        <th scope="col">Remove</th>
+                    <?php endif; ?>
+                </tr>
             </thead>
             <tbody id="tableBody">
-    <?php
-   
+                <?php
+                if ($familyID) {
+                    $query = "SELECT 
+                    Resident_ID,
+                    Address,
+                    FirstName,
+                    COALESCE(MiddleName, '') AS MiddleName,
+                    LastName,
+                    COALESCE(Suffix, '') AS Suffix,  -- ✅ ADDED Suffix
+                    Sex,
+                    Date_of_Birth,
+                    Role,
+                    Contact_Number,
+                    Resident_Email,
+                    Religion,
+                    Eligibility_Status,
+                    Civil_Status,
+                    Emergency_Person,
+                    Emergency_Contact_No,
+                    Relationship_to_Person,
+                    Emergency_Address,
+                    Occupation,
+                    TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) AS Age
+                FROM Residents_information_tbl
+                WHERE Family_Name_ID = ?";
 
-    
-   
+                    $stmt = $conn->prepare($query);
+                    if (!$stmt) {
+                        die("Query preparation failed: " . $conn->error);
+                    }
+                    $stmt->bind_param("s", $familyID);
+                    $stmt->execute();
+                    $result = $stmt->get_result();
 
-    if ($familyID) {
-        $query = "SELECT 
-            Resident_ID,
-            Address,
-            FirstName,
-            COALESCE(MiddleName, '') AS MiddleName,
-            LastName,
-            COALESCE(Suffix, '') AS Suffix,  -- ✅ ADDED Suffix
-            Sex,
-            Date_of_Birth,
-            Role,
-            Contact_Number,
-            Resident_Email,
-            Religion,
-            Eligibility_Status,
-            Civil_Status,
-            Emergency_Person,
-            Emergency_Contact_No,
-            Relationship_to_Person,
-            Emergency_Address,
-            Occupation,
-            TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) AS Age
-        FROM Residents_information_tbl
-        WHERE Family_Name_ID = ?";
+                    $count = 0;
+                    while ($row = $result->fetch_assoc()) {
+                        $count++;
+                        ?>
+                        <tr>
+                            <th scope="row"><?= $count ?></th>
+                            <td><?= htmlspecialchars($row['FirstName']) ?> 
+                                <?= !empty($row['MiddleName']) ? htmlspecialchars(substr($row['MiddleName'], 0, 1)) . "." : "" ?>
+                                <?= htmlspecialchars($row['LastName']) ?>
+                                <?= !empty($row['Suffix']) ? htmlspecialchars($row['Suffix']) : "" ?>
+                            </td>
+                            <td><?= htmlspecialchars($row['Role']) ?></td>
 
-        $stmt = $conn->prepare($query);
-        if (!$stmt) {
-            die("Query preparation failed: " . $conn->error);
-        }
-        $stmt->bind_param("s", $familyID);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        $count = 0; // Row counter
-        while ($row = $result->fetch_assoc()) {
-            $count++;
-            ?>
-            <tr>
-                <th scope="row"><?= $count ?></th>
-                <td><?= htmlspecialchars($row['FirstName']) ?> 
-                    <?= !empty($row['MiddleName']) ? htmlspecialchars(substr($row['MiddleName'], 0, 1)) . "." : "" ?>
-                    <?= htmlspecialchars($row['LastName']) ?>
-                    <?= !empty($row['Suffix']) ? htmlspecialchars($row['Suffix']) : "" ?>  <!-- ✅ SHOW SUFFIX -->
-                </td>
-                <td><?= htmlspecialchars($row['Role']) ?></td>
-                <td>
-                    <button class="btn btn-warning btn-sm" 
-                        data-bs-toggle="modal" 
-                        data-bs-target="#editModal"
-                        onclick="populateEditModal(
+                            <?php if ($isHead): ?> <!-- Only show buttons if user is Head -->
+                                <td>
+                                    <button class="btn btn-warning btn-sm" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#editModal"
+                                        onclick="populateEditModal(
                             '<?= htmlspecialchars($row['Resident_ID']) ?>', 
                             '<?= htmlspecialchars($row['FirstName']) ?>', 
                             '<?= htmlspecialchars($row['MiddleName']) ?>', 
@@ -325,94 +352,36 @@ while ($row = $result->fetch_assoc()) {
                             '<?= htmlspecialchars($row['Emergency_Address']) ?>', 
                             '<?= htmlspecialchars($row['Role']) ?>'
                         )">
-                        Edit
-                    </button>
-                </td>
-                <td>
-                    <button class="btn btn-danger btn-sm" onclick="confirmDelete('<?= htmlspecialchars($row['Resident_ID']) ?>')">
-                        Remove
-                    </button>
-                </td>
-            </tr>
-            <?php
-        }
+                                        Edit
+                                    </button>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" onclick="confirmDelete('<?= htmlspecialchars($row['Resident_ID']) ?>')">
+                                        Remove
+                                    </button>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                        <?php
+                    }
 
-        if ($count === 0) {  
-            echo "<tr><td colspan='5' class='text-center'>No family members found.</td></tr>";
-        }
+                    if ($count === 0) {
+                        echo "<tr><td colspan='" . ($isHead ? "5" : "3") . "' class='text-center'>No family members found.</td></tr>";
+                    }
 
-        $stmt->close();
-    } else {
-        echo "<tr><td colspan='5' class='text-center'>No family members found.</td></tr>";
-    }
-    ?>
-</tbody>
-          </table>
+                    $stmt->close();
+                } else {
+                    echo "<tr><td colspan='" . ($isHead ? "5" : "3") . "' class='text-center'>No family members found.</td></tr>";
+                }
+                ?>
+            </tbody>
+        </table>
     </div>
     
 
 
 
 
-
-
-
-
-
-
-
-
- 
-<!-- Modal -->
-<div class="modal fade" id="account" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Select Account</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div class="row " style="text-align: center;">
-            <div class="col-md-6">
-               <a data-bs-dismiss="modal">
-                <img src="../pics/profile.jpg" alt="" style="width: 85px;">
-                <div class="lead">Juan </div>
-               </a>
-            </div>
-            <div class="col-md-6">
-                <a data-bs-dismiss="modal">
-                 <img src="../pics/profile.jpg" alt="" style="width: 85px;">
-                 <div class="lead">Juan </div>
-                </a>
-             </div>
-             <div class="col-md-6">
-                <a data-bs-dismiss="modal">
-                 <img src="../pics/profile.jpg" alt="" style="width: 85px;">
-                 <div class="lead">Juan </div>
-                </a>
-             </div>
-             <div class="col-md-6">
-                <a data-bs-dismiss="modal">
-                 <img src="../pics/profile.jpg" alt="" style="width: 85px;">
-                 <div class="lead">Juan </div>
-                </a>
-             </div>
-             <div class="col-md-6">
-                <a data-bs-dismiss="modal">
-                 <img src="../pics/profile.jpg" alt="" style="width: 85px;">
-                 <div class="lead">Juan </div>
-                </a>
-             </div>
-          </div>
-          
-         
-        </div>
-        <div class="modal-footer">
-          
-        </div>
-      </div>
-    </div>
-  </div>
 
 <!-- Edit Resident Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editResidentModalLabel" aria-hidden="true">
@@ -769,6 +738,105 @@ function setSelectValue(id, value) {
 </div>
 
 
+ 
+<!-- Account Selection Modal -->
+<div class="modal fade" id="account" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Select Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row justify-content-center">
+          <?php foreach ($familyMembers as $member): ?>
+            <div class="col-6 d-flex flex-column align-items-center text-center">
+              <a href="#" class="text-decoration-none text-dark" data-bs-dismiss="modal" 
+                onclick="switchAccount('<?= $member['Resident_ID'] ?>', '<?= $member['Role'] ?>')">
+                <img src="../pics/profile.jpg" alt="Profile" class="img-fluid rounded-circle"
+                  style="width: 85px; transition: transform 0.3s ease-in-out;">
+                <div class="lead mt-2" style="font-size: 16px;"><?= $member['Role'] ?></div>
+                <div class="lead fw-bold"><?= $member['FirstName'] ?></div>
+              </a>
+            </div>
+          <?php endforeach; ?>
+          <!-- Add Account -->
+          <div class="col-6 d-flex flex-column align-items-center text-center">
+            <a href="#" class="text-decoration-none text-dark">
+              <img src="../pics/profile.jpg" alt="Add Account" class="img-fluid rounded-circle"
+                style="width: 85px; transition: transform 0.3s ease-in-out;">
+              <div class="lead fw-bold mt-2">Add Account</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+ function switchAccount(residentID, role) {
+    if (role.toLowerCase().trim() !== "head") {
+        document.getElementById('residentID').value = residentID;
+        console.log('Resident ID:', residentID);
+        console.log('Role:', role);
+        $('#accountPassword').modal('show');
+    } else {
+        console.log("Redirecting to switch_account.php for Head...");
+
+        // Send an AJAX request to `switch_account.php` for validation
+        fetch('switch_account.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ Resident_ID: residentID })
+        })
+        .then(response => response.text()) 
+        .then(data => {
+            console.log("Server Response:", data);  // Debugging response
+            if (data.includes("Error")) {
+                alert("An error occurred: " + data);
+            } else {
+                window.location.href = '../index.php';  // Redirect if successful
+            }
+        })
+        .catch(error => console.error("AJAX Error:", error));
+    }
+}
+
+</script>
+
+
+
+
+<!-- Password Modal -->
+<div class="modal fade" id="accountPassword" tabindex="-1" aria-labelledby="accountPasswordLabel" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header text-white">
+        <h5 class="modal-title" id="accountPasswordLabel">Enter Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+      </div>
+      <div class="modal-body text-center">
+        <form id="passwordForm" action="../src/switch_account.php" method="POST">
+          <input type="hidden" id="residentID" name="Resident_ID"> <!-- Hidden input to store ID -->
+          <div class="mt-3" style="text-align:left;">
+            <label class="form-label" for="passwordMember">Password</label>
+          </div>
+          <input type="password" name="passwordMember" id="passwordMember" class="form-control" required placeholder="Enter Password"/>
+        </form>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button type="button" class="btn btn-secondary w-25" data-bs-toggle="modal" 
+        data-bs-target="#account">Close</button>
+        <button type="submit" form="passwordForm" class="btn btn-success w-25 mt-2">Login</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 
   <script>
@@ -777,11 +845,24 @@ function setSelectValue(id, value) {
     this.submit(); // Manually submit
 });
 
-    function validateForm() {
-    return true; // Ensures the form actually submits
-}
+      // Handle form submission
+      document.getElementById("accountForm").addEventListener("submit", function(event) {
+        // Prevent default form submission
+        event.preventDefault();
 
+        // Perform validation first
+        var firstInvalid = validateInputs();
+        
+        // If there are validation errors, focus on the first invalid field
+        if (firstInvalid) {
+            firstInvalid.focus();
+        } else {
+            // If no validation errors, manually submit the form
+            this.submit();
+        }
+    });
 
+    // Hide or show elements based on session state
     document.addEventListener("DOMContentLoaded", function () {
         var profile = document.getElementById("profile");
         var start = document.getElementById("start");
@@ -796,94 +877,88 @@ function setSelectValue(id, value) {
     });
 
     $(document).ready(function () {
-    $("#saveChanges").click(function (event) {
-        var firstInvalid = validateInputs();
+        $("#saveChanges").click(function (event) {
+            // Prevent form submission to run validation first
+            event.preventDefault();
 
-        if (firstInvalid) {
-            event.preventDefault(); // Prevent form submission if there are errors
-            firstInvalid.focus(); // Focus on the first invalid field
-        }
-    });
-});
+            // Run the validation function
+            var firstInvalid = validateInputs();
 
-$(document).ready(function () {
-    $("#saveChanges").click(function (event) {
-        var firstInvalid = validateInputs();
-
-        if (firstInvalid) {
-            event.preventDefault(); // Prevent form submission if there are errors
-            firstInvalid.focus(); // Focus on the first invalid field
-        }
-    });
-});
-
-function validateInputs() {
-    var firstInvalid = null;
-    var specialCharRegex = /[^a-zA-Z0-9ñ ]/; // Allows only letters, numbers, and space
-    var specialCharRegexEmail = /[^a-zA-Z0-9@.]/; // Allows only letters, numbers, @, and .
-    var passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/; // Password: 8+ chars, 1 uppercase, 1 special char
-    var allValid = true;
-
-    $("input[required], select[required]").each(function () {
-        var value = $(this).val().trim();
-        var inputType = $(this).attr("type");
-        var inputId = $(this).attr("id");
-        var isEmail = inputType === "email";
-        var isPassword = inputId === "password" || inputId === "rePassword";
-        var isDate = inputType === "date" || inputId.toLowerCase().includes("date");
-        var feedbackSpan = $(this).next(".invalid-feedback");
-
-        // Empty field
-        if (!value) {
-            showError(this, "This field is required.");
-            allValid = false;
-            if (!firstInvalid) firstInvalid = this;
-        } 
-        // Email validation
-        else if (isEmail && specialCharRegexEmail.test(value)) {
-            showError(this, "Only letters, numbers, @, and . are allowed.");
-            allValid = false;
-            if (!firstInvalid) firstInvalid = this;
-        } 
-        // Password validation
-        else if (isPassword && !passwordRegex.test(value)) {
-            showError(this, "Password must be at least 8 characters, contain an uppercase letter, and a special character.");
-            allValid = false;
-            if (!firstInvalid) firstInvalid = this;
-        } 
-        // Allow dates to have special characters
-        else if (!isEmail && !isPassword && !isDate && specialCharRegex.test(value)) {
-            showError(this, "Special characters are not allowed.");
-            allValid = false;
-            if (!firstInvalid) firstInvalid = this;
-        } 
-        // Password confirmation
-        else if (inputId === "rePassword") {
-            validatePasswords();
-        } 
-        // Valid input
-        else {
-            removeError(this);
-        }
+            // If there is an invalid field, prevent form submission and focus on the first invalid field
+            if (firstInvalid) {
+                firstInvalid.focus(); // Focus on the first invalid field
+            } else {
+                // If no validation errors, manually submit the form
+                $('#editResidentForm').submit();
+            }
+        });
     });
 
-    return allValid ? null : firstInvalid;
-}
+    function validateInputs() {
+        var firstInvalid = null;
+        var generalRegex = /[^a-zA-Z0-9ñ ]/; // Blocks special characters except space (for general fields)
+        var lastNameRegex = /^[a-zA-Zñ -]+$/; // Allows letters, spaces, and hyphens for last name
+        var emailRegex = /^[a-zA-Z0-9@.]+$/; // Allows only letters, numbers, @, and .
+        var passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/; // Password: 8+ chars, 1 uppercase, 1 special char
 
-// ✅ Password matching check
-function validatePasswords() {
-    var password = $("#password").val();
-    var rePassword = $("#rePassword").val();
-    var rePasswordField = $("#rePassword");
+        // Loop through all required fields
+        $("input[required], select[required]").each(function () {
+            var value = $(this).val() ? $(this).val().trim() : ''; // Avoid `.trim()` on null
+            var inputType = $(this).attr("type");
+            var inputId = $(this).attr("id");
+            var isEmail = inputType === "email";
+            var isDate = inputType === "date";
+            var isPassword = inputId === "password" || inputId === "rePassword";
 
-    if (!password || !rePassword) return;
+            // Empty input field check
+            if (!value) {
+                showError(this, "This field is required.");
+                if (!firstInvalid) firstInvalid = this;
+            } 
+            // Email validation
+            else if (isEmail && !emailRegex.test(value)) {
+                showError(this, "Only letters, numbers, @, and . are allowed.");
+                if (!firstInvalid) firstInvalid = this;
+            } 
+            // Password validation
+            else if (isPassword && !passwordRegex.test(value)) {
+                showError(this, "Password must be at least 8 characters, contain an uppercase letter, and a special character.");
+                if (!firstInvalid) firstInvalid = this;
+            }
+            // Last name validation (allows hyphens)
+            else if (inputId === "lastName" && !lastNameRegex.test(value)) {
+                showError(this, "Only letters, spaces, and hyphens are allowed.");
+                if (!firstInvalid) firstInvalid = this;
+            }
+            // General fields validation (blocks special characters)
+            else if (!isEmail && !isDate && !isPassword && inputId !== "lastName" && generalRegex.test(value)) {
+                showError(this, "Special characters are not allowed.");
+                if (!firstInvalid) firstInvalid = this;
+            } 
+            // Valid input, remove any previous error message
+            else {
+                removeError(this);
+            }
+        });
 
-    if (password !== rePassword) {
-        showError(rePasswordField, "Passwords do not match.");
-    } else {
-        removeError(rePasswordField);
+        return firstInvalid; // Return the first invalid field if any, otherwise null
     }
-}
+
+    // Show error message
+    function showError(element, message) {
+        $(element).addClass("is-invalid").removeClass("is-valid");
+        $(element).next(".invalid-feedback").remove();
+        $(element).after('<div class="invalid-feedback">' + message + '</div>');
+    }
+
+    // Remove error message
+    function removeError(element) {
+        $(element).removeClass("is-invalid").addClass("is-valid");
+        $(element).next(".invalid-feedback").remove();
+    }
+
+
+
 
 // ✅ Show error message
 function showError(element, message) {

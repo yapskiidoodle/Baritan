@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
 <?php
-require '../src/account.php';
 require '../src/connect.php'; // Use 'include' or 'require' to load the file
+require '../src/account.php';
+// ["Family_Name_ID"]=> string(13) "FAMBAR2025003"
+
 
 
 if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
@@ -14,6 +16,44 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
         });
     </script>";
     unset($_SESSION['deactivated']); // Clear the session variable
+}
+
+if (!empty($_SESSION['show_modal'])) {
+    echo '<script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var myModal = new bootstrap.Modal(document.getElementById("account"));
+                myModal.show();
+            });
+          </script>';
+    unset($_SESSION['show_modal']);
+}
+
+$FirstName = $_SESSION['User_Data']['FirstName'] ?? '';
+$familyMembers = []; // Initialize an empty array
+$familyID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
+
+if ($familyID) {
+    $query = "SELECT r.Resident_ID, r.FirstName, r.Role 
+              FROM residents_information_tbl r
+              LEFT JOIN family_name_tbl f ON r.Family_Name_ID = f.Family_Name_ID
+              LEFT JOIN account_tbl acc ON f.Account_ID = acc.Account_ID
+              LEFT JOIN account_setting_tbl a ON r.Resident_ID = a.Resident_ID
+              WHERE r.Family_Name_ID = ? 
+              AND (r.Role = 'Head' OR a.Profile_ID IS NOT NULL)";
+    
+    $stmt = $conn->prepare($query);
+
+    if (!$stmt) {
+        die("🔥 SQL Error: " . $conn->error); // Debugging output
+    }
+    
+    $stmt->bind_param("s", $familyID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+        $familyMembers[] = $row;
+    }
 }
 
 $errorMessage = ""; // Default empty message
@@ -31,6 +71,8 @@ if (isset($_SESSION['error_message'])) {
     <link rel="stylesheet" href="../design.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 
     <style>
     body {
@@ -49,6 +91,10 @@ if (isset($_SESSION['error_message'])) {
         z-index: 1;
         padding-top: 50px; /* Adjust this value based on your header's height */
      
+    }
+    a:hover img {
+    transform: scale(1.1);
+    transition: transform 0.2s ease-in-out;
     }
     </style>
 
@@ -127,7 +173,8 @@ if (isset($_SESSION['error_message'])) {
 
             <div class="col" >
                 <!-- Simple link -->
-                <a href="#!" style="color: #1C3A5B;">Forgot password?</a>
+                <a href="#accountPassword" data-bs-toggle="modal" 
+                data-bs-target="#accountPassword"  style="color: #1C3A5B;">Forgot password?</a>
             </div>
         </div>
 
@@ -201,7 +248,7 @@ if (isset($_SESSION['error_message'])) {
               </div>
         </div>
         <div class="modal-footer">
-            <form>
+            <form action="../src/register.php"method="POST">
                 <div class="row">
                     <div class="col">
                         <div class="form-check">
@@ -214,7 +261,7 @@ if (isset($_SESSION['error_message'])) {
                     </div>
                     <div class="col text-center" >
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="location.reload();">Close</button>
-                        <button type="button" class="btn btn-primary" id="submitBtn" disabled style="background-color: #1C3A5B;" >I Accept</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn" disabled style="background-color: #1C3A5B;" >I Accept</button>
                     
                     </div>
                 </div>
@@ -241,6 +288,103 @@ if (isset($_SESSION['error_message'])) {
 
 
 
+ 
+ 
+<!-- Account Selection Modal -->
+<div class="modal fade" id="account" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Select Account</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row justify-content-center">
+          <?php foreach ($familyMembers as $member): ?>
+            <div class="col-6 d-flex flex-column align-items-center text-center">
+              <a href="#" class="text-decoration-none text-dark" data-bs-dismiss="modal" 
+                onclick="switchAccount('<?= $member['Resident_ID'] ?>', '<?= $member['Role'] ?>')">
+                <img src="../pics/profile.jpg" alt="Profile" class="img-fluid rounded-circle"
+                  style="width: 85px; transition: transform 0.3s ease-in-out;">
+                <div class="lead mt-2" style="font-size: 16px;"><?= $member['Role'] ?></div>
+                <div class="lead fw-bold"><?= $member['FirstName'] ?></div>
+              </a>
+            </div>
+          <?php endforeach; ?>
+          <!-- Add Account -->
+          <div class="col-6 d-flex flex-column align-items-center text-center">
+            <a href="#" class="text-decoration-none text-dark">
+              <img src="../pics/profile.jpg" alt="Add Account" class="img-fluid rounded-circle"
+                style="width: 85px; transition: transform 0.3s ease-in-out;">
+              <div class="lead fw-bold mt-2">Add Account</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+ function switchAccount(residentID, role) {
+    if (role.toLowerCase().trim() !== "head") {
+        document.getElementById('residentID').value = residentID;
+        console.log('Resident ID:', residentID);
+        console.log('Role:', role);
+        $('#accountPassword').modal('show');
+    } else {
+        console.log("Redirecting to switch_account.php for Head...");
+
+        // Send an AJAX request to `switch_account.php` for validation
+        fetch('switch_account.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ Resident_ID: residentID })
+        })
+        .then(response => response.text()) 
+        .then(data => {
+            console.log("Server Response:", data);  // Debugging response
+            if (data.includes("Error")) {
+                alert("An error occurred: " + data);
+            } else {
+                window.location.href = '../index.php';  // Redirect if successful
+            }
+        })
+        .catch(error => console.error("AJAX Error:", error));
+    }
+}
+
+</script>
+
+
+
+
+<!-- Password Modal -->
+<div class="modal fade" id="accountPassword" tabindex="-1" aria-labelledby="accountPasswordLabel" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header text-white">
+        <h5 class="modal-title" id="accountPasswordLabel">Enter Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+      </div>
+      <div class="modal-body text-center">
+        <form id="passwordForm" action="../src/switch_account.php" method="POST">
+          <input type="hidden" id="residentID" name="Resident_ID"> <!-- Hidden input to store ID -->
+          <div class="mt-3" style="text-align:left;">
+            <label class="form-label" for="passwordMember">Password</label>
+          </div>
+          <input type="password" name="passwordMember" id="passwordMember" class="form-control" required placeholder="Enter Password"/>
+        </form>
+      </div>
+      <div class="modal-footer d-flex justify-content-center">
+        <button type="button" class="btn btn-secondary w-25" data-bs-toggle="modal" 
+        data-bs-target="#account">Close</button>
+        <button type="submit" form="passwordForm" class="btn btn-success w-25 mt-2">Login</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -248,22 +392,7 @@ if (isset($_SESSION['error_message'])) {
 
 
 
-    <script> 
-        document.addEventListener("DOMContentLoaded", function () {
-            var profile = document.getElementById("profile");
-            var start = document.getElementById("start");
 
-            <?php if (isset($_SESSION['userEmail'])) { ?>
-                profile.hidden = false;
-                start.hidden = true;
-            <?php } else { ?>
-                profile.hidden = true;
-                start.hidden = false;
-            <?php } ?>
-        });
-    </script>
-
-    <script src="script.js"></script>
 
 
 

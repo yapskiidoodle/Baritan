@@ -122,7 +122,7 @@ if (isset($_SESSION['error_message'])) {
         </div>
         </div>
 
-       
+
         
      <div class="container" style="margin-top:-40%">
         
@@ -241,99 +241,7 @@ if (isset($_SESSION['error_message'])) {
 
       </div>
 
-      <!-- Modal Box (revised) -->
-     
-      <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="height: 75vh;"> <!-- Increased height -->
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalToggleLabel">Modal 1</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body p-0 position-relative overflow-hidden" style="overflow-y: hidden;"> <!-- Hides vertical overflow -->
-        <!-- Background Image -->
-        <img src="pics/BarangayBaritan.png" alt="Barangay Baritan"   
-          style="object-fit: cover; height: 100%; width: 100%;"> 
-        
-        <!-- Overlay Text -->
-        <div class="position-absolute top-50 start-50 translate-middle text-center text-white"
-          style="width: 80%; padding: 20px; border-radius: 10px;">
-          <div style="font-weight: 700; font-size: 36px;">
-            Join Our Community!
-          </div>
-          <div class="lead mt-3">
-            Be part of Barangay Baritan, connect, stay updated, and access services with ease!
-          </div>
-          <button type="submit" class="btn btn- success text-white learn mt-3" id="register" 
-            style="width: 50%;"
-            data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal">
-            Register
-          </button>
-          <button type="submit" class="btn text-white learn mt-3" 
-            style="width: 50%;"
-            data-bs-toggle="modal" data-bs-target="#exampleModalToggle2" data-bs-dismiss="modal">
-            Login
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-<div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content" style="height: 75vh;">
-     
-      <div class="modal-header border-0">
-        <h5 class="modal-title" id="loginModalLabel">Login</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
-      </div>
-      
-      <div class="modal-body p-0 ">
-        <div class="container text-center" style="padding: 5% 10%; font-weight: 600; color: #00264d; font-size: 28px;">
-          Login
-          <div class="lead pt-2">Login to continue</div>
-        </div>
-
-        <form style="padding: 1% 10%;" action="src/account.php" method="POST">
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="lead">Username</label>
-            <input name="userEmail" type="text" class="form-control" id="exampleInputEmail1" placeholder="Enter email" 
-              style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;" required>
-          </div>
-          <small id="emailError" style="color: red; display: <?php echo ($errorMessage ? 'block' : 'none'); ?>; margin-top: -1px;">
-            <?php echo $errorMessage; ?>
-          </small>
-
-          <div class="mb-3">
-            <label for="exampleInputPassword1" class="lead">Password</label>
-            <input name="password" type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" 
-              style="border-radius: 7px; border: 1px solid #ced4da; padding: 10px;" required>
-          </div>
-
-          <div class="row my-5">
-            <div class="col-md-6">
-              <button type="button" class="btn btn-danger w-100" 
-                style="border-radius: 7px; padding: 10px; font-size: 16px;" data-bs-dismiss="modal">
-                Cancel
-              </button>
-            </div>
-            <div class="col-md-6">
-              <button name="loginButton" type="submit" class="btn text-white w-100" 
-                style="background-color: #00264d; border-radius: 7px; padding: 10px; font-size: 16px;">
-                Login
-               
-              </button>
-            </div>
-          </div>
-          
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
+    
 
 
 
@@ -435,6 +343,7 @@ document.addEventListener('hidden.bs.modal', function () {
       </div>
     </div>
   </div>
+
 <!-- Bootstrap 5 Deactivated Account Modal -->
 <div class="modal fade" id="deactivatedModal" tabindex="-1" aria-labelledby="deactivatedModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
