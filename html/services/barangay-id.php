@@ -78,9 +78,11 @@
 <body>
 
 
+    
+    
     <!--header-->
-    <div class="container-fluid" style="background-color:#1C3A5B;color: white;padding: 1%; width: 100%;  ">  
-        <div class="row" >    
+    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
+        <div class="row">
            <div class="col-1" style="width: 5.3%; ">
                <img src="../../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
                
@@ -90,34 +92,49 @@
                <h6 style="font-size: 10.5px;">Malabon City, Metro Manila, Philippines</h6>
            </div>
            <div class="col" style=" text-align: center; padding-top: 1.5%;">
-            <div style="display: flex; ">
-                <div style="padding:0% 4%;">
-                    <a href="../../index.php">Home</a>
-                </div>
-                <div class="vr"></div>
-                <div style="padding:0% 4%;">
-                    <a href="../about.php">About Us</a>
-                </div>
-                <div class="vr"></div>
-                <div style="padding:0% 4%;">
-                    <a href="../service.php">Services</a>
-                </div>
-                <div class="vr"></div>
-                <div style="padding:0% 4%;">
-                    <a href="../../index.php?#contact"  >Contact Us</a>
-                </div>
-                <div class="vr"></div>
-                <div hidden>
-                    <img src="pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; margin-top: -26.6%; margin-left: 5%;">
-                </div>
-                <div>
-                     <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
-                </div>
-            </div>
+               <div style="display: flex; ">
+                   <div style="padding:0% 4%;">
+                       <a href="../../">Home</a>
+                   </div>
+                   <div class="vr"></div>
+                   <div style="padding:0% 4%;">
+                       <a href="about.php">About Us</a>
+                   </div>
+                   <div class="vr"></div>
+                   <div style="padding:0% 4%;">
+                       <a href="../service.php">Services</a>
+                   </div>
+                   <div class="vr"></div>
+                   <div style="padding:0% 4%;">
+                      <a href="../../index.php#contact">Contact Us</a>
+                   </div>
+                   <div class="vr"></div>
+                   
+                    <?php if (isset($_SESSION['userEmail'])) { ?>
+                        <div class="dropdown" id="profile" name="profile">
+                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                                <li>
+                                    <form action="../../src/logout.php" method="POST">
+                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php } else { ?>
+                        <div id="start" name="start">
+                            <a href="../login.php" class="btn btn-danger ms-2">Log In</a>
+                        </div>
+                    <?php } ?>
+               </div>
            </div>
         </div>
-    </div>
-    <!--END HEADER-->
+        </div>
+    <!-- End Header -->
+
 
 
 
@@ -187,44 +204,44 @@
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Date of Birth</label>
-                                <input type="date" name="birthday" class="form-control" id="exampleInputPassword1" placeholder="ex. Dela Cruz">
+                                <input type="date" name="birthday" class="form-control" id="exampleInputPassword1" required>
                               </div>
                         </div>
                         <div class="h4 mt-5 text-center" style="font-weight: 700;">Emergency Contact Information</div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Emergency Contact Person</label>
-                        <input type="text" class="form-control" id="emergencyPerson" name="emergencyPerson"placeholder="">
+                        <input type="text" class="form-control" id="emergencyPerson" name="emergencyPerson" required>
                       </div>
 
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="emergencyContact">Emergency Contact Number</label>
                         <input type="tel" class="form-control" id="emergencyContact" name="emergencyContact" 
                             placeholder="09XXXXXXXXX" 
-                            pattern="09[0-9]{9}" maxlength="11">
+                            pattern="09[0-9]{9}" maxlength="11" required>
                         <div class="invalid-feedback">Must be exactly 11 digits (09XXXXXXXXX).</div>
                       </div>
                     </div>
-                    
-                  
-                   
-                     
-                 
-      
-                      <div class="tab d-none">
-                      <div class="h4 mt-5 text-center" style="font-weight: 700;">Address</div>
+                    <div class="h4 mt-5 text-center" style="font-weight: 700;">Address</div>
                     
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Block No.</label>
-                        <input type="text" class="form-control" name="block" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Block No">
+                        <input type="text" class="form-control" name="block" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Block No" required>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Street Name</label>
-                        <input type="text" class="form-control" name="street" id="exampleInputPassword1" placeholder="Street Name">
+                        <input type="text" class="form-control" name="street" id="exampleInputPassword1" placeholder="Street Name" required>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Subdivision/Village/Sitio (Optional)</label>
                         <input type="text" class="form-control" name="subdivision" id="exampleInputPassword1" placeholder="(optional)">
                       </div>
+                  
+                   
+                     
+                 
+  </div>
+                      <div class="tab d-none">
+                      
 
 
                 
@@ -348,57 +365,87 @@
 
     <script>
     var current = 0;
-    var tabs = $(".tab");
-    var tabs_pill = $(".step-circle");
+var tabs = $(".tab");
+var tabs_pill = $(".step-circle");
 
+loadFormData(current);
+
+function loadFormData(n) {
+    $(tabs_pill[n]).addClass("active").removeClass("inactive");
+    $(tabs[n]).removeClass("d-none");
+
+    $("#back_button").toggleClass("d-none", n === 0);
+
+    if (n === tabs.length - 1) {
+        $("#next_button")
+            .text("Submit")
+            .removeAttr("onclick")
+            .attr({ "data-bs-toggle": "modal", "data-bs-target": "#exampleModal" });
+    } else {
+        $("#next_button")
+            .text("Next")
+            .attr({ "type": "button", "onclick": "next()" })
+            .removeAttr("data-bs-toggle data-bs-target");
+    }
+}
+
+function next() {
+    if (!validateInput()) return; // Check validation before proceeding
+
+    $(tabs[current]).addClass("d-none");
+    $(tabs_pill[current]).addClass("inactive");
+
+    current++;
     loadFormData(current);
+}
 
-    function loadFormData(n) {
-        // Activate the current step
-        $(tabs_pill[n]).addClass("active").removeClass("inactive");
-        $(tabs[n]).removeClass("d-none");
+function back() {
+    $(tabs[current]).addClass("d-none");
+    $(tabs_pill[current]).addClass("inactive");
 
-        // Handle back button visibility
-        $("#back_button").toggleClass("d-none", n === 0);
+    current--;
+    loadFormData(current);
+}
 
-        // Handle next/submit button state
-        if (n === tabs.length - 1) {
-            $("#next_button")
-                .text("Submit")
-                .removeAttr("onclick")
-                .attr({ "data-bs-toggle": "modal", "data-bs-target": "#exampleModal" });
+/**
+ * validateInput - Checks all required fields in the current tab.
+ * @returns {boolean} - Returns true if all fields are valid, false otherwise.
+ */
+function validateInput() {
+    let valid = true;
+    let currentTab = $(tabs[current]); // Get current tab
+
+    // Validate all required inputs
+    currentTab.find("input[required], select[required]").each(function () {
+        if (!$(this).val().trim()) {
+            $(this).addClass("is-invalid");
+            valid = false;
         } else {
-            $("#next_button")
-                .text("Next")
-                .attr({ "type": "button", "onclick": "next()" })
-                .removeAttr("data-bs-toggle data-bs-target");
+            $(this).removeClass("is-invalid");
         }
+    });
+
+    // Validate phone number format (if applicable in the current tab)
+    let phoneField = currentTab.find("input[name='emergencyContact']");
+    let phoneRegex = /^09\d{9}$/; // Format: 09XXXXXXXXX (11 digits)
+    if (phoneField.length && !phoneRegex.test(phoneField.val().trim())) {
+        phoneField.addClass("is-invalid");
+        valid = false;
+    } else {
+        phoneField.removeClass("is-invalid");
     }
 
-    function next() {
-        $(tabs[current]).addClass("d-none");
-        $(tabs_pill[current]).addClass("inactive");
+    return valid;
+}
 
-        current++;
-        loadFormData(current);
-    }
+function submitForm() {
+    document.getElementById("generateID").submit();
+}
 
-    function back() {
-        $(tabs[current]).addClass("d-none");
-        $(tabs_pill[current]).addClass("inactive");
-
-        current--;
-        loadFormData(current);
-    }
-    
-    function submitForm() {
-        // Redirect to the generate-id page
-        document.getElementById("generateID").submit();
-    }
-    function redirectToIndex() {
-    setTimeout(function() {
-        window.location.href = "../../index.php"; // Redirect to index.php after submission
-    }, 1000); // Delay to allow the new tab to open before redirection
+function redirectToIndex() {
+    setTimeout(function () {
+        window.location.href = "../../index.php"; 
+    }, 1000);
 }
 
 </script>

@@ -107,8 +107,8 @@ if (isset($_SESSION['error_message'])) {
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                             <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                            <li><hr class="dropdown-divider"></li> -->
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>-->
+                            <li><div class="container">Hello, <?php echo $_SESSION['User_Data']['FirstName']; ?></div></li> 
                             <li><a class="dropdown-item" href="html/profile.php" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Profile</a></li>
                             <li><form action="src/logout.php" method="POST"><button class="dropdown-item" href="index.php" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button></li></form>
 

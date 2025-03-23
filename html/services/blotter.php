@@ -102,7 +102,7 @@ require '../../src/account.php';
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                       <a href="service.php">Services</a>
+                       <a href="../service.php">Services</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">

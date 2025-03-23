@@ -1,9 +1,8 @@
 <?php
 require '../../src/connect.php'; // Include your database connection file
 require('../../admin/fpdf186/fpdf.php'); // Include the FPDF library
-// Check if the form is submitted via POST method
-
 ob_start();
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Handle file upload for 2x2 picture
@@ -13,61 +12,66 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $twoByTwoError = $twoByTwo['error'];
 
     if ($twoByTwoError === 0) {
-        // Generate a unique name for the file
         $twoByTwoNewName = uniqid('', true) . '.' . pathinfo($twoByTwoName, PATHINFO_EXTENSION);
-        
-        // Define the destination path for the file
         $twoByTwoDestination = '../../resident_folder/2x2pic/' . $twoByTwoNewName;
-        
-        // Move the uploaded file to the destination folder
-        if (move_uploaded_file($twoByTwoTmpName, $twoByTwoDestination)) {
-            echo "File uploaded successfully.";
-        } else {
-            echo "There was an error moving the uploaded file.";
+
+        if (!move_uploaded_file($twoByTwoTmpName, $twoByTwoDestination)) {
+            die("Error moving uploaded file.");
         }
     } else {
-        echo "There was an error uploading your file.";
+        die("Error uploading file.");
     }
 
-    // Other form handling logic
+    // Form processing
+    
+    $residentID = $_SESSION['User_Data']['Resident_ID']; // Resident ID from session
+    $barangayID = $_POST['barangayID'];
     $birthday = $_POST['birthday'];
-    $today = date("F j, Y"); // Get today's date formatted as Month Day, Year
+    $today = date("F j, Y"); // Current date
 
-    // Create a DateTime object for today
     $date = new DateTime();
-
-    $dateFormatted = $date->format('Ymd'); // For example, "20250323"
-
-    // Static unique number (you can generate dynamically)
-    $uniqueNumber = str_pad(1, 4, '0', STR_PAD_LEFT); // Pad to 4 digits like "0001"
-
-    // Generate the ID in the desired format: [Year][Month][Day]-[Unique Number]
+    $dateFormatted = $date->format('Ymd');
+    $uniqueNumber = str_pad(1, 4, '0', STR_PAD_LEFT);
     $id = $dateFormatted . '-' . $uniqueNumber;
 
-    // Add 1 year for validity
     $date->modify('+1 year');
-
-    // Format the date to "Month Day, Year"
     $valid = $date->format('F j, Y');
-    
-    // Convert the birthday into the "Month Day, Year" format
+
     $formattedBirthday = date("F j, Y", strtotime($birthday));
 
-    // Full Name
     $fullName = $_POST['firstName'] . ' ' . $_POST['middleInitial'][0] . '. ' . $_POST['lastName'] . ' ' . $_POST['suffix'];
-
-    // Address (Join with commas and newlines as per your request)
-    $address = $_POST['block'] ." ". $_POST['street'] ." ".  $_POST['subdivision'] . ', 1470 Barangay Baritan, Malabon City';
-    $formattedAddress = str_replace(',', ",\n", $address);  // Add newline after commas
+    $address = $_POST['block'] . " " . $_POST['street'] . " " . $_POST['subdivision'] . ', 1470 Barangay Baritan, Malabon City';
+    $formattedAddress = str_replace(',', ",\n", $address);
 
     $emergencyPerson = $_POST['emergencyPerson'];
     $emergencyContact = $_POST['emergencyContact'];
 
+    // Database Insert Query
+    $sql = "INSERT INTO barangay_id_tbl_{$id}Resident_ID, FullName, Address, Birthday, Date_Issued, Valid_Until, Contact_Person, Contact_Number, TwoByTwo) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->bind_param("ssssssssss", $barangayID, $residentID, $fullName, $formattedAddress, $formattedBirthday, $today, $valid, $emergencyPerson, $emergencyContact, $twoByTwoNewName);
+        
+        if ($stmt->execute()) {
+            echo "Record inserted successfully.";
+
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+
+        $stmt->close();
+    } else {
+        echo "Error preparing query: " . $conn->error;
+    }
+
+    $conn->close();
     ob_end_clean();
 } else {
     echo "Form was not submitted.";
     exit;
 }
+
 
 
 // Create instance of FPDF class
