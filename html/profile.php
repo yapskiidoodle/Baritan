@@ -10,7 +10,7 @@ require '../src/residentInfo.php';
 
 $FirstName = $_SESSION['User_Data']['FirstName'] ?? '';
 $LastName = $_SESSION['User_Data']['LastName'] ?? '';
-$Address = $userData['Address']?? '';
+$Address = $_SESSION['User_Data']['Address']?? '';
 $userEmail =  $_SESSION['User_Data']['Resident_Email'] ?? '';
 $isHead = $_SESSION['User_Data']['Resident_Role'] == 'Head';
 
@@ -255,14 +255,15 @@ if ($familyID) {
         data-bs-target="#editModal">
          Edit Profile
     </button>
-<?php endif; ?>
+    <?php endif; ?>
 
-
+    <?php if ($isHead): ?>  
     <button type="button" id="add_account_button" class="button mt-2" 
         style="padding: 0% 2%; font-size: 20px;" 
         data-bs-toggle="modal" data-bs-target="#registerModal">
         Add Member
     </button>
+    <?php endif; ?>
 <!-- id="edit_button" class="btn btn-warning text-white mt-2" 
             style="padding: 0% 2%; font-size: 20px;"  -->
 </div>

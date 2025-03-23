@@ -98,8 +98,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (!empty($password)) {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        $sqlAccount = "INSERT INTO account_setting_tbl (Profile_ID, Account_ID, Password, Date_Created) 
-                       VALUES (?, ?, ?, NOW())";
+        $sqlAccount = "INSERT INTO account_setting_tbl (Profile_ID, Account_ID, Resident_ID,Member_Password, Date_Created) 
+                       VALUES (?, ?, ?, ?, NOW())";
         $stmtAccount = $conn->prepare($sqlAccount);
         if (!$stmtAccount) {
             die("Error preparing account setting table SQL: " . $conn->error);
@@ -107,8 +107,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $Profile_ID = "PROF" . date("Y") . str_pad($residentCount, 4, "0", STR_PAD_LEFT);
         $Account_ID = $_SESSION['User_Data']['Account_ID'] ?? '';
+       
 
-        $stmtAccount->bind_param("sss", $Profile_ID, $Account_ID, $hashedPassword);
+        $stmtAccount->bind_param("ssss", $Profile_ID,$Account_ID, $Resident_ID , $hashedPassword);
 
         if (!$stmtAccount->execute()) {
             die("Error inserting into account_setting_tbl: " . $stmtAccount->error);

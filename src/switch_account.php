@@ -2,13 +2,12 @@
 require 'connect.php';
 require 'account.php';
 
-session_regenerate_id(true);
+session_regenerate_id(true); // Try commenting this out if session issues persist
 
 // Check if the request method is POST
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     die("Invalid request method!");
 }
-
 
 // Ensure Resident_ID is provided
 if (!isset($_POST['Resident_ID'])) {
@@ -16,7 +15,7 @@ if (!isset($_POST['Resident_ID'])) {
 }
 
 $residentID = $_POST['Resident_ID'];
-$enteredPassword = $_POST['passwordMember'] ?? ''; // Get entered password if provided
+$enteredPassword = $_POST['passwordMember'] ?? '';
 
 // Fetch resident data
 $query = "SELECT 
@@ -31,8 +30,8 @@ $query = "SELECT
   FROM residents_information_tbl r
   LEFT JOIN family_name_tbl f ON r.Family_Name_ID = f.Family_Name_ID
   LEFT JOIN account_tbl a ON f.Account_ID = a.Account_ID
-  LEFT JOIN account_setting_tbl asettings ON a.Account_ID = asettings.Account_ID
-  WHERE r.Resident_ID = ?"; 
+  LEFT JOIN account_setting_tbl asettings ON r.Resident_ID = asettings.Resident_ID
+  WHERE r.Resident_ID = ?";
 
 $stmt = $conn->prepare($query);
 if (!$stmt) {
@@ -49,6 +48,15 @@ $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
+// echo "<pre>";
+// echo "DEBUG: Resident_ID ($residentID)\n";
+// echo "DB Password Retrieved: " . ($user['Member_Password'] ?? "Not Found") . "\n";
+// echo  ($_SESSION ?? "Not Found") . "\n";
+// echo "Actual DB Row: ";
+// print_r($user); // Display full row
+// echo "</pre>";
+
+
 // Check if the user exists
 if (!$user) {
     die("Error: User not found.");
@@ -60,7 +68,6 @@ $isHead = $user['Resident_Role'] === 'Head';
 // If the user is NOT the head, verify their password
 if (!$isHead) {
     if (empty($enteredPassword)) {
-        var_dump($enteredPassword);
         die("Error: Password is required for non-head users.");
     }
 
@@ -98,8 +105,14 @@ $_SESSION['User_Data'] = [
     'Valid_ID_Picture_Back' => $user['Valid_ID_Picture_Back'],
     'Pic_Path' => $user['Pic_Path'],
     'Age' => $user['Age'],
-    'Member_Password' => $user['Member_Password']
+    'Member_Password' => $user['Member_Password'] // Explicitly setting this
 ];
+
+// // Debugging output after session update
+// echo "<pre>";
+// echo "Session Password After: " . $_SESSION['User_Data']['Member_Password'] . "\n";
+// echo "</pre>";
+// exit();
 
 // Redirect to the homepage or another page
 header("Location: ../index.php");
