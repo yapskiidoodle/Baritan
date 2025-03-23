@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <?php
+  require '../../src/connect.php';
+  require '../../src/account.php';
+  
+  ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -12,7 +17,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../../design.css"> 
 
-    <title>Register</title>
+    <title>Barangay ID</title>
     <style>
         body {
             background-image: url('../../pics/BarangayBaritan.png'); 
@@ -116,11 +121,11 @@
 
 
 
-    <div class="container mt-5 text-center" style=" background-color: white; padding: 3% 0%; margin-bottom:5%;"> 
+    <div class="container mt-5 text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%;"> 
         <div class="display-4 " style="font-weight: 700;">Barangay ID</div>
         <div class="container w-75 mt-5">
 
-            <form action="">
+            <form  id="generateID" action="generate_id.php" method="POST" enctype="multipart/form-data" target="_blank" >
               <div class="container text-center w-50">
                 <div class=" row justify-content-center align-items-center mt-4 " >
                     <div class="col text-center" >
@@ -150,134 +155,80 @@
                     
 
 
-                      <div class="h4 mt-5 text-center" style="font-weight: 700;">Personal Information</div>
+                    <!--  Personal Information -->
+                    <div class="h4 mt-5 text-center" style="font-weight: 700;">Personal Information</div>
                       <div class="row">
-                        <div class="col w-25">
+                        <div class="col-md-12 ">
                             <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">First Name</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. Juan">
+                                <label for="exampleInputPassword1" >First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="ex. Juan" required>
                               </div>
                         </div>
-                        <div class="col w-25">
+                        <div class="col-md-12 ">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Last Name</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. Dela Cruz">
+                                <input type="text" class="form-control" id="lastName" name="lastName"placeholder="ex. Dela Cruz" required>
                               </div>
                         </div>
-                        <div class="col-auto">
+                        <div class="col-md-12">
                             <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">M.I.</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. B">
+                                <label for="exampleInputPassword1">Middle Name</label>
+                                <input type="text" class="form-control" id="middleInitial" name="middleInitial" placeholder="ex. Banaga">
+                              </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mt-4" style="font-weight: 800;">
+                                <label for="exampleInputPassword1">Suffix</label>
+                                <input type="text" class="form-control" id="suffix" name="suffix" placeholder="ex. Sr. Jr."  >
                               </div>
                         </div>
                       </div>
 
-
-                      <div class="row">
-                        <div class="col">
-                            <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">Sex</label>
-                                <select class="form-control" id="exampleFormControlSelect1">
-                                    <option>Male</option>
-                                    <option>Female</option>
-                                    <option>Other? ewan</option>
-                                    
-                                  </select>
-                              </div>
-                        </div>
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Date of Birth</label>
-                                <input type="date" class="form-control" id="exampleInputPassword1" placeholder="ex. Dela Cruz">
+                                <input type="date" name="birthday" class="form-control" id="exampleInputPassword1" placeholder="ex. Dela Cruz">
                               </div>
                         </div>
-                        <div class="col">
-                            <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">Role</label>
-                                <select class="form-control" id="exampleFormControlSelect1">
-                                    <option>Head of the Family</option>
-                                    <option>Father</option>
-                                    <option>Mother</option>
-                                    <option>Daughter</option>
-                                    <option>Son</option>
-                                    <option>Other</option>
-                                  </select>
-                              </div>
-                        </div>
-                      </div>
+                        <div class="h4 mt-5 text-center" style="font-weight: 700;">Emergency Contact Information</div>
                       <div class="form-group mt-4" style="font-weight: 800;">
-                        <label for="exampleInputEmail1">Email address</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example@gmail.com">
+                        <label for="exampleInputPassword1">Emergency Contact Person</label>
+                        <input type="text" class="form-control" id="emergencyPerson" name="emergencyPerson"placeholder="">
                       </div>
-                      <div class="form-group mt-4" style="font-weight: 800;">
-                        <label for="exampleInputEmail1">Contact Number</label>
-                        <input type="number" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="(09)">
-                      </div>
-                      <div class="form-group mt-4" style="font-weight: 800;">
-                        <label for="exampleInputEmail1">Occupation</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example@gmail.com">
-                      </div>
-                      <div class="row">
-                        <div class="col">
-                            <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">Religion</label>
-                                <select class="form-control" id="exampleFormControlSelect1">
-                                    <option>Roman Catholic</option>
-                                    <option>Islam</option>
-                                    <option>Jehovah’s Witnesses</option>
-                                    <option>Christian</option>
-                                    <option>Iglesia ni Cristo (INC)</option>
-                                    
-                                  </select>
-                              </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">Civil Status</label>
-                                <select class="form-control" id="exampleFormControlSelect1">
-                                    <option>Single</option>
-                                    <option>Married</option>
-                                    <option>Widowed</option>
-                                    <option>Divorced</option>
-                                    <option>Annuled</option>
-                                    <option>Seperated</option>
-                                  </select>
-                              </div>
-                        </div>
-                        <div class="col">
-                            <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">Eligibility Status</label>
-                                <select class="form-control" id="exampleFormControlSelect1">
-                                    <option>PWD</option>
-                                    <option>Single Parent</option>
-                                    <option>Employed/Unemployed</option>
-                                    <option>Student</option>
-                                    <option>Senior Citizen</option>
-                                    <option>Other</option>
-                                  </select>
-                              </div>
-                        </div>
-                      </div>
-                      <br>
 
+                      <div class="form-group mt-4" style="font-weight: 800;">
+                        <label for="emergencyContact">Emergency Contact Number</label>
+                        <input type="tel" class="form-control" id="emergencyContact" name="emergencyContact" 
+                            placeholder="09XXXXXXXXX" 
+                            pattern="09[0-9]{9}" maxlength="11">
+                        <div class="invalid-feedback">Must be exactly 11 digits (09XXXXXXXXX).</div>
+                      </div>
+                    </div>
+                    
+                  
+                   
+                     
+                 
+      
+                      <div class="tab d-none">
                       <div class="h4 mt-5 text-center" style="font-weight: 700;">Address</div>
                     
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Block No.</label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example@gmail.com">
+                        <input type="text" class="form-control" name="block" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Block No">
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Street Name</label>
-                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                        <input type="text" class="form-control" name="street" id="exampleInputPassword1" placeholder="Street Name">
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Subdivision/Village/Sitio (Optional)</label>
-                        <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                        <input type="text" class="form-control" name="subdivision" id="exampleInputPassword1" placeholder="(optional)">
                       </div>
 
 
-                </div>
-                <div class="tab d-none">
+                
+       
                     <div class="h4 mt-5 text-center" style="font-weight: 700">Payment</div>
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Type of Identification Card (ID)</label>
@@ -299,6 +250,12 @@
                             <input type="file" class="form-control" id="exampleInputEmail1">
                             <div class="lead mt-4" style="font-size: 16px;">Back Side</div>
                             <input type="file" class="form-control" id="exampleInputEmail1">
+                          </div>
+
+                          <div class="form-group mt-4" style="font-weight: 800;">
+                              <label for="exampleInputEmail1">Upload 2x2 Picture</label>  
+                              <input type="file" name="twoByTwo" id="2x2" accept="image/*" class="form-control"  />
+                              <div class="lead mt-4" style="font-size: 16px;">with white background</div>
                           </div>
     
                           <div class="form-group mt-5" style="font-weight: 800;">
@@ -328,66 +285,14 @@
                         <button type="button" id="next_button" class="button ms-auto mt-2" onclick="next()" >Next</button>
                     </div>
             </form>
-                    <script> 
-
-                        var current = 0;
-                        var tabs = $(".tab");
-                        var tabs_pill = $(".step-circle");
-                        loadFormData(current);
-                        
-                        function loadFormData(n) {
-                        
-                            $(tabs_pill[n]).addClass("active");
-                            $(tabs_pill[n]).removeClass("inactive"); 
-                            $(tabs[n]).removeClass("d-none");
-                          
-                        if (n == 0) {
-                            $("#back_button").addClass("d-none"); // Hide the Back button
-                        } else {
-                            $("#back_button").removeClass("d-none"); // Show the Back button
-                        }
-                
-                        n == tabs.length -1
-                            ? $("#next_button")
-                                .text("Submit")
-                                .removeAttr("onclick")
-                                .attr("data-bs-toggle", "modal")
-                                .attr("data-bs-target","#exampleModal")
-                            : $("#next_button")
-                                .attr("type", "button")
-                                .text("Next")
-                                .attr("onclick", "next()");
-                        
-                        
-                        }
-                        
-                        function next() {
-                          $(tabs[current]).addClass("d-none");
-                          $(tabs_pill[current]).addClass("inactive");
-                         
-                          current++;
-                          loadFormData(current);
-                        }
-                        
-                        function back() {
-                          $(tabs[current]).addClass("d-none");
-                          $(tabs_pill[current]).addClass("inactive");
-                          
-                          $("#next_button").removeAttr("data-bs-toggle","data-bs-target")
-                
-                        
-                          current--;
-                          loadFormData(current);
-                        }
-                        
-                              </script>
+   
                 
                 
             </div>
 
           </div>
 
-        </form>
+    
     </div>
     
 
@@ -432,14 +337,92 @@
               </div>
             </div>
             <div class="modal-footer">
-               <div class="text-center mx-auto">
-                    <button type="button" class="learn" data-bs-toggle="modal"  style="padding: 5px 15px;" onclick="window.location.href='../../'">Okay</button>
-               </div>
+            <div class="text-center mx-auto">
+              <button type="button" id="generateButton" class="learn" style="padding: 5px 15px;" onclick="submitForm()">Okay</button>
+          </div>
              
             </div>
           </div>
         </div>
     </div>
+
+    <script>
+    var current = 0;
+    var tabs = $(".tab");
+    var tabs_pill = $(".step-circle");
+
+    loadFormData(current);
+
+    function loadFormData(n) {
+        // Activate the current step
+        $(tabs_pill[n]).addClass("active").removeClass("inactive");
+        $(tabs[n]).removeClass("d-none");
+
+        // Handle back button visibility
+        $("#back_button").toggleClass("d-none", n === 0);
+
+        // Handle next/submit button state
+        if (n === tabs.length - 1) {
+            $("#next_button")
+                .text("Submit")
+                .removeAttr("onclick")
+                .attr({ "data-bs-toggle": "modal", "data-bs-target": "#exampleModal" });
+        } else {
+            $("#next_button")
+                .text("Next")
+                .attr({ "type": "button", "onclick": "next()" })
+                .removeAttr("data-bs-toggle data-bs-target");
+        }
+    }
+
+    function next() {
+        $(tabs[current]).addClass("d-none");
+        $(tabs_pill[current]).addClass("inactive");
+
+        current++;
+        loadFormData(current);
+    }
+
+    function back() {
+        $(tabs[current]).addClass("d-none");
+        $(tabs_pill[current]).addClass("inactive");
+
+        current--;
+        loadFormData(current);
+    }
+    
+    function submitForm() {
+    const form = document.getElementById("generateID");
+    
+    // Open a new tab for form submission
+    const newTab = window.open("", "_blank");
+
+    // Create a temporary form to submit inside the new tab
+    const tempForm = document.createElement("form");
+    tempForm.action = form.action;
+    tempForm.method = form.method;
+    tempForm.enctype = form.enctype;
+    tempForm.target = newTab.name; // Ensure submission goes to the new tab
+
+    // Clone form elements and append them to the temporary form
+    for (let element of form.elements) {
+        const clonedElement = element.cloneNode(true);
+        tempForm.appendChild(clonedElement);
+    }
+
+    document.body.appendChild(tempForm);
+    tempForm.submit(); // Submit the form inside the new tab
+    document.body.removeChild(tempForm); // Clean up
+
+    // Redirect back to index.php after submission
+    setTimeout(() => {
+        window.location.href = "../../index.php";
+    }, 1000);
+}
+
+</script>
+
+
 
 
 </body>

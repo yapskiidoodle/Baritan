@@ -193,7 +193,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                         </div>
                         <div class="col-md-12">
                             <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">Middle Initial</label>
+                                <label for="exampleInputPassword1">Middle Name</label>
                                 <input type="text" class="form-control" id="middleInitial" name="middleInitial" placeholder="ex. Banaga">
                               </div>
                         </div>
