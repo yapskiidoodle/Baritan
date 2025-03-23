@@ -392,32 +392,13 @@
     }
     
     function submitForm() {
-    const form = document.getElementById("generateID");
-    
-    // Open a new tab for form submission
-    const newTab = window.open("", "_blank");
-
-    // Create a temporary form to submit inside the new tab
-    const tempForm = document.createElement("form");
-    tempForm.action = form.action;
-    tempForm.method = form.method;
-    tempForm.enctype = form.enctype;
-    tempForm.target = newTab.name; // Ensure submission goes to the new tab
-
-    // Clone form elements and append them to the temporary form
-    for (let element of form.elements) {
-        const clonedElement = element.cloneNode(true);
-        tempForm.appendChild(clonedElement);
+        // Redirect to the generate-id page
+        document.getElementById("generateID").submit();
     }
-
-    document.body.appendChild(tempForm);
-    tempForm.submit(); // Submit the form inside the new tab
-    document.body.removeChild(tempForm); // Clean up
-
-    // Redirect back to index.php after submission
-    setTimeout(() => {
-        window.location.href = "../../index.php";
-    }, 1000);
+    function redirectToIndex() {
+    setTimeout(function() {
+        window.location.href = "../../index.php"; // Redirect to index.php after submission
+    }, 1000); // Delay to allow the new tab to open before redirection
 }
 
 </script>

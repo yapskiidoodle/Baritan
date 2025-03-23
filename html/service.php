@@ -90,74 +90,78 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
         </div>
     <!-- End Header -->
 
+    <div style="margin: 10%;" class="container">
+    <div class="ms-5">
+        <div class="display-6">
+            Our Services
+        </div>
+        <div class="lead">Online Services we Offer</div>
+    </div>
 
-      <div style="margin: 10%; " class="container">
-        <div class="ms-5">
-            <div class="display-6">
-                Our Services
-            </div>
-            <div class="lead">Online Services we Offer</div>
-        </div>
-        <div class="mt-5">
-            <div class="row">
-                <div class="col-md-7">
-                    <div class="row">
-                        <div class="col">
-                            <li style="color: #1C3A5B;" class="h4">Application Forms 
-                                <div class="lead ms-4" style="font-size: 18px;">Renewal/Closure/Personal Use</div>
-                                <div class="text-center">
-                                    <a href="application.php"><button class="learn mt-3" style="padding: 10px 20px" >Check Forms</button></a>
-                                </div>
-                            </li>
-                            <br>
-                            <br>
-                            <br>
-                            <li style="color: #1C3A5B;" class="h4">Barangay ID 
-                                <div class="lead ms-4" style="font-size: 18px;">Barangay ID for the residents
-                                    of <br> Barangay Baritan</div>
-                                    <div class="text-center">
-                                        <button type="button" id="next_button" class="learn  mt-3"  style="padding: 10px 20px" data-bs-target="#autofill"  data-bs-toggle="modal" >
-                                            Click to Apply
-                                        </button> 
-                                    </div>
-                            </li>
-                        </div>
-                        <div class="col">
-                            <li style="color: #1C3A5B;" class="h4">Reservation
-                                <div class="lead ms-4" style="font-size: 18px;">Reserve Tents, Chairs, etc...</div>
-                                <div class="text-center">
-                                    <a href="services/reservation.php"><button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button></a>
-                                </div>
-                            </li>
-                        </div>
+
+    <div class="mt-5">
+        <div class="row">
+  
+            <div class="col-md-7">
+            <?php if (isset($_SESSION['userEmail'])): ?>
+                <div class="row">
+                    <div class="col">
+                        <li style="color: #1C3A5B;" class="h4">Application Forms 
+                            <div class="lead ms-4" style="font-size: 18px;">Renewal/Closure/Personal Use</div>
+                            <div class="text-center">
+                                <a href="application.php"><button class="learn mt-3" style="padding: 10px 20px">Check Forms</button></a>
+                            </div>
+                        </li>
+                        <br><br><br>
+                        <li style="color: #1C3A5B;" class="h4">Barangay ID 
+                            <div class="lead ms-4" style="font-size: 18px;">Barangay ID for the residents
+                                of <br> Barangay Baritan</div>
+                            <div class="text-center">
+                                <button type="button" id="next_button" class="learn mt-3" style="padding: 10px 20px" data-bs-target="#autofill" data-bs-toggle="modal">
+                                    Click to Apply
+                                </button> 
+                            </div>
+                        </li>
                     </div>
-                    <hr class="hr mt-4" >
-                    <div class="row" style="margin-top: 10%;">
-                        <div class="col">
-                            <li style="color: #1C3A5B;" class="h4">Report Complaint
-                                <div class="lead ms-4" style="font-size: 18px;">Report an Incident</div>
-                                <div class="text-center">
-                                    <a href="services/complaint.php"><button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button></a>
-                                </div>
-                            </li>
-                        </div>
-                        <div class="col">
-                            <li style="color: #1C3A5B;" class="h4">Blotter Report
-                                <div class="lead ms-4" style="font-size: 18px;">Report an Incident</div>
-                                <div class="text-center">
-                                  <a href="services/blotter.php"> <button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button></a>
-                                </div>
-                            </li>
-                        </div>
+                    <div class="col">
+                        <li style="color: #1C3A5B;" class="h4">Reservation
+                            <div class="lead ms-4" style="font-size: 18px;">Reserve Tents, Chairs, etc...</div>
+                            <div class="text-center">
+                                <a href="services/reservation.php"><button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button></a>
+                            </div>
+                        </li>
                     </div>
                 </div>
-                
-                <div class="col-md-3">
-                    <img src="../pics/BarangayBaritan.png " alt="Barangay"  style="height: 520px; width: 450px;">
+                <?php endif; ?>
+                <hr class="hr mt-4">
+                <div class="row" style="margin-top: 10%;">
+                    <div class="col">
+                        <li style="color: #1C3A5B;" class="h4">Report Complaint
+                            <div class="lead ms-4" style="font-size: 18px;">Report an Incident</div>
+                            <div class="text-center">
+                                <a href="services/complaint.php"><button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button></a>
+                            </div>
+                        </li>
+                    </div>
+                    <div class="col">
+                        <li style="color: #1C3A5B;" class="h4">Blotter Report
+                            <div class="lead ms-4" style="font-size: 18px;">Report an Incident</div>
+                            <div class="text-center">
+                                <a href="services/blotter.php"><button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button></a>
+                            </div>
+                        </li>
+                    </div>
                 </div>
             </div>
+
+            <div class="col-md-3">
+                <img src="../pics/BarangayBaritan.png" alt="Barangay" style="height: 520px; width: 450px;">
+            </div>
         </div>
-      </div>
+    </div>
+ 
+</div>
+
 
 
 

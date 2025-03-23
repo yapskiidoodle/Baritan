@@ -1,6 +1,12 @@
+<?php
+require '../../src/connect.php'; // Use 'include' or 'require' to load the 
+require '../../src/account.php';
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -73,9 +79,10 @@
 <body>
 
 
+    
     <!--header-->
-    <div class="container-fluid" style="background-color:#1C3A5B;color: white;padding: 1%; width: 100%;  ">  
-        <div class="row" >    
+    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
+        <div class="row">
            <div class="col-1" style="width: 5.3%; ">
                <img src="../../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
                
@@ -87,42 +94,56 @@
            <div class="col" style=" text-align: center; padding-top: 1.5%;">
                <div style="display: flex; ">
                    <div style="padding:0% 4%;">
-                       <a href="../../index.php">Home</a>
+                       <a href="../../">Home</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                       <a href="../about.php">About Us</a>
+                       <a href="about.php">About Us</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                       <a href="../service.php">Services</a>
+                       <a href="service.php">Services</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                       <a href="../../index.php?#contact"  >Contact Us</a>
+                      <a href="../../index.php#contact">Contact Us</a>
                    </div>
                    <div class="vr"></div>
-                   <div hidden>
-                       <img src="pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; margin-top: -26.6%; margin-left: 5%;">
-                   </div>
-                   <div>
-                        <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
-                   </div>
+                   
+                    <?php if (isset($_SESSION['userEmail'])) { ?>
+                        <div class="dropdown" id="profile" name="profile">
+                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                                <li>
+                                    <form action="../../src/logout.php" method="POST">
+                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php } else { ?>
+                        <div id="start" name="start">
+                            <a href="../login.php" class="btn btn-danger ms-2">Log In</a>
+                        </div>
+                    <?php } ?>
                </div>
            </div>
         </div>
-    </div>
-    <!--END HEADER-->
+        </div>
+    <!-- End Header -->
 
 
-
-    <div class="container mt-5 text-center" style=" background-color: white; padding: 3% 0%; margin-bottom:5%;"> 
+    <div class="container mt-5 text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom: 5%;"> 
+    
         <div class="display-4 " style="font-weight: 700;">Blotter Form</div>
         <div class="lead">All section as marked <s style="color:red">*</s> are to be completed </div>
         <div class="lead" style="font-size: 16px;">All Personal Details remains <b>CONFIDENTIAL</b></div>
         <div class="container w-75 mt-5">
 
-            <form action="">
+            <form action="../../src/blotterLogic.php" method="POST" id="blotterForm">
 
       
             <div class="container " style="text-align: left;">
@@ -132,25 +153,26 @@
                     <div class="col w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Name of Person making the Complaint</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. Juan Dela Cruz">
+                            <input type="text" name="fullName" class="form-control" id="exampleInputPassword1" placeholder="ex. Juan Dela Cruz" required>
                           </div>
                     </div>
                     <div class="col w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Residential Address</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Block No. Street Name, Subd/Village/Sitio">
+                            <input type="text" name="fullAddress"class="form-control" id="exampleInputPassword1" placeholder="Block No. Street Name, Subd/Village/Sitio" required>
                           </div>
                     </div>
-                    <div class="col w-100">
-                        <div class="form-group mt-4" style="font-weight: 800;">
-                            <label for="exampleInputPassword1">Contact Information</label>
-                            <input type="number" class="form-control" id="exampleInputPassword1" placeholder="(09) ">
-                          </div>
-                    </div>
+                    <div class="form-group mt-4" style="font-weight: 800;">
+                        <label for="contact">Contact Number</label>
+                        <input type="tel" class="form-control" name="contact" id="contact"  
+                            placeholder="09XXXXXXXXX" 
+                            pattern="09[0-9]{9}" maxlength="11" required>
+                        <div class="invalid-feedback">Must be exactly 11 digits (09XXXXXXXXX).</div>
+                      </div>
                     <div class="col w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Email Address</label>
-                            <input type="email" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com">
+                            <input type="email" name="email" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com" required>
                           </div>
                     </div>
                     
@@ -160,13 +182,13 @@
                     <div class="col-md-4 ">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Date  of Incident</label>
-                            <input type="date" class="form-control" id="exampleInputPassword1" >
+                            <input type="date" name="dateIncident"class="form-control" id="exampleInputPassword1" required >
                           </div>
                     </div>
                     <div class="col-md-4 ">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Time of the Incident</label>
-                            <input type="time" class="form-control" id="exampleInputPassword1">
+                            <input type="time" name="timeIncident" class="form-control" id="exampleInputPassword1" required>
                           </div>
                     </div>
                     <div class="col-md-4  ">
@@ -174,17 +196,17 @@
                             <label class="mt-3 "> Case Nature </label>
 
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                <input class="form-check-input" type="radio" name="caseType" value="Civil Case" id="flexRadioDefault1" required>
                                 <label class="form-check-label" for="flexRadioDefault1">
-                                  Civil Case
+                                    Civil Case
                                 </label>
-                              </div>
-                              <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="caseType" value="Criminal Case" id="flexRadioDefault2" required>
                                 <label class="form-check-label" for="flexRadioDefault2">
-                                  Criminal Case
+                                    Criminal Case
                                 </label>
-                              </div>
+                            </div>
 
                            </div>
                     </div>
@@ -193,33 +215,35 @@
                     <div class="col-md-12 w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Location of the Incident</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1">
+                            <input type="text" name="locationIncident" class="form-control" id="exampleInputPassword1" required>
                           </div>
                     </div>
                     <div class="col-md-12 w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Who/What is the subject of your Complaint</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1">
+                            <input type="text" name="subjectIncident"class="form-control" id="exampleInputPassword1" >
                           </div>
                     </div>
                     <div class="col-md-12">
                         <div class="form-group mt-4" style="font-weight: 800; text-align: left;">
                             <label for="exampleFormControlTextarea1">Summary of the Complaint</label>
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                          </div>
+                            <textarea class="form-control" id="exampleFormControlTextarea1" name="blotterSummary" rows="3" required></textarea>
+                        </div>
                     </div>
+
 
                 </div>
                 <div class="d-flex mt-5">
                     <button type="button" id="back_button" onclick="window.location.href='../service.php'" class="button me-auto mt-2">
                         Back
                     </button>
-                    <button type="button" id="next_button" class="button mt-2" data-bs-toggle="modal" data-bs-target="#confirmation">
+                    <button type="button" id="next_button" class="button mt-2" >
                         Submit
                     </button>
                 </div>
         </form>
     </div>
+                    </div>
     
 
 
@@ -264,13 +288,129 @@
             </div>
             <div class="modal-footer">
                <div class="text-center mx-auto">
-                    <button type="button" class="learn" data-bs-toggle="modal"  style="padding: 5px 15px;" onclick="window.location.href='../../'">Okay</button>
+                    <button type="button" class="learn" data-bs-toggle="modal"  style="padding: 5px 15px;" onclick="submitForm()">Okay</button>
                </div>
              
             </div>
           </div>
         </div>
       </div>
+
+
+      <script>
+$(document).ready(function () {
+    // ✅ Live validation on input change
+    $(document).on("input change", "input[required], select[required], textarea[required]", function () {
+        validateField(this);
+        toggleSubmitButton();
+    });
+
+    $("input[name='caseType']").on("change", function () {
+        validateField(this);
+        toggleSubmitButton();
+    });
+
+    // ✅ Validate all fields when clicking Submit
+    $("#next_button").on("click", function (event) {
+        let firstInvalid = validateAllFields();
+        
+        if (firstInvalid) {
+            event.preventDefault(); // Stop modal from opening
+            $(firstInvalid).focus(); // Focus on first invalid field
+        } else {
+            enableSubmitButton(); // ✅ Enable modal attributes
+        }
+    });
+});
+
+// ✅ Validate all fields & highlight missing inputs
+function validateAllFields() {
+    let firstInvalid = null;
+
+    $("#blotterForm").find("input[required], select[required], textarea[required]").each(function () {
+        if (!validateField(this) && !firstInvalid) {
+            firstInvalid = this;
+        }
+    });
+
+    // ✅ Ensure a case type is selected
+    if (!$("input[name='caseType']:checked").val()) {
+        showError($("input[name='caseType']").first(), "Please select a case type.");
+        if (!firstInvalid) firstInvalid = $("input[name='caseType']").first();
+    }
+
+    return firstInvalid;
+}
+
+// ✅ Validate a single field
+function validateField(element) {
+    var value = $(element).val() ? $(element).val().trim() : '';
+    var inputType = $(element).attr("type");
+    var inputName = $(element).attr("name");
+
+    var generalRegex = /[^a-zA-Z0-9ñ ]/;
+    var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    var phoneRegex = /^09[0-9]{9}$/;
+
+    if (!value) {
+        showError(element, "This field is required.");
+        return false;
+    } 
+    if (inputType === "email" && !emailRegex.test(value)) {
+        showError(element, "Invalid email format (example@gmail.com).");
+        return false;
+    } 
+    if (inputName === "contact" && !phoneRegex.test(value)) {
+        showError(element, "Must be exactly 11 digits (09XXXXXXXXX).");
+        return false;
+    } 
+    if (!["email", "date", "time"].includes(inputType) && generalRegex.test(value)) {
+        showError(element, "Special characters are not allowed.");
+        return false;
+    }
+
+    removeError(element);
+    return true;
+}
+
+// ✅ Show error message
+function showError(element, message) {
+    $(element).addClass("is-invalid").removeClass("is-valid");
+    $(element).next(".invalid-feedback").remove();
+    $(element).after('<div class="invalid-feedback">' + message + '</div>');
+}
+
+// ✅ Remove error message
+function removeError(element) {
+    $(element).removeClass("is-invalid").addClass("is-valid");
+    $(element).next(".invalid-feedback").remove();
+}
+
+// ✅ Enable modal attributes on the Submit button
+function enableSubmitButton() {
+    $("#next_button").attr("data-bs-toggle", "modal").attr("data-bs-target", "#confirmation");
+}
+
+// ✅ Disable modal attributes if fields are missing
+function disableSubmitButton() {
+    $("#next_button").removeAttr("data-bs-toggle data-bs-target");
+}
+
+// ✅ Check if all fields are valid and toggle the Submit button
+function toggleSubmitButton() {
+    if (validateAllFields()) {
+        disableSubmitButton();
+    } else {
+        enableSubmitButton();
+    }
+}
+
+function submitForm() {
+    $("#blotterForm").submit();
+}
+</script>
+
+
 
 
 </body>
