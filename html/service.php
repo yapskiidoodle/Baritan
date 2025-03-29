@@ -103,13 +103,17 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
         <div class="row">
   
             <div class="col-md-7">
-            <?php if (isset($_SESSION['userEmail'])): ?>
+            
+
+            
                 <div class="row">
                     <div class="col">
                         <li style="color: #1C3A5B;" class="h4">Application Forms 
                             <div class="lead ms-4" style="font-size: 18px;">Renewal/Closure/Personal Use</div>
                             <div class="text-center">
-                                <a href="application.php"><button class="learn mt-3" style="padding: 10px 20px">Check Forms</button></a>
+                            <a href="<?php echo isset($_SESSION['userEmail']) ? 'application.php' : 'login.php'; ?>">
+                                <button class="learn mt-3" style="padding: 10px 20px">Check Forms</button>
+                            </a>
                             </div>
                         </li>
                         <br><br><br>
@@ -117,9 +121,15 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                             <div class="lead ms-4" style="font-size: 18px;">Barangay ID for the residents
                                 of <br> Barangay Baritan</div>
                             <div class="text-center">
-                                <button type="button" id="next_button" class="learn mt-3" style="padding: 10px 20px" data-bs-target="#autofill" data-bs-toggle="modal">
-                                    Click to Apply
-                                </button> 
+                            <button type="button" id="next_button" class="learn mt-3" style="padding: 10px 20px" 
+                                <?php if (!isset($_SESSION['userEmail'])) { ?>
+                                    onclick="window.location.href='login.php';"
+                                <?php } else { ?>
+                                    data-bs-target="#autofill" data-bs-toggle="modal"
+                                <?php } ?>
+                            >
+                                Click to Apply
+                            </button>
                             </div>
                         </li>
                     </div>
@@ -127,13 +137,32 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                         <li style="color: #1C3A5B;" class="h4">Reservation
                             <div class="lead ms-4" style="font-size: 18px;">Reserve Tents, Chairs, etc...</div>
                             <div class="text-center">
-                                <a href="services/reservation.php"><button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button></a>
+                            <a href="<?php echo isset($_SESSION['userEmail']) ? 'services/reservation.php' : 'login.php'; ?>">
+                                <button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button>
+                            </a>
                             </div>
                         </li>
                     </div>
                 </div>
-                <?php endif; ?>
-                <hr class="hr mt-4">
+    
+
+
+                <hr clas```php
+<?php
+// Check if the session variable 'deactivated' is set and its value is true
+if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
+    // Display a modal to notify the user that their account has been deactivated
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var myModal = new bootstrap.Modal(document.getElementById('deactivatedModal'));
+            myModal.show();
+        });
+    </script>";
+    // Clear the session variable
+    unset($_SESSION['deactivated']);
+}
+?>
+```s="hr mt-4">
                 <div class="row" style="margin-top: 10%;">
                     <div class="col">
                         <li style="color: #1C3A5B;" class="h4">Report Complaint

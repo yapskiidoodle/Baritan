@@ -343,12 +343,14 @@ function validateAllFields() {
 }
 
 // ✅ Validate a single field
+// ✅ Validate a single field
 function validateField(element) {
     var value = $(element).val() ? $(element).val().trim() : '';
     var inputType = $(element).attr("type");
     var inputName = $(element).attr("name");
 
-    var generalRegex = /[^a-zA-Z0-9ñ ]/;
+    var generalRegex = /[^a-zA-Z0-9ñ ]/; // Blocks special characters except space
+    var addressRegex = /[^a-zA-Z0-9ñ ,.]/; // Allows ",", "." and space for fullAddress
     var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     var phoneRegex = /^09[0-9]{9}$/;
 
@@ -364,13 +366,23 @@ function validateField(element) {
         showError(element, "Must be exactly 11 digits (09XXXXXXXXX).");
         return false;
     } 
-    if (!["email", "date", "time"].includes(inputType) && generalRegex.test(value)) {
-        showError(element, "Special characters are not allowed.");
-        return false;
-    }
 
+    // If not email, date, or time, validate special characters
+    if (!["email", "date", "time"].includes(inputType)) {
+        if (inputName === "fullAddress") {
+            if (addressRegex.test(value)) {
+                showError(element, "Only letters, numbers, spaces, commas, and periods are allowed.");
+                return false;
+            }
+        } else {
+            if (generalRegex.test(value)) {
+                showError(element, "Special characters are not allowed.");
+                return false;
+            }
+        }
+    }
     removeError(element);
-    return true;
+    return true; // Passes validation
 }
 
 // ✅ Show error message

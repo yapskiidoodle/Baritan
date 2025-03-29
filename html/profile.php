@@ -436,6 +436,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
+
+
+
 <!-- Edit Resident Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editResidentModalLabel">
     <div class="modal-dialog modal-dialog-centered modal-lg">

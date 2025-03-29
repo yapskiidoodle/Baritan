@@ -1,10 +1,33 @@
 <?php
 require ('../src/connect.php');
 
-$id = $_GET['id'];
-$sql = "SELECT Account_ID, User_Email, Role, Type, Status FROM account_tbl WHERE Account_ID = $id";
-$result = $conn->query($sql);
-$admin = $result->fetch_assoc();
+// Check if Account_ID is provided
+if (isset($_GET['Account_ID'])) {
+    $accountId = $_GET['Account_ID'];
 
-echo json_encode($admin);
+    // Fetch admin data from the database
+    $sql = "SELECT Account_ID, Role, Type, Status FROM account_tbl WHERE Account_ID = ?";
+    $stmt = $conn->prepare($sql);
+
+    if ($stmt) {
+        $stmt->bind_param("s", $accountId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows > 0) {
+            $admin = $result->fetch_assoc();
+            echo json_encode(['success' => true, 'admin' => $admin]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Admin not found.']);
+        }
+        $stmt->close();
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Failed to prepare the SQL statement.']);
+    }
+} else {
+    echo json_encode(['success' => false, 'error' => 'Account_ID is required.']);
+}
+
+// Close the database connection
+$conn->close();
 ?>

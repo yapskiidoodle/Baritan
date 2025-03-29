@@ -1,5 +1,20 @@
 <?php
 require ('../src/connect.php');
+require ('../src/account.php');
+
+if (isset($_SESSION['Account_Role'])) {
+    if (($_SESSION['type'] === "Super Admin") || ($_SESSION['type'] === "Admin") || ($_SESSION['type'] === "Editor")) {
+        $_SESSION['Account_Role'];
+    }
+    else {
+        header("Location: ../index.php");
+        exit(); 
+    }
+} else {
+    header("Location: ../index.php");
+    exit();
+}
+
 
 // Fetch all admin accounts
 $sql = "SELECT Account_ID, User_Email, Role, Type, Status FROM account_tbl";
@@ -249,6 +264,12 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
         </div>
         <div class="profile-dropdown">
             <div class="dropdown">
+                <!-- Display Account Role next to the profile icon -->
+                <?php if (isset($_SESSION['Account_Role'])): ?>
+                    <span style="margin-right: 10px; color: white; font-size: 15px; font-weight: Semi-Bold;">
+                        <?php echo $_SESSION['Account_Role']; ?>
+                    </span>
+                <?php endif; ?>
                 <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="fas fa-user-circle"></i>
                 </button>
@@ -286,58 +307,129 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
             <i class="fas fa-plus"></i> Add New Admin
         </button>
 
-        <!-- Admin Table -->
-<div class="table-container">
-    <table class="admins-table">
-        <thead>
-            <tr>
-                <th>Account ID</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Account Type</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach ($admins as $admin): ?>
-                <tr>
-                    <td><?php echo $admin['Account_ID']; ?></td>
-                    <td><?php echo $admin['User_Email']; ?></td>
-                    <td><?php echo $admin['Role']; ?></td>
-                    <td><?php echo $admin['Type']; ?></td>
-                    <td><?php echo $admin['Status']; ?></td>
-                    <td>
-                        <!-- Conditional Buttons -->
-                        <?php if ($admin['Type'] !== 'Family Account'): ?>
-                            <!-- Edit Button for Non-Family Accounts -->
-                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editAdminModal" onclick="populateEditForm(<?php echo $admin['Account_ID']; ?>)">
-                                <i class="fas fa-edit"></i> Edit
-                            </button>
-                        <?php endif; ?>
+        <!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to update the account status?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmActionButton">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+        <!-- Success Modal -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header text-center"> <!-- Add text-center class here -->
+                        <h5 class="modal-title w-100" id="successModalLabel">Action Success</h5> <!-- Add w-100 class for full width -->
+                        
+                    </div>
+                    <!-- Modal Body -->
+                    <div class="modal-body text-center" id="successModalBody"> <!-- Add text-center class here -->
+                        <!-- Success message will be inserted here -->
+                    </div>
+                    <!-- Modal Footer -->
+                    <div class="modal-footer justify-content-center"> <!-- Add justify-content-center class here -->
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Admin Table -->
+        <div class="table-container">
+            <table class="admins-table">
+                <thead>
+                    <tr>
+                        <th>Account ID</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Account Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($admins as $admin): ?>
+            <tr>
+                <td><?php echo $admin['Account_ID']; ?></td>
+                <td><?php echo $admin['User_Email']; ?></td>
+                <td><?php echo $admin['Role']; ?></td>
+                <td><?php echo $admin['Type']; ?></td>
+                <td><?php echo $admin['Status']; ?></td>
+                <td>
+                    <!-- Conditional Buttons -->
+                    <?php if ($admin['Type'] !== 'Family Account'): ?>
+                        <!-- Edit Button for Non-Family Accounts -->
+                        <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editAdminModal" onclick="populateEditForm(<?php echo $admin['Account_ID']; ?>)">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <!-- Delete Button here -->
+                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteConfirmationModal" onclick="setDeleteAccountId(<?php echo $admin['Account_ID']; ?>)">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+
+                        <!-- Hidden Form for Delete -->
+                        <form id="deleteForm" action="delete_admin.php" method="POST" style="display: none;">
+                            <input type="hidden" id="deleteAccountId" name="Account_ID" value="<?php echo $admin['Account_ID']; ?>">
+                        </form>
+                        
+                    <?php else: ?>
                         <!-- Activate/Deactivate Buttons for Family Accounts -->
-                        <?php if ($admin['Type'] === 'Family Account'): ?>
-                            <?php if ($admin['Status'] === 'Deactivated'): ?>
-                                <button class="btn btn-sm btn-success" onclick="activateAccount(<?php echo $admin['Account_ID']; ?>)">
-                                    <i class="fas fa-check"></i> Activate
-                                </button>
-                            <?php else: ?>
-                                <button class="btn btn-sm btn-danger" onclick="deactivateAccount(<?php echo $admin['Account_ID']; ?>)">
-                                    <i class="fas fa-times"></i> Deactivate
-                                </button>
-                            <?php endif; ?>
-                        <?php else: ?>
-                            <!-- Delete Button for Non-Family Accounts -->
-                            <button class="btn btn-sm btn-danger" onclick="deleteAccount(<?php echo $admin['Account_ID']; ?>)">
-                                <i class="fas fa-trash"></i> Delete
+                        <?php if ($admin['Status'] === 'Deactivated'): ?>
+                        <!-- Activate Form -->
+                        <form id="activateForm" action="activate_account.php" method="POST" style="display: inline;">
+                            <input type="hidden" name="Account_ID" value="<?php echo $admin['Account_ID']; ?>">
+                            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#confirmationModal">
+                                <i class="fas fa-check"></i> Activate
                             </button>
+                        </form>
+                        <?php else: ?>
+                            <!-- Deactivate Form -->
+                            <form id="activateForm" action="deactivate_account.php" method="POST" style="display: inline;">
+                                <input type="hidden" name="Account_ID" value="<?php echo $admin['Account_ID']; ?>">
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#confirmationModal">
+                                    <i class="fas fa-check"></i> Deactivate
+                                </button>
+                            </form>
+                            
                         <?php endif; ?>
-                    </td>
-                </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+                    <?php endif; ?>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+<div class="modal fade" id="resultModal" tabindex="-1" aria-labelledby="resultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultModalLabel">Action Completed</h5>
+                
+            </div>
+            <!-- Modal Body -->
+            <div class="modal-body" id="resultModalBody">
+                <!-- Message will be inserted here -->
+            </div>
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
     <!-- Add New Admin Modal -->
@@ -385,7 +477,7 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
 </div>
 
     <!-- Edit Admin Modal -->
-<div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editAdminModal" tabindex="-1" aria-labelledby="editAdminModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -395,10 +487,6 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
             <div class="modal-body">
                 <form id="editAdminForm" action="edit_admin.php" method="POST">
                     <input type="hidden" id="editAdminId" name="Account_ID">
-                    <div class="mb-3">
-                        <label for="editEmail" class="form-label">Username</label>
-                        <input type="email" class="form-control" id="editEmail" name="User_Email" required>
-                    </div>
                     <div class="mb-3">
                         <label for="editRole" class="form-label">Role</label>
                         <input type="text" class="form-control" id="editRole" name="Role" required>
@@ -425,136 +513,83 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
     </div>
 </div>
 
-    <!-- Delete Admin Modal -->
-    <div class="modal fade" id="deleteAdminModal" tabindex="-1" aria-labelledby="deleteAdminModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteAdminModalLabel">Delete Admin</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete this admin?</p>
-                    <form id="deleteAdminForm" action="delete_admin.php" method="POST">
-                        <input type="hidden" id="deleteAdminId" name="id">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </div>
+    <!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-labelledby="deleteConfirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmationModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this admin account?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Delete</button>
             </div>
         </div>
     </div>
+</div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
 
-        // Function to delete an admin account
-function deleteAccount(accountId) {
-    if (confirm("Are you sure you want to delete this admin account?")) {
-        fetch('delete_admin.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `id=${accountId}`, // Send the account ID in the request body
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok.");
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    alert("Admin account deleted successfully!");
-                    location.reload(); // Refresh the page
-                } else {
-                    alert("Failed to delete admin account: " + (data.error || "Unknown error"));
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred while deleting the admin account.");
-            });
-    }
+        // Function to set the Account_ID for deletion
+function setDeleteAccountId(accountId) {
+    document.getElementById('deleteAccountId').value = accountId;
 }
 
-        // Function to populate the edit form
-    function populateEditForm(id) {
-        fetch(`get_admin.php?id=${id}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.Type === 'Family Account') {
-                    alert("Editing is restricted for Family Accounts.");
-                    return;
-                }
-                document.getElementById('editAdminId').value = data.Account_ID;
-                document.getElementById('editEmail').value = data.User_Email;
-                document.getElementById('editRole').value = data.Role;
-                document.getElementById('editAccountType').value = data.Type;
-                document.getElementById('editStatus').value = data.Status;
-            });
-    }
+// Handle delete confirmation
+document.addEventListener('DOMContentLoaded', function () {
+    const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+    confirmDeleteButton.addEventListener('click', function () {
+        // Submit the delete form
+        document.getElementById('deleteForm').submit();
+    });
+});
 
-    // Function to activate an account
-function activateAccount(accountId) {
-    if (confirm("Are you sure you want to activate this account?")) {
-        fetch(`activate_account.php?id=${accountId}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok.");
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    alert("Account activated successfully!");
-                    location.reload(); // Refresh the page
-                } else {
-                    alert("Failed to activate account: " + (data.error || "Unknown error"));
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred while activating the account.");
-            });
-    }
-}
+        document.addEventListener('DOMContentLoaded', function () {
+    // Get references to the form and confirmation button
+    const activateForm = document.getElementById('activateForm');
+    const confirmActionButton = document.getElementById('confirmActionButton');
 
-    // Function to deactivate an account
-    function deactivateAccount(accountId) {
-        if (confirm("Are you sure you want to deactivate this account?")) {
-            fetch(`deactivate_account.php?id=${accountId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert("Account deactivated successfully!");
-                        location.reload(); // Refresh the page
-                    } else {
-                        alert("Failed to deactivate account.");
-                    }
-                });
-        }
-    }
+    // Add a click event listener to the confirmation button
+    confirmActionButton.addEventListener('click', function () {
+        // Submit the form when the user confirms
+        activateForm.submit();
+    });
+});
 
-    // Function to populate the edit form
-    function populateEditForm(id) {
-        fetch(`get_admin.php?id=${id}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('editAdminId').value = data.Account_ID;
-                document.getElementById('editEmail').value = data.User_Email;
-                document.getElementById('editRole').value = data.Role;
-                document.getElementById('editAccountType').value = data.Type;
-                document.getElementById('editStatus').value = data.Status;
-            });
-    }
+        // Check for success or error query parameters
+document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const success = urlParams.get('success');
+    const error = urlParams.get('error');
 
-    // Function to set the delete ID
-    function setDeleteId(id) {
-        document.getElementById('deleteAdminId').value = id;
+    if (success === '1') {
+        // Show success modal
+        document.getElementById('successModalBody').innerText = 'Account status updated successfully!';
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+    } if (success === '2') {
+        document.getElementById('successModalBody').innerText = 'Admin account deleted successfully!';
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+    } 
+    else if (error === '1') {
+        // Show error modal
+        document.getElementById('successModalBody').innerText = 'Failed to update account status.';
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
     }
-</script>
+});
+
+
+
+    
+    </script>
 </body>
 </html>

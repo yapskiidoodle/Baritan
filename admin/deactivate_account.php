@@ -1,15 +1,27 @@
 <?php
 require ('../src/connect.php');
+require ('../src/account.php');
 
-$accountId = $_GET['id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $accountId = $_POST['Account_ID'];
 
-// Update the account status to "Deactivated"
-$sql = "UPDATE account_tbl SET Status = 'Deactivated' WHERE Account_ID = $accountId";
-if ($conn->query($sql) === TRUE) {
-    echo json_encode(["success" => true]);
+    // Debug: Log the received Account_ID
+    error_log("Received Account_ID: " . $accountId);
+
+    // Update the account status to "Deactivated"
+    $sql = "UPDATE account_tbl SET Status = 'Deactivated' WHERE Account_ID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $accountId);
+
+    if ($stmt->execute()) {
+        header("Location: admin_management.php?success=1");
+    } else {
+        header("Location: admin_management.php?error=1");
+    }
+
+    $stmt->close();
+    $conn->close();
 } else {
-    echo json_encode(["success" => false, "error" => $conn->error]);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }
-
-$conn->close();
 ?>

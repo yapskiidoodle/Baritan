@@ -1,17 +1,21 @@
 <?php
-// Database connection settings
-$host = "localhost"; // Change if needed
-$username = "root"; // Change if needed
-$password = ""; // Change if needed
-$database = "Barangay_Baritan"; // Change to your actual database name
+require ('../src/connect.php');
+require ('../src/account.php');
 
-// Create connection
-$conn = new mysqli($host, $username, $password, $database);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (isset($_SESSION['Account_Role'])) {
+    if (($_SESSION['type'] === "Super Admin") || ($_SESSION['type'] === "Admin") || ($_SESSION['type'] === "Editor")) {
+        $_SESSION['Account_Role'];
+    }
+    else {
+        header("Location: ../index.php");
+        exit(); 
+    }
+} else {
+    header("Location: ../index.php");
+    exit();
 }
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -113,7 +117,7 @@ if ($conn->connect_error) {
         .main-content {
             margin-left: 270px; /* Increase margin to account for sidebar width (250px + 20px padding) */
             padding: 20px;
-            margin-top: 80px; /* Adjust for header height */
+            margin-top: 6%; /* Adjust for header height */
             width: calc(100% - 270px); /* Ensure it doesn't overflow horizontally */
         }
 
@@ -317,21 +321,27 @@ if ($conn->connect_error) {
             </div>
         </div>
         <div class="profile-dropdown">
-            <div class="dropdown">
-                <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fas fa-user-circle"></i>
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                    <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                    <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                    <li><hr class="dropdown-divider"></li> -->
-                    <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                    <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
-                        <input type="hidden" name="logoutButton" value="1">
-                    </form>
-                </ul>
-            </div>
+        <div class="dropdown">
+            <!-- Display Account Role next to the profile icon -->
+            <?php if (isset($_SESSION['Account_Role'])): ?>
+                <span style="margin-right: 10px; color: white; font-size: 15px; font-weight: Semi-Bold;">
+                    <?php echo $_SESSION['Account_Role']; ?>
+                </span>
+            <?php endif; ?>
+            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="fas fa-user-circle"></i>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><hr class="dropdown-divider"></li> -->
+                <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
+                    <input type="hidden" name="logoutButton" value="1">
+                </form>
+            </ul>
         </div>
+    </div>
     </div>
 
     <!-- Sidebar -->

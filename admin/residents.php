@@ -2,8 +2,18 @@
 require ('../src/connect.php');
 require ('../src/account.php');
 
-$_SESSION['Account_Role'];
-
+if (isset($_SESSION['Account_Role'])) {
+    if (($_SESSION['type'] === "Super Admin") || ($_SESSION['type'] === "Admin") || ($_SESSION['type'] === "Editor")) {
+        $_SESSION['Account_Role'];
+    }
+    else {
+        header("Location: ../index.php");
+        exit(); 
+    }
+} else {
+    header("Location: ../index.php");
+    exit();
+}
 
 ?>
 <!DOCTYPE html>
@@ -106,7 +116,7 @@ $_SESSION['Account_Role'];
         .main-content {
             margin-left: 250px; /* Adjust for sidebar width */
             padding: 20px;
-            margin-top: 5%; /* Reduced from 80px to 40px */
+            margin-top: 6%; /* Reduced from 80px to 40px */
         }
 
         /* Search bar and filter styling */
@@ -400,7 +410,7 @@ $_SESSION['Account_Role'];
                             <option value="" selected disabled>Select a type</option>
                             <option value="Senior Citizen">Senior Citizen</option>
                             <option value="Head of the Family">Head of the Family</option>
-                            <option value="pwd">PWD (Person with Disability)</option>
+                            <option value="Person with Disability">PWD (Person with Disability)</option>
                             <option value="Single Parent">Single Parent</option>
                             <option value="Male Age Range">Male Age Range</option>
                             <option value="Female Age Range">Female Age Range</option>
@@ -789,6 +799,7 @@ $_SESSION['Account_Role'];
                 FirstName,
                 MiddleName,
                 LastName,
+                Suffix,
                 Sex,
                 Date_of_Birth,
                 Role,
@@ -817,7 +828,7 @@ $_SESSION['Account_Role'];
                       data-emergency-person='{$row['Emergency_Person']}'
                       data-emergency-contact='{$row['Emergency_Contact_No']}'
                       data-relationship='{$row['Relationship_to_Person']}'>
-                    <td>{$row['LastName']} {$row['FirstName']} </td>
+                    <td>{$row['LastName']} {$row['FirstName']} {$row['Suffix']}</td>
                     <td>{$row['Age']}</td>
                     <td>{$row['Contact_Number']}</td>
                     <td>{$row['Sex']}</td>

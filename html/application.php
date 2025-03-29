@@ -173,6 +173,7 @@
                             <li>Postal ID Requirements</li>
                             <li>PhilHealth Requirements</li>
                             <li>Business Permit/Business Closure</li>
+                            <li>Application for Late Submission of Birth Certificate</li>
                         </ul>
                         
                     </div>
@@ -218,43 +219,17 @@
                     <button type="button" id="back_button" onclick="window.location.href='service.php'" class="button me-auto mt-2">
                         Back
                     </button>
-                    <button type="button" id="next_button" class="button mt-2" data-bs-toggle="modal" data-bs-target="#autofill">
-                        Click to Apply
+                    <button type="button" id="next_button" class="button mt-2" >
+                        <a href="services/indigency.php">Click to Apply for Indigency</a>
+                    </button>
+                    <button type="button" id="next_button" class="button mt-2" >
+                        <a href="services/certificate.php">Click to Apply for Clearance/Certificate/Permit</a>
                     </button>
                 </div>
                
         </div>
 
      
-<!-- Auto Fill? -->
-<!-- Modal -->
-<div class="modal fade" id="autofill" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="40" fill="currentColor" class="bi bi-info" viewBox="0 0 16 16">
-                    <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-                  </svg>
-              <h5 class="modal-title" id="exampleModalLongTitle">Notification
-                
-              </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Do you want to auto fill the requirements? 
-            </div>
-            <div class="modal-footer">
-                <div class="me-auto">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
-                </div>
-                <button type="button" class="btn btn-danger" onclick="window.location.href='services/forms.php'">No</button>
-                <button type="button" class="btn btn-primary" onclick="window.location.href='services/forms.php'">Yes</button> 
-            </div>
-        </div>
-    </div>
-</div>
-
 
 
 

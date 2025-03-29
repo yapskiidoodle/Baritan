@@ -1,18 +1,27 @@
 <?php
-require ('../src/connect.php'); // Include the database connection file
+require ('../src/connect.php');
+require ('../src/account.php');
 
-// Get the account ID from the request
-$accountId = $_GET['id'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $accountId = $_POST['Account_ID'];
 
-// Update the account status to "Activated"
-$sql = "UPDATE account_tbl SET Status = 'Activated' WHERE Account_ID = $accountId";
-if ($conn->query($sql)) {
-    // Return a success response
-    echo json_encode(["success" => true]);
+    // Debug: Log the received Account_ID
+    error_log("Received Account_ID: " . $accountId);
+
+    // Update the account status to "Activated"
+    $sql = "UPDATE account_tbl SET Status = 'Activated' WHERE Account_ID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $accountId);
+
+    if ($stmt->execute()) {
+        header("Location: admin_management.php?success=1");
+    } else {
+        header("Location: admin_management.php?error=1");
+    }
+
+    $stmt->close();
+    $conn->close();
 } else {
-    // Return an error response
-    echo json_encode(["success" => false, "error" => $conn->error]);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
 }
-
-$conn->close(); // Close the database connection
 ?>

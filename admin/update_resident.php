@@ -1,8 +1,11 @@
 <?php
 // update_resident.php
 require ('../src/connect.php');
-session_start();
-$_SESSION['Account_ID'];
+require '../src/account.php';
+
+
+$edit_by = $_SESSION['Account_Role'];
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $resident_id = $_POST['resident_id'];
@@ -45,8 +48,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Execute the statement
         if ($stmt->execute()) {
           if ($stmt->affected_rows > 0) {
+            $logIdPrefix = strtoupper(substr($edit_by, 0, 3)); // First 3 letters of the admin role
+            $logIdDateTime = date("YmdHis"); // Current date and time in YYYYMMDDHHMMSS format
+            $logId = $logIdPrefix . $logIdDateTime; // Combine prefix and date-time
+
+            $activityLogSql = "INSERT INTO admin_activity_log (log_id, admin_id, action_by, action, created_at)
+                                VALUES (?, ?, ?, ?, NOW())";
+            $activityLogStmt = $conn->prepare($activityLogSql);
+
+            if ($activityLogStmt) {
+                $action = "Updated resident information with ID: $resident_id"; // Description of the action
+                $activityLogStmt->bind_param("ssss", $logId, $_SESSION['Account_ID'], $edit_by, $action);
+
+                if ($activityLogStmt->execute()) {
+                    $message = "Resident Information updated successfully!";
+                }
+
+                
+            }
+            
             // Success: Resident updated
-            $message = "Resident Information updated successfully!";
+            
         } else {
             // No changes made
             $message = "There are no changes!";

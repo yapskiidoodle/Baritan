@@ -15,11 +15,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "SELECT * FROM Residents_information_tbl WHERE 1=1";
 
     if ($residentType === "Senior Citizen") {
-        $sql .= " AND Eligibility_Status = 'senior_citizen'";
+        $sql .= " AND Eligibility_Status = 'Senior Citizen'";
     } elseif ($residentType === "Head of the Family") {
         $sql .= " AND Role = 'Head'";
-    } elseif ($residentType === "pwd") {
-        $sql .= " AND Eligibility_Status = 'pwd'";
+    } elseif ($residentType === "Person with Disability") {
+        $sql .= " AND Eligibility_Status = 'Person with Disability'";
     } elseif ($residentType === "Single Parent") {
         $sql .= " AND Eligibility_Status = 'Single Parent'";
     } elseif ($residentType === "Male Age Range") {
