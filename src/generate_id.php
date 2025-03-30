@@ -1,6 +1,6 @@
 <?php
-require '../../src/connect.php'; // Include your database connection file
-require('../../admin/fpdf186/fpdf.php'); // Include the FPDF library
+require '../src/connect.php'; // Include your database connection file
+require('../admin/fpdf186/fpdf.php'); // Include the FPDF library
 ob_start();
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($twoByTwoError === 0) {
         $twoByTwoNewName = uniqid('', true) . '.' . pathinfo($twoByTwoName, PATHINFO_EXTENSION);
-        $twoByTwoDestination = '../../resident_folder/2x2pic/' . $twoByTwoNewName;
+        $twoByTwoDestination = '../resident_folder/2x2pic/' . $twoByTwoNewName;
 
         if (!move_uploaded_file($twoByTwoTmpName, $twoByTwoDestination)) {
             die("Error moving uploaded file.");
@@ -79,7 +79,7 @@ $pdf = new FPDF();
 $pdf->AddPage();
 
 // Add the `baritan_id.png` image (background) first
-$bgImagePath = '../../pics/baritan_id.png'; // Path to your background image
+$bgImagePath = '../pics/baritan_id.png'; // Path to your background image
 $imageWidth = 150;  // Width in mm
 $imageHeight = 100; // Height in mm
 
@@ -97,7 +97,7 @@ $pdf->Rect($x - 2, $y - 2, $imageWidth + 4, $imageHeight + 4); // Rectangle arou
 $pdf->Image($bgImagePath, $x, $y, $imageWidth,$pdf->Cell(40, $imageHeight)); // X, Y, width, height
 
 // Now, add the profile image above the background image (in terms of layering)
-$profileImagePath = '../../resident_folder/2x2pic/'.$twoByTwoNewName; // Path to your profile image
+$profileImagePath = '../resident_folder/2x2pic/'.$twoByTwoNewName; // Path to your profile image
 $profileImageWidth = 40;  // Width of profile image in mm
 $profileImageHeight = 40; // Height of profile image in mm
 $pdf->Image($profileImagePath, 130, 68, $profileImageWidth, $profileImageHeight); // X, Y, width, height

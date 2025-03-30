@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<?php
+require '../src/account.php';
+require '../src/connect.php'; // Use 'include' or 'require' to load the file
+
+
+
+if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var myModal = new bootstrap.Modal(document.getElementById('deactivatedModal'));
+            myModal.show();
+        });
+    </script>";
+    unset($_SESSION['deactivated']); // Clear the session variable
+}
+?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
    
@@ -53,8 +69,8 @@
 <body>
    
 
-    <!--header-->
-    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
+        <!--header-->
+        <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
         <div class="row">
            <div class="col-1" style="width: 5.3%; ">
                <img src="../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
@@ -67,7 +83,7 @@
            <div class="col" style=" text-align: center; padding-top: 1.5%;">
                <div style="display: flex; ">
                    <div style="padding:0% 4%;">
-                       <a href="../index.php">Home</a>
+                       <a href="../">Home</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
@@ -75,24 +91,38 @@
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                       <a href="">Services</a>
+                       <a href="service.php">Services</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                      <a href="../index.php?#contact">Contact Us</a>
+                      <a href="../index.php#contact">Contact Us</a>
                    </div>
                    <div class="vr"></div>
-                   <div hidden>
-                       <img src="pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; margin-top: -26.6%; margin-left: 5%;">
-                   </div>
-                   <div>
-                        <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
-                   </div>
+                   
+                    <?php if (isset($_SESSION['userEmail'])) { ?>
+                        <div class="dropdown" id="profile" name="profile">
+                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                                <li>
+                                    <form action="../src/logout.php" method="POST">
+                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php } else { ?>
+                        <div id="start" name="start">
+                            <a href="login.php" class="btn btn-danger ms-2">Log In</a>
+                        </div>
+                    <?php } ?>
                </div>
            </div>
         </div>
         </div>
-      <!--end header-->
+    <!-- End Header -->
 
         <div class="container" style="margin-top: 10%;">
             <div class="display-3">

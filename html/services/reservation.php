@@ -1,3 +1,8 @@
+<?php
+require '../../src/connect.php'; // Use 'include' or 'require' to load the 
+require '../../src/account.php';
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,9 +78,13 @@
 <body>
 
 
-    <!--header-->
-    <div class="container-fluid" style="background-color:#1C3A5B;color: white;padding: 1%; width: 100%;  ">  
-        <div class="row" >    
+  
+    
+     
+    
+    <!-- header-->
+    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
+        <div class="row">
            <div class="col-1" style="width: 5.3%; ">
                <img src="../../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
                
@@ -87,7 +96,7 @@
            <div class="col" style=" text-align: center; padding-top: 1.5%;">
                <div style="display: flex; ">
                    <div style="padding:0% 4%;">
-                       <a href="../../index.php">Home</a>
+                       <a href="../../">Home</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
@@ -99,31 +108,43 @@
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                       <a href="../../index.php?#contact"  >Contact Us</a>
+                      <a href="../../index.php#contact">Contact Us</a>
                    </div>
                    <div class="vr"></div>
-                   <div hidden>
-                       <img src="pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; margin-top: -26.6%; margin-left: 5%;">
-                   </div>
-                   <div>
-                        <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
-                   </div>
+                   
+                    <?php if (isset($_SESSION['userEmail'])) { ?>
+                        <div class="dropdown" id="profile" name="profile">
+                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="../../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                                <li>
+                                    <form action="../../src/logout.php" method="POST">
+                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php } else { ?>
+                        <div id="start" name="start">
+                            <a href="../login.php" class="btn btn-danger ms-2">Log In</a>
+                        </div>
+                    <?php } ?>
                </div>
            </div>
         </div>
-    </div>
-    <!--END HEADER-->
+        </div>
+    <!-- End Header -->
 
 
-
-    <div class="container mt-5 text-center" style=" background-color: white; padding: 3% 0%; margin-bottom:5%;"> 
+    <div class="container text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%; margin-top:10%;"> 
+     
         <div class="display-4 " style="font-weight: 700;">Reservation</div>
         <div class="container w-75 mt-5">
 
-            <form action="">
+            <form action="../../src/reservationLogic.php" method="POST" id="reservationForm">
         
-   
-
       
             <div class="container " style="text-align: left;">
 
@@ -131,13 +152,32 @@
                 <div class="tab " style="background-color: white;">
                     <div class="h4 mt-5 text-center" style="font-weight: 700;">Please Input the reservation details</div>
                     <div class="row">
-                        <div class="col-12">
-                                <div class="form-group mt-4" style="font-weight: 800;">
-                                    <label for="exampleInputPassword1">Recievers Name</label>
-                                    <input type="text" class="form-control" id="exampleInputPassword1" placeholder="FName M.I. LName">
-                                  </div>
-                       
+                    <div class="row">
+                        <div class="col-md-12 ">
+                            <div class="form-group mt-4" style="font-weight: 800;">
+                                <label for="exampleInputPassword1" >First Name</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="ex. Juan" required>
+                              </div>
                         </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group mt-4" style="font-weight: 800;">
+                                <label for="exampleInputPassword1">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" name="lastName"placeholder="ex. Dela Cruz" required>
+                              </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mt-4" style="font-weight: 800;">
+                                <label for="exampleInputPassword1">Middle Name</label>
+                                <input type="text" class="form-control" id="middleInitial" name="middleName" placeholder="ex. Banaga">
+                              </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mt-4" style="font-weight: 800;">
+                                <label for="exampleInputPassword1">Suffix</label>
+                                <input type="text" class="form-control" id="suffix" name="suffix" placeholder="ex. Sr. Jr."  >
+                              </div>
+                        </div>
+                      </div>
                         <div class="col-9">
                             <div class="col w-100">
                                 <div class="form-group mt-4" style="font-weight: 800;">
@@ -145,14 +185,14 @@
                                         <div class="lead d-inline" style="font-size: 15px;">(Equipment/Facility)</div>
 
                                     </label>
-                                    <select class="form-control" >
+                                    <select class="form-control" name="equipment" >
                                         <option >--Choose--</option>
-                                        <option value="table">Table</option>
-                                        <option value="chair">Chair</option>
-                                        <option value="tent">Tent</option>
-                                        <option value="sound_system">Sound System</option>
-                                        <option value="covered_court">Covered Court</option>
-                                        <option value="multipurpose_hall">Multipurpose Hall</option>
+                                        <option value="Table">Table</option>
+                                        <option value="Chair">Chair</option>
+                                        <option value="Tent">Tent</option>
+                                        <option value="Sound System">Sound System</option>
+                                        <option value="Covered Court">Covered Court</option>
+                                        <option value="Multipurpose Hall">Multipurpose Hall</option>
     
                                       </select>
                                   </div>
@@ -162,7 +202,7 @@
                             <div class="col w-100">
                                 <div class="form-group mt-4" style="font-weight: 800;">
                                     <label for="exampleInputPassword1">Quantity</label> 
-                                    <input type="number" class="form-control" id="exampleInputPassword1">
+                                    <input type="number" class="form-control" id="exampleInputPassword1" oninput="this.value=this.value.slice(0,3)" name="quantity">
                                   </div>
                             </div>
                         </div>
@@ -174,47 +214,68 @@
                         <label for="exampleInputEmail1">Venue
                             <div class="lead d-inline" style="font-size: 15px;">(For Equipment Reservation Only)</div>
                         </label>
-                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="eg. Multipurpose hall, Jose Str., Court">
+                        <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="eg. Multipurpose hall, Jose Str., Court" name="venue">
                       </div>
                       <div class="row">
-                        <div class="col">
+                        <div class="col-auto">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Date to Reserve</label>
-                                <input type="date" class="form-control" id="exampleInputPassword1">
+                                <input type="date" class="form-control" id="exampleInputPassword1" name="dateToReserve">
                               </div>  
                         </div>
-                        <div class="col">
+                        <div class="col-auto">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Date to Return</label>
-                                <input type="date" class="form-control" id="exampleInputPassword1" >
+                                <input type="date" class="form-control" id="exampleInputPassword1" name="dateToReturn" >
                               </div>
                         </div>
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="purpose">Purpose of Reservation</label>
-                                <select class="form-control" id="purpose">
+                                <select class="form-control" id="purpose" name="purpose">
                                     <option value="">--Choose--</option>
-                                    <option value="birthday_celebration">Birthday Celebration</option>
-                                    <option value="community_meeting">Community Meeting</option>
-                                    <option value="wedding_ceremony">Wedding Ceremony</option>
-                                    <option value="sports_event_tournament">Sports Event/Tournament</option>
-                                    <option value="funeral">Funeral</option>
-                                    <option value="other">Other (please specify)</option>
+                                    <option value="Birthday Celebration">Birthday Celebration</option>
+                                    <option value="Community_meeting">Community Meeting</option>
+                                    <option value="Wedding_ceremony">Wedding Ceremony</option>
+                                    <option value="Sports_event_tournament">Sports Event/Tournament</option>
+                                    <option value="Funeral">Funeral</option>
+                                    <option value="Other">Other (please specify)</option>
                                 </select>
                             </div>
                         </div>
                         
-                        <div class="col" id="other" hidden>
+                        <div class="col-md-12" id="other" hidden>
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="otherInput">Please Specify</label>
-                                <input type="text" class="form-control" id="otherInput">
+                                <input type="text" class="form-control" id="otherInput" name="otherInput">
                             </div>
                         </div>
                         
+                        
                         <script>
                             document.getElementById("purpose").addEventListener("change", function() {
-                                var type = this.value;
-                                document.getElementById("other").hidden = type !== "other";
+                                var selectedValue = this.value;
+                                var otherInputDiv = document.getElementById("other");
+                                
+                                if (selectedValue === "Other") {
+                                    otherInputDiv.hidden = false;
+                                } else {
+                                    otherInputDiv.hidden = true;
+                                }
+                            });
+
+                            function getSelectedPurpose() {
+                                var selectedValue = document.getElementById("purpose").value;
+                                if (selectedValue === "Other") {
+                                    return document.getElementById("otherInput").value; // Get custom input
+                                } else {
+                                    return selectedValue; // Return selected option
+                                }
+                            }
+
+                            // Example: Using the function when submitting a form
+                            document.getElementById("otherInput").addEventListener("input", function() {
+                                console.log("Selected Purpose:", getSelectedPurpose());
                             });
                         </script>
 
@@ -286,7 +347,7 @@
             </div>
             <div class="modal-footer">
                <div class="text-center mx-auto">
-                    <button type="button" class="learn" data-bs-toggle="modal"  style="padding: 5px 15px;" onclick="window.location.href='../../'">Okay</button>
+                    <button type="button" class="learn" data-bs-toggle="modal"  style="padding: 5px 15px;" onclick="submitForm()">Okay</button>
                </div>
              
             </div>
@@ -297,12 +358,16 @@
 
 
 
+<script>
+    function submitForm() {
+        document.getElementById("reservationForm").submit();
+ 
+        document.getElementById("reservationForm").disabled = true;
+
+    }
+</script>
 
 
-
-
-
-  
 
 
 

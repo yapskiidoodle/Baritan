@@ -80,7 +80,9 @@ require '../../src/account.php';
 
 
     
-    <!--header-->
+      
+    
+    <!-- header-->
     <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
         <div class="row">
            <div class="col-1" style="width: 5.3%; ">
@@ -98,7 +100,7 @@ require '../../src/account.php';
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                       <a href="about.php">About Us</a>
+                       <a href="../about.php">About Us</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
@@ -116,7 +118,7 @@ require '../../src/account.php';
                                 <img src="../../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="../../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
                                 <li>
                                     <form action="../../src/logout.php" method="POST">
                                         <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -136,7 +138,7 @@ require '../../src/account.php';
     <!-- End Header -->
 
 
-    <div class="container mt-5 text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom: 5%;"> 
+    <div class="container  text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom: 5%; margin-top: 10%;"> 
     
         <div class="display-4 " style="font-weight: 700;">Blotter Form</div>
         <div class="lead">All section as marked <s style="color:red">*</s> are to be completed </div>
@@ -333,10 +335,12 @@ function validateAllFields() {
         }
     });
 
-    // ✅ Ensure a case type is selected
+    // ✅ Ensure a case type is selected (Highlight in red, No error message)
     if (!$("input[name='caseType']:checked").val()) {
-        showError($("input[name='caseType']").first(), "Please select a case type.");
+        $("input[name='caseType']").addClass("is-invalid");
         if (!firstInvalid) firstInvalid = $("input[name='caseType']").first();
+    } else {
+        $("input[name='caseType']").removeClass("is-invalid");
     }
 
     return firstInvalid;

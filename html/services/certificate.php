@@ -1,3 +1,8 @@
+<?php
+require '../../src/connect.php'; // Use 'include' or 'require' to load the 
+require '../../src/account.php';
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,9 +78,11 @@
 <body>
 
 
-    <!--header-->
-    <div class="container-fluid" style="background-color:#1C3A5B;color: white;padding: 1%; width: 100%;  ">  
-        <div class="row" >    
+      
+    
+    <!-- header-->
+    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
+        <div class="row">
            <div class="col-1" style="width: 5.3%; ">
                <img src="../../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
                
@@ -85,42 +92,56 @@
                <h6 style="font-size: 10.5px;">Malabon City, Metro Manila, Philippines</h6>
            </div>
            <div class="col" style=" text-align: center; padding-top: 1.5%;">
-            <div style="display: flex; ">
-                <div style="padding:0% 4%;">
-                    <a href="../../index.php">Home</a>
-                </div>
-                <div class="vr"></div>
-                <div style="padding:0% 4%;">
-                    <a href="../about.php">About Us</a>
-                </div>
-                <div class="vr"></div>
-                <div style="padding:0% 4%;">
-                    <a href="../service.php">Services</a>
-                </div>
-                <div class="vr"></div>
-                <div style="padding:0% 4%;">
-                    <a href="../../index.php?#contact"  >Contact Us</a>
-                </div>
-                <div class="vr"></div>
-                <div hidden>
-                    <img src="pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; margin-top: -26.6%; margin-left: 5%;">
-                </div>
-                <div>
-                     <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
-                </div>
-            </div>
+               <div style="display: flex; ">
+                   <div style="padding:0% 4%;">
+                       <a href="../../">Home</a>
+                   </div>
+                   <div class="vr"></div>
+                   <div style="padding:0% 4%;">
+                       <a href="../about.php">About Us</a>
+                   </div>
+                   <div class="vr"></div>
+                   <div style="padding:0% 4%;">
+                       <a href="../service.php">Services</a>
+                   </div>
+                   <div class="vr"></div>
+                   <div style="padding:0% 4%;">
+                      <a href="../../index.php#contact">Contact Us</a>
+                   </div>
+                   <div class="vr"></div>
+                   
+                    <?php if (isset($_SESSION['userEmail'])) { ?>
+                        <div class="dropdown" id="profile" name="profile">
+                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="../../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                                <li>
+                                    <form action="../../src/logout.php" method="POST">
+                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php } else { ?>
+                        <div id="start" name="start">
+                            <a href="../login.php" class="btn btn-danger ms-2">Log In</a>
+                        </div>
+                    <?php } ?>
+               </div>
            </div>
         </div>
-    </div>
-    <!--END HEADER-->
+        </div>
+    <!-- End Header -->
 
 
 
-    <div class="container mt-5 text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%;"> 
+    <div class="container text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%; margin-top:10%;"> 
         <div class="display-4 " style="font-weight: 700;">Document Issuance</div>
         <div class="container w-75 mt-5">
 
-            <form action="certificate_form.php" method="POST" id="certificateForm">
+            <form action="../../src/certificate_form.php" method="POST" id="certificateForm">
         
    
 
@@ -145,57 +166,61 @@
                               </div>
                         </div>
                         <div class="col" > 
-                            <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputEmail1">Purpose</label>
-                                <select class="form-control" id="purposeSelect" name="purpose">
-                                    <option value="">-- Select Purpose --</option>
-                                </select>
-                                <script>
-                                    // Define options for each category
-                                    const options = {
-                                            clearance: [
-                                                "SSS Requirements",
-                                                "Pldt Requirements",
-                                                "Philhealth Requirements",
-                                                "Loan Requirements",
-                                                "Marriage Requirements",
-                                                "Internet Connection Requirements",
-                                                "Tesda Requirements",
-                                                "Proof Of Residency",
-                                                "Application For Employment"
-                                            ],
-                                            permit: [
-                                                "Demolition Permit",
-                                                "Renovation Permit",
-                                                "Business Permit/Business Closure",
-                                                "E-Trike Registration/Loan"
-                                            ],
-                                            certificate: [
-                                                "Postal Id Requirements",
-                                                "Application For Late Submission Of Birth Certificate"
-                                            ]
-                                        };
+                        <div class="form-group mt-4" style="font-weight: 800;" id="options" hidden>
+                            <label for="purposeSelect">Purpose</label>
+                            <select class="form-control" id="purposeSelect" name="purpose" required>
+                                <option value="" disabled selected>-- Select Purpose --</option>
+                            </select>
+                        </div>
 
-                                    // Handle category change
-                                    document.getElementById("categorySelect").addEventListener("change", function () {
-                                        const selectedCategory = this.value;
-                                        const purposeSelect = document.getElementById("purposeSelect");
+                        <script>
+                            const optionsData = {
+                                clearance: [
+                                    "SSS Requirements",
+                                    "PLDT Requirements",
+                                    "PhilHealth Requirements",
+                                    "Loan Requirements",
+                                    "Marriage Requirements",
+                                    "Internet Connection Requirements",
+                                    "TESDA Requirements",
+                                    "Proof Of Residency",
+                                    "Application For Employment"
+                                ],
+                                permit: [
+                                    "Demolition Permit",
+                                    "Renovation Permit",
+                                    "Business Permit/Business Closure",
+                                    "E-Trike Registration/Loan"
+                                ],
+                                certificate: [
+                                    "Postal ID Requirements",
+                                    "Application For Late Submission Of Birth Certificate"
+                                ]
+                            };
 
-                                        // Clear previous options
-                                        purposeSelect.innerHTML = '<option value="">-- Select Purpose --</option>';
+                            document.getElementById("categorySelect").addEventListener("change", function () {
+                                const selectedCategory = this.value;
+                                const purposeSelect = document.getElementById("purposeSelect");
+                                const optionsDiv = document.getElementById("options");
 
-                                        // If a valid category is selected, populate new options
-                                        if (options[selectedCategory]) {
-                                            options[selectedCategory].forEach(option => {
-                                                let newOption = document.createElement("option");
-                                                newOption.value = option;
-                                                newOption.textContent = option;
-                                                purposeSelect.appendChild(newOption);
-                                            });
-                                        }
+                                // Clear previous options except for the default disabled one
+                                purposeSelect.innerHTML = '<option value="" disabled selected>-- Select Purpose --</option>';
+
+                                if (optionsData[selectedCategory]) {
+                                    optionsDiv.removeAttribute("hidden"); // Show the options div
+                                    
+                                    optionsData[selectedCategory].forEach(option => {
+                                        let newOption = document.createElement("option");
+                                        newOption.value = option;
+                                        newOption.textContent = option;
+                                        purposeSelect.appendChild(newOption);
                                     });
-                                </script>
-                              </div>
+                                } else {
+                                    optionsDiv.setAttribute("hidden", "true"); // Hide if no valid category is selected
+                                }
+                            });
+                        </script>
+                              
                       
                     </div>
                       
@@ -248,17 +273,17 @@
                         <label for="exampleInputPassword1">Subdivision/Village/Sitio (Optional)</label>
                         <input type="text" class="form-control" name="subdivision" id="exampleInputPassword1" placeholder="(optional)">
                       </div>
-
+                            
 
                 </div>
                 
                 
 
                 <div class="d-flex mt-5">
-                    <button type="button" id="back_button" onclick="window.location.href='../service.php'" class="button mt-2">
+                    <button type="button" id="back_button" onclick="window.location.href='../service.php'" class="button mt-2 ">
                         Back
                     </button>
-                    <button type="button" id="next_button" class="button ms-auto mt-2" data-bs-target="#confirmation"data-bs-toggle="modal" >Finish</button>
+                    <button type="button" id="next_button" class="button ms-auto mt-2 me-2" data-bs-target="#confirmation"data-bs-toggle="modal" >Finish</button>
                 </div>
 
 

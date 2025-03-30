@@ -80,7 +80,7 @@
 
     
     
-    <!--header-->
+    <!-- header-->
     <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
         <div class="row">
            <div class="col-1" style="width: 5.3%; ">
@@ -98,7 +98,7 @@
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                       <a href="about.php">About Us</a>
+                       <a href="../about.php">About Us</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
@@ -116,7 +116,7 @@
                                 <img src="../../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                                <li><a class="dropdown-item" href="../../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
                                 <li>
                                     <form action="../../src/logout.php" method="POST">
                                         <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
@@ -138,11 +138,11 @@
 
 
 
-    <div class="container mt-5 text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%;"> 
+    <div class="container  text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%;margin-top:10%; "> 
         <div class="display-4 " style="font-weight: 700;">Barangay ID</div>
         <div class="container w-75 mt-5">
 
-            <form  id="generateID" action="generate_id.php" method="POST" enctype="multipart/form-data" target="_blank" >
+            <form  id="generateID" action="../../src/generate_id.php" method="POST" enctype="multipart/form-data" target="_blank" >
               <div class="container text-center w-50">
                 <div class=" row justify-content-center align-items-center mt-4 " >
                     <div class="col text-center" >

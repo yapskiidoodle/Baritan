@@ -1,3 +1,8 @@
+<?php
+require '../../src/connect.php'; // Use 'include' or 'require' to load the 
+require '../../src/account.php';
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -73,9 +78,11 @@
 <body>
 
 
-    <!--header-->
-    <div class="container-fluid" style="background-color:#1C3A5B;color: white;padding: 1%; width: 100%;  ">  
-        <div class="row" >    
+      
+    
+    <!-- header-->
+    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
+        <div class="row">
            <div class="col-1" style="width: 5.3%; ">
                <img src="../../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
                
@@ -85,44 +92,58 @@
                <h6 style="font-size: 10.5px;">Malabon City, Metro Manila, Philippines</h6>
            </div>
            <div class="col" style=" text-align: center; padding-top: 1.5%;">
-            <div style="display: flex; ">
-                <div style="padding:0% 4%;">
-                    <a href="../../index.php">Home</a>
-                </div>
-                <div class="vr"></div>
-                <div style="padding:0% 4%;">
-                    <a href="../about.php">About Us</a>
-                </div>
-                <div class="vr"></div>
-                <div style="padding:0% 4%;">
-                    <a href="../service.php">Services</a>
-                </div>
-                <div class="vr"></div>
-                <div style="padding:0% 4%;">
-                    <a href="../../index.php?#contact"  >Contact Us</a>
-                </div>
-                <div class="vr"></div>
-                <div hidden>
-                    <img src="pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; margin-top: -26.6%; margin-left: 5%;">
-                </div>
-                <div>
-                     <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
-                </div>
-            </div>
+               <div style="display: flex; ">
+                   <div style="padding:0% 4%;">
+                       <a href="../../">Home</a>
+                   </div>
+                   <div class="vr"></div>
+                   <div style="padding:0% 4%;">
+                       <a href="../about.php">About Us</a>
+                   </div>
+                   <div class="vr"></div>
+                   <div style="padding:0% 4%;">
+                       <a href="../service.php">Services</a>
+                   </div>
+                   <div class="vr"></div>
+                   <div style="padding:0% 4%;">
+                      <a href="../../index.php#contact">Contact Us</a>
+                   </div>
+                   <div class="vr"></div>
+                   
+                    <?php if (isset($_SESSION['userEmail'])) { ?>
+                        <div class="dropdown" id="profile" name="profile">
+                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <img src="../../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                                <li><a class="dropdown-item" href="../../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
+                                <li>
+                                    <form action="../../src/logout.php" method="POST">
+                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php } else { ?>
+                        <div id="start" name="start">
+                            <a href="../login.php" class="btn btn-danger ms-2">Log In</a>
+                        </div>
+                    <?php } ?>
+               </div>
            </div>
         </div>
-    </div>
-    <!--END HEADER-->
+        </div>
+    <!-- End Header -->
 
 
 
-    <div class="container mt-5 text-center" style=" background-color: white; padding: 3% 0%; margin-bottom:5%;"> 
+    <div class="container text-center w-75" style=" background-color: white; padding: 3% 0%; margin-bottom:5%;margin-top:10%;"> 
         <div class="display-4 " style="font-weight: 700;">Complaint Form</div>
         <div class="lead">All section as marked <s style="color:red">*</s> are to be completed </div>
         <div class="lead" style="font-size: 16px;">All Personal Details remains <b>CONFIDENTIAL</b></div>
         <div class="container w-75 mt-5">
 
-            <form action="">
+            <form action="../../src/complaintForm.php" method="POST" id="complaintForm">
                 <div class=" row justify-content-center align-items-center mt-4" >
                     <div class="col text-center" >
                       <div class="step-circle inactive" >
@@ -161,25 +182,25 @@
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Name of Person making the Complaint</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. Juan Dela Cruz">
+                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. Juan Dela Cruz" name="fullName">
                               </div>
                         </div>
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Residential Address</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Block No. Street Name, Subd/Village/Sitio">
+                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Block No. Street Name, Subd/Village/Sitio" name="address">
                               </div>
                         </div>
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Contact Information</label>
-                                <input type="number" class="form-control" id="exampleInputPassword1" placeholder="(09) ">
+                                <input type="number" class="form-control" id="exampleInputPassword1" placeholder="(09) " name="contact">
                               </div>
                         </div>
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Email Address</label>
-                                <input type="email" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com">
+                                <input type="email" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com" name="email">
                               </div>
                         </div>
                         
@@ -195,43 +216,38 @@
                     <div class="col-md-6 ">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Date  of Incident</label>
-                            <input type="date" class="form-control" id="exampleInputPassword1" >
+                            <input type="date" class="form-control" id="exampleInputPassword1" name="dateOfIncident">
                           </div>
                     </div>
                     <div class="col-md-6 ">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Time of the Incident</label>
-                            <input type="time" class="form-control" id="exampleInputPassword1">
+                            <input type="time" class="form-control" id="exampleInputPassword1" name="timeOfIncident">
                           </div>
                     </div>
                     <div class="col-md-12 w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Location of the Incident</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1">
+                            <input type="text" class="form-control" id="exampleInputPassword1" name="locationOfIncident">
                           </div>
                     </div>
                     <div class="col-md-12 w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">What is the Subject of your Complaint</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1">
+                            <input type="text" class="form-control" id="exampleInputPassword1" name="whatSubjectOfComplaint">
                           </div>
                     </div>
                     <div class="col-md-12 w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Who is the Subject of your complaint</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1">
+                            <input type="text" class="form-control" id="exampleInputPassword1" name="whoSubjectOfComplaint">
                           </div>
                     </div>
-                    <div class="col-md-12 w-100">
-                        <div class="form-group mt-4" style="font-weight: 800;">
-                            <label for="exampleInputPassword1">Who is the Subject of your complaint</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1">
-                          </div>
-                    </div>
+                    
                     <div class="col-md-12">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleFormControlTextarea1">Summary of the Complaint</label>
-                            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                            <textarea class="form-control" name="summaryOfComplaint" id="exampleFormControlTextarea1" rows="3" ></textarea>
                           </div>
                     </div>
                    </div>
@@ -241,26 +257,26 @@
                     <div style="text-align: left;">
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
-                                <label for="exampleInputPassword1">Name of Person making the Complaint</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. Juan Dela Cruz">
+                                <label for="exampleInputPassword1">Name of the Witness</label>
+                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. Juan Dela Cruz" name="nameOfWitness">
                               </div>
                         </div>
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Residential Address</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Block No. Street Name, Subd/Village/Sitio">
+                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Block No. Street Name, Subd/Village/Sitio" name="witnessAddress">
                               </div>
                         </div>
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Contact Information</label>
-                                <input type="number" class="form-control" id="exampleInputPassword1" placeholder="(09) ">
+                                <input type="number" class="form-control" id="exampleInputPassword1" placeholder="(09) " name="witnessContact">
                               </div>
                         </div>
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Email Address</label>
-                                <input type="email" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com">
+                                <input type="email" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com" name="witnessEmail">
                               </div>
                         </div>
                         
@@ -274,40 +290,28 @@
                             <label class="mt-5"> As a result of making this complaint, is there any outcome you would like to?</label>
 
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                <input class="form-check-input" type="radio" name="outcome" value="Yes" id="flexRadioDefault1" required>
                                 <label class="form-check-label" for="flexRadioDefault1">
-                                  Yes
+                                    Yes
                                 </label>
-                              </div>
-                              <div class="form-check">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="outcome" value="No" id="flexRadioDefault2" required>
                                 <label class="form-check-label" for="flexRadioDefault2">
-                                  No
+                                    No
                                 </label>
-                              </div>
+                            </div>
 
                            </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group mt-4" style="font-weight: 800; text-align: left;">
                                 <label for="exampleFormControlTextarea1">If yes, please provide details</label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="outcomeDetails"></textarea>
                               </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group mt-4" style="font-weight: 800; text-align: left;">
-                                <label for="exampleFormControlTextarea1">Today's Date</label>
-                                <input type="date" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com">
-                               
-                              </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group mt-4" style="font-weight: 800; text-align: left;">
-                                <label for="exampleFormControlTextarea1">Upload E-Signature</label>
-                                <input type="file" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com">
-                              
-                              </div>
-                        </div>
+                        
+                        
                     </div>
                 </div>
                 
@@ -424,13 +428,22 @@
             </div>
             <div class="modal-footer">
                <div class="text-center mx-auto">
-                    <button type="button" class="learn" data-bs-toggle="modal"  style="padding: 5px 15px;" onclick="window.location.href='../../'">Okay</button>
+                    <button type="button" class="learn" data-bs-toggle="modal"  style="padding: 5px 15px;" onclick="submitForm()">Okay</button>
                </div>
              
             </div>
           </div>
         </div>
     </div>
+
+
+    <script>
+    function submitForm() {
+        document.getElementById("complaintForm").submit();
+        document.getElementById("complaintForm").disabled = true;
+
+    }
+</script>
 
 
 </body>

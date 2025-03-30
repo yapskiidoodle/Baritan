@@ -1,7 +1,7 @@
 <?php
-require '../../src/connect.php'; // Database connection
-require '../../src/account.php'; // Contains session_start()
-require('../../admin/fpdf186/fpdf.php'); // Include the FPDF library
+require 'connect.php'; // Database connection
+require 'account.php'; // Contains session_start()
+require('../admin/fpdf186/fpdf.php'); // Include the FPDF library
 ob_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") { 
@@ -35,7 +35,7 @@ $pageWidth = $pdf->GetPageWidth();
 $pageHeight = $pdf->GetPageHeight();
 
 // Add the background image
-$bgImagePath = '../../pics/documents.png'; // Path to your background image
+$bgImagePath = '../pics/documents.png'; // Path to your background image
 $pdf->Image($bgImagePath, 0, 0, $pageWidth, $pageHeight);
 
 // Now you can add other content on top of the background image
@@ -48,12 +48,32 @@ $pdf->SetTextColor(0, 0, 0);
 
 
 $purpose = $_POST['purpose'];
-$header = "CERTIFICATE OF INDIGENCY"; 
-$body = 'This is to certify '.$fullName.' that is a bona fide resident of #'.$address.'.
 
-    Further certifies also that the above-named person belongs to an indigent family of this Barangay.
+if ($documentType == "certificate") {
+    $header = "CERTIFICATE"; 
+    $body = '
+    This is to certify that this office interposes no objection as to the operation of '.$purpose.' owned by '.$fullName.' located at #'.$address.'.
 
-    This Certification is Being Issued upon request of the above named person for '. $purpose.' Issued this '.$formattedDate.' at Barangay Baritan, City of Malabon.';
+    This certification is being issued upon the request of the above-named person/establishment for securing Locational Clearance and Business Permit. 
+    
+    Issued this '.$formattedDate.' at Barangay Baritan, City of Malabon.';
+
+}  else if ($documentType == "permit") { 
+    $header = "PERMIT"; 
+    $body = 'wala pa eh';
+} else if ($documentType == "clearance") {
+    $header = "CLEARANCE"; 
+    $body = '
+      This is to certify that ' . $fullName . ' is a bona fide resident of #' . $address . ' and personally known to be a person of good moral character without any criminal record or derogatory information against him/her and who enjoys a good reputation in this community.
+
+      As per requirement and/or to support his/her application for: '.$purpose.'.
+      
+      Issued this '.$formattedDate.' at Barangay Baritan, City of Malabon.' ;
+
+}
+
+
+
 
 
 $pdf->Cell(0, 10, $header, 0, 1, "C");

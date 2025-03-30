@@ -152,7 +152,7 @@ if ($familyID) {
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
-                       <a href="">About Us</a>
+                       <a href="about.php">About Us</a>
                    </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;">
