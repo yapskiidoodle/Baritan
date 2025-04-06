@@ -773,8 +773,8 @@ function setSelectValue(id, value) {
                         <div class="btn-group" role="group">
                         <form action="addMember.php" method="POST" id="accountForm">
                             <input type="hidden" id="accountTypeField" name="accountType" value="">
-                            <button type="submit" class="btn btn-primary" onclick="setAccountType('with')">With Account</button>
-                            <button type="submit" class="btn btn-primary" onclick="setAccountType('without')">Without Account</button>
+                            <button type="submit" class="btn btn-primary" onclick="setAccountType('with')">With Password</button>
+                            <!-- <button type="submit" class="btn btn-primary" onclick="setAccountType('without')">Without Password</button> -->
                         </form>
 
                         <script>
@@ -817,13 +817,13 @@ function setSelectValue(id, value) {
             </div>
           <?php endforeach; ?>
           <!-- Add Account -->
-          <div class="col-6 d-flex flex-column align-items-center text-center">
+          <!-- <div class="col-6 d-flex flex-column align-items-center text-center">
             <a href="#" class="text-decoration-none text-dark">
               <img src="../pics/profile.jpg" alt="Add Account" class="img-fluid rounded-circle"
                 style="width: 85px; transition: transform 0.3s ease-in-out;">
               <div class="lead fw-bold mt-2">Add Account</div>
             </a>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>

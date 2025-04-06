@@ -60,7 +60,13 @@ if ($documentType == "certificate") {
 
 }  else if ($documentType == "permit") { 
     $header = "PERMIT"; 
-    $body = 'wala pa eh';
+    $body = '
+    This is to certify that '.$fullName.' of #'.$address.' has complied with the necessary requirements and is hereby granted permission to operate for the purpose of '.$purpose.' within the jurisdiction of Barangay Baritan, City of Malabon.
+
+    This Permit is issued in accordance with local ordinances and regulations, and is valid for the purpose of securing a Locational Clearance and Business Permit.
+
+    Issued this '.$formattedDate.' at Barangay Baritan, City of Malabon.';
+
 } else if ($documentType == "clearance") {
     $header = "CLEARANCE"; 
     $body = '

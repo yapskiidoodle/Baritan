@@ -17,6 +17,16 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
     unset($_SESSION['deactivated']); // Clear the session variable
 }
 
+
+// if(isset($_SESSION['Account_Role'])) {
+//   if ($_SESSION['type'] == 'Family_Account') {
+    
+    
+//   } else {
+//     header('Location: admin/residents.php');
+//   }
+// }
+
 if (isset($_SESSION['error_message'])) {
   $errorMessage = $_SESSION['error_message'];
   unset($_SESSION['error_message']); // Clear the error message after displaying it
@@ -41,10 +51,7 @@ if (isset($_SESSION['error_message'])) {
         body {
             overflow-x: hidden;
         }
-        
-        
-  
-
+     
     </style>
 
 <script>
@@ -65,7 +72,31 @@ if (isset($_SESSION['error_message'])) {
     
 </head>
 <body>
-        
+<!-- Floating chat icon -->
+<div class="chatbot-icon" id="chatbot-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/2099/2099192.png" alt="Chat">
+    </div>
+    
+    <!-- Chat container (hidden by default) -->
+    <div class="chatbot-container" id="chatbot-container">
+        <div class="chat-header">
+            <span id="chat-title">Help Center Bot</span>
+            <div class="chat-header-controls">
+                <button class="chat-btn lang-btn" id="lang-btn">Filipino</button>
+                <button class="chat-btn close-btn" id="close-btn">×</button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="welcome-message" id="welcome-message">Click on a question below to get an instant answer</div>
+        </div>
+        <div class="questions-container" id="questions-container" style="overflow-y: scroll; height: 10em;">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+    </div>
+    <script src="chatbot.js"> </script>
+    <link rel="stylesheet" href="chatbot.css">
+    
+
 
         <div class="aspect-ratio-container">
             <img src="pics/BarangayBaritan.png" alt="Barangay Baritan">
@@ -142,7 +173,7 @@ if (isset($_SESSION['error_message'])) {
 
         
      </div>
-     <div class="infos container" style="margin-top: 20%;" id="learn">
+     <div class="infos container" style="margin-top: 20em;" id="learn">
         <div class="row">
             <span class="col-md-6 text-center display-6 pt-3" style="font-weight: 500;">
                 Operating  Hours
@@ -163,43 +194,8 @@ if (isset($_SESSION['error_message'])) {
         
      </div>
     
-     <div class="faq container mt-5 display-6 ">
-        <span style="color: #70A0D7;">-</span>Frequenly Ask Questions (FAQs)
-        
-     </div>
-     <div class="faq-container">
-        <div class="faq-item">
-          <button class="faq-question">Who should apply for the account?</button>
-          <div class="faq-answer">
-            <p>The account should be applied for by the head of the family, as designated within the family.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">What online payment methods are accepted?</button>
-          <div class="faq-answer">
-            <p>We currently accept payments via PayMaya and GCash.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-question">Do I need to register to access services?</button>
-          <div class="faq-answer">
-            <p>Yes, registration is required to access all services.</p>
-          </div>
-        </div>
-        <div class="faq-item">
-            <button class="faq-question">When should I apply for a Certificate of Indigency?</button>
-            <div class="faq-answer">
-              <p>You may apply for a Certificate of Indigency if you need it for the following purposes: financial assistance, medical assistance, educational assistance, social pension requirements, burial assistance, P.W.D ID requirements, anti-rabies vaccination, legal assistance, 4Ps requirements, OSCA requirements, solo parent ID requirements, drug test requirements.</p>
-            </div>
-          </div>
-          <div class="faq-item">
-            <button class="faq-question"> When should I apply for a Clearance, Certification, or Permit?</button>
-            <div class="faq-answer">
-              <p>Apply for these documents if required for: SSS requirements, PLDT requirements, demolition permit, renovation permit, postal ID requirements, PhilHealth requirements, business permit or business closure, bank requirements, loan requirements, marriage requirements, internet connection requirements.</p>
-            </div>
-          </div>
-      </div>
-      <div class="container text-center " style="width: 40%; margin-bottom: 4%;">
+    
+      <div class="container text-center " style="width: 40%; margin-bottom: 4%; margin-top: 5%;">
         <div class="row">
             <div class="col" style="text-align: left;">
                 <div class="display-5" style="font-size: 20px;">
@@ -381,7 +377,6 @@ document.addEventListener('hidden.bs.modal', function () {
 
 <!-- Bootstrap Bundle (includes Popper.js) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 
     <script src="script.js"></script>
 

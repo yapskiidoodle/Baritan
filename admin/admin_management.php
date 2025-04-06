@@ -2,6 +2,7 @@
 require ('../src/connect.php');
 require ('../src/account.php');
 
+
 if (isset($_SESSION['Account_Role'])) {
     if (($_SESSION['type'] === "Super Admin") || ($_SESSION['type'] === "Admin") || ($_SESSION['type'] === "Editor")) {
         $_SESSION['Account_Role'];
@@ -20,6 +21,7 @@ if (isset($_SESSION['Account_Role'])) {
 $sql = "SELECT Account_ID, User_Email, Role, Type, Status FROM account_tbl";
 $result = $conn->query($sql);
 $admins = $result->fetch_all(MYSQLI_ASSOC);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -249,6 +251,32 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
         .modal-footer {
             border-top: none;
         }
+        /* Add this to your existing style section */
+/* Activity Log Modal Styles */
+.modal-xl {
+    max-width: 90%;
+}
+
+#activityLogModal .table-container {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+#activityLogModal table {
+    width: 100%;
+}
+
+#activityLogModal th {
+    position: sticky;
+    top: 0;
+    background-color: #1C3A5B;
+    color: white;
+    z-index: 10;
+}
+
+#activityLogModal tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
     </style>
 </head>
 <body>
@@ -298,14 +326,83 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
         <a href="tracking_records.php"><i class="fas fa-calendar-alt"></i>Tracking Records</a>
         <a href="admin_management.php" class="active"><i class="fas fa-tools"></i>Admin Management</a>
     </div>
+
+
+    <?php if (isset($_SESSION['error_message'])): ?>
+        <script> alert("<?php echo $_SESSION['error_message']; ?>");</script>
+        <?php unset($_SESSION['error_message']); ?>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['success_message'])): ?>
+    <script> alert("<?php echo $_SESSION['success_message']; ?>");</script>
+    <?php unset($_SESSION['success_message']); ?>
+    <?php endif; ?>
+
 <!-- Main Content -->
 <div class="main-content">
-        <h2>Admin Management</h2>
 
+    <h2>Admin Management</h2>
+
+    <div class="d-flex justify-content-between mb-3">
         <!-- Add New Admin Button -->
-        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addAdminModal">
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAdminModal">
             <i class="fas fa-plus"></i> Add New Admin
         </button>
+        
+        <!-- View Activity Log Button -->
+        <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#activityLogModal">
+            <i class="fas fa-history"></i> View Admin Activity Log
+        </button>
+    </div>
+
+        <!-- Activity Log Modal -->
+<div class="modal fade" id="activityLogModal" tabindex="-1" aria-labelledby="activityLogModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="activityLogModalLabel">Admin Activity Log</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-container" style="max-height: 500px;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Admin ID</th>
+                                <th>Action By</th>
+                                <th>Action</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // Fetch activity logs directly
+                            $logSql = "SELECT * FROM admin_activity_log ORDER BY created_at DESC";
+                            $logResult = $conn->query($logSql);
+                            
+                            if ($logResult->num_rows > 0) {
+                                while($log = $logResult->fetch_assoc()) {
+                                    echo '<tr>';
+                                    echo '<td>'.$log['log_id'].'</td>';
+                                    echo '<td>'.$log['admin_id'].'</td>';
+                                    echo '<td>'.$log['action_by'].'</td>';
+                                    echo '<td>'.$log['action'].'</td>';
+                                    echo '<td>'.$log['created_at'].'</td>';
+                                    echo '</tr>';
+                                }
+                            } else {
+                                echo '<tr><td colspan="5" class="text-center">No activity logs found</td></tr>';
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
 
         <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
@@ -348,7 +445,7 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
         </div>
         <!-- Admin Table -->
         <div class="table-container">
-            <table class="admins-table">
+        <table class="admins-table">
                 <thead>
                     <tr>
                         <th>Account ID</th>
@@ -446,18 +543,71 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
                         <label for="email" class="form-label">Username</label>
                         <input type="text" class="form-control" id="email" name="User_Email" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="role" class="form-label">Role</label>
-                        <input type="text" class="form-control" id="role" name="Role" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="accountType" class="form-label">Account Type</label>
-                        <select class="form-select" id="accountType" name="Type" required>
-                            <option value="Super Admin">Super Admin</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Editor">Editor</option>
-                        </select>
-                    </div>
+                        <div class="form-group mt-4" style="font-weight: 800;" id="type">
+                            <label for="role" class="form-label">Role</label>
+                            <select  class="form-control" name="Role" id="categorySelect">
+                            <option value="" disabled selected>-- Select Purpose --</option>
+                                <option value="Chairman">Chairman</option>
+                                <option value="Secretary">Secretary</option>
+                                <option value="Counselor">Counselor</option>
+                                <option value="Lupon">Lupon</option>
+                                <option value="SK">SK</option>
+
+                            </select>
+                        </div>
+                        <div class="form-group mt-4" style="font-weight: 800;" id="options" hidden>
+                                <label for="purposeSelect">Purpose</label>
+                                <select class="form-control" id="purposeSelect" name="Type" required>
+                                    <option value="" disabled selected>-- Select Purpose --</option>
+                                </select>
+                        
+
+                            <script>
+                                const optionsData = {
+                                    Chairman: [
+                                        "Super Admin"
+                                    ],
+                                    Secretary: [
+                                        "Super Admin",
+                                        "Admin"
+
+                                    ],
+                                    Counselor: [
+                                
+                                        "Admin","Editor"
+
+                                    ],
+                                    Lupon: [
+                                    "Admin"
+                                    ], 
+                                    SK: [
+                                        "Editor"
+                                    ]
+                                };
+
+                                document.getElementById("categorySelect").addEventListener("change", function () {
+                                    const selectedCategory = this.value;
+                                    const purposeSelect = document.getElementById("purposeSelect");
+                                    const optionsDiv = document.getElementById("options");
+
+                                    // Clear previous options except for the default disabled one
+                                    purposeSelect.innerHTML = '<option value="" disabled selected>-- Select Purpose --</option>';
+
+                                    if (optionsData[selectedCategory]) {
+                                        optionsDiv.removeAttribute("hidden"); // Show the options div
+                                        
+                                        optionsData[selectedCategory].forEach(option => {
+                                            let newOption = document.createElement("option");
+                                            newOption.value = option;
+                                            newOption.textContent = option;
+                                            purposeSelect.appendChild(newOption);
+                                        });
+                                    } else {
+                                        optionsDiv.setAttribute("hidden", "true"); // Hide if no valid category is selected
+                                    }
+                                });
+                            </script>
+                        </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" name="Password" required>
@@ -536,6 +686,13 @@ $admins = $result->fetch_all(MYSQLI_ASSOC);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script>
+
+
+// Load logs when modal is shown
+document.addEventListener('DOMContentLoaded', function() {
+    const activityLogModal = document.getElementById('activityLogModal');
+    activityLogModal.addEventListener('show.bs.modal', loadActivityLogs);
+});
 
         // Function to set the Account_ID for deletion
 function setDeleteAccountId(accountId) {

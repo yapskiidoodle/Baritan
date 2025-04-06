@@ -34,7 +34,30 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
     </style>
 </head>
 <body>
+     <!-- Floating chat icon -->
+<div class="chatbot-icon" id="chatbot-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/2099/2099192.png" alt="Chat">
+    </div>
     
+    <!-- Chat container (hidden by default) -->
+    <div class="chatbot-container" id="chatbot-container">
+        <div class="chat-header">
+            <span id="chat-title">Help Center Bot</span>
+            <div class="chat-header-controls">
+                <button class="chat-btn lang-btn" id="lang-btn">Filipino</button>
+                <button class="chat-btn close-btn" id="close-btn">×</button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="welcome-message" id="welcome-message">Click on a question below to get an instant answer</div>
+        </div>
+        <div class="questions-container" id="questions-container" style="overflow-y: scroll; height: 10em;">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+    </div>
+    <script src="../chatbot.js"> </script>
+    <link rel="stylesheet" href="../chatbot.css">
+
     <!--header-->
     <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
         <div class="row">
@@ -80,6 +103,7 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                             </ul>
                         </div>
                     <?php } else { ?>
+                      
                         <div id="start" name="start">
                             <a href="login.php" class="btn btn-danger ms-2">Log In</a>
                         </div>
@@ -111,7 +135,14 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                         <li style="color: #1C3A5B;" class="h4">Application Forms 
                             <div class="lead ms-4" style="font-size: 18px;">Renewal/Closure/Personal Use</div>
                             <div class="text-center">
-                            <a href="<?php echo isset($_SESSION['userEmail']) ? 'application.php' : 'login.php'; ?>">
+                            <?php
+                                $redirectPage = 'application.php';
+                                if (!isset($_SESSION['userEmail'])) {
+                                    $_SESSION['error_message'] = "Please log in first to access Application module";
+                                    $redirectPage = 'login.php';
+                                }
+                                ?>
+                            <a href="<?php echo $redirectPage; ?>">
                                 <button class="learn mt-3" style="padding: 10px 20px">Check Forms</button>
                             </a>
                             </div>
@@ -122,7 +153,8 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                                 of <br> Barangay Baritan</div>
                             <div class="text-center">
                             <button type="button" id="next_button" class="learn mt-3" style="padding: 10px 20px" 
-                                <?php if (!isset($_SESSION['userEmail'])) { ?>
+                                <?php if (!isset($_SESSION['userEmail'])) {  ?>
+                                    <?php $_SESSION['error_message'] = "Please log in first to access Barangay ID module"; ?>
                                     onclick="window.location.href='login.php';"
                                 <?php } else { ?>
                                     data-bs-target="#autofill" data-bs-toggle="modal"
@@ -137,7 +169,14 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                         <li style="color: #1C3A5B;" class="h4">Reservation
                             <div class="lead ms-4" style="font-size: 18px;">Reserve Tents, Chairs, etc...</div>
                             <div class="text-center">
-                            <a href="<?php echo isset($_SESSION['userEmail']) ? 'services/reservation.php' : 'login.php'; ?>">
+                            <?php
+                                $redirectReservation = 'services/reservation.php';
+                                if (!isset($_SESSION['userEmail'])) {
+                                    $_SESSION['error_message'] = "Please log in first to access the Reservation module";
+                                    $redirectReservation = 'login.php';
+                                }
+                                ?>
+                            <a href="<?php echo $redirectReservation; ?>">
                                 <button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button>
                             </a>
                             </div>

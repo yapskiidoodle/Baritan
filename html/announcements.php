@@ -9,7 +9,7 @@
     // Check if the account is deactivated
     if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
         echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
+            document.addEventListener('DOMContentLoaded', f unction() {
                 var myModal = new bootstrap.Modal(document.getElementById('deactivatedModal'));
                 myModal.show();
             });

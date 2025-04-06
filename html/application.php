@@ -67,7 +67,30 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
     </style>
 </head>
 <body>
-   
+    <!-- Floating chat icon -->
+<div class="chatbot-icon" id="chatbot-icon">
+        <img src="https://cdn-icons-png.flaticon.com/512/2099/2099192.png" alt="Chat">
+    </div>
+    
+    <!-- Chat container (hidden by default) -->
+    <div class="chatbot-container" id="chatbot-container">
+        <div class="chat-header">
+            <span id="chat-title">Help Center Bot</span>
+            <div class="chat-header-controls">
+                <button class="chat-btn lang-btn" id="lang-btn">Filipino</button>
+                <button class="chat-btn close-btn" id="close-btn">×</button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="welcome-message" id="welcome-message">Click on a question below to get an instant answer</div>
+        </div>
+        <div class="questions-container" id="questions-container" style="overflow-y: scroll; height: 10em;">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+    </div>
+    <script src="../chatbot.js"> </script>
+    <link rel="stylesheet" href="../chatbot.css">
+
 
         <!--header-->
         <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">

@@ -101,8 +101,8 @@ if (isset($_SESSION['error_message'])) {
 
 
 </head>
-<body style="overflow-y:hidden;">
-        
+<body>
+  
 
     <!-- Header -->
     <div style="background-color:#1C3A5B; top: 0; color: white; padding: 1%; position: fixed; width: 100%;">
@@ -120,7 +120,7 @@ if (isset($_SESSION['error_message'])) {
                    <div class="vr"></div>
                    <div style="padding:0% 4%;"> <a href="about.php">About Us</a> </div>
                    <div class="vr"></div>
-                   <div style="padding:0% 4%;"> <a href="">Services</a> </div>
+                   <div style="padding:0% 4%;"> <a href="service.php">Services</a> </div>
                    <div class="vr"></div>
                    <div style="padding:0% 4%;"> <a href="../index.php?#contact">Contact Us</a> </div>
                    <div class="vr"></div>
@@ -136,7 +136,7 @@ if (isset($_SESSION['error_message'])) {
 
 
 
-    <div style="margin-top: 2%;"></div>
+
     <div class="container content" style="background-color: rgba(255, 255, 255, 0.8); margin-top:15%; width:30%; border-radius:10px; padding-top:1%;padding-bottom:2%;">
     <form  action="../src/account.php" method="POST">
     <div class="container text-center mb-3" style=" font-weight: 600; color: #00264d; font-size: 28px;">
@@ -163,7 +163,7 @@ if (isset($_SESSION['error_message'])) {
 
         <!-- 2 column grid layout for inline styling -->
         <div class="row  mb-2">
-            <div class="col d-flex justify-content-center">
+            <div class="col d-flex ps-3 mt-3">
                 <!-- Checkbox -->
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="" id="form2Example31" checked />
@@ -171,11 +171,7 @@ if (isset($_SESSION['error_message'])) {
                 </div>
             </div>
 
-            <div class="col" >
-                <!-- Simple link -->
-                <a href="#accountPassword" data-bs-toggle="modal" 
-                data-bs-target="#accountPassword"  style="color: #1C3A5B;">Forgot password?</a>
-            </div>
+            
         </div>
 
         <!-- Submit button -->
@@ -296,7 +292,7 @@ if (isset($_SESSION['error_message'])) {
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Select Account</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        
       </div>
       <div class="modal-body">
         <div class="row justify-content-center">
@@ -312,13 +308,13 @@ if (isset($_SESSION['error_message'])) {
             </div>
           <?php endforeach; ?>
           <!-- Add Account -->
-          <div class="col-6 d-flex flex-column align-items-center text-center">
+          <!-- <div class="col-6 d-flex flex-column align-items-center text-center">
             <a href="#" class="text-decoration-none text-dark">
               <img src="../pics/profile.jpg" alt="Add Account" class="img-fluid rounded-circle"
                 style="width: 85px; transition: transform 0.3s ease-in-out;">
               <div class="lead fw-bold mt-2">Add Account</div>
             </a>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -385,9 +381,6 @@ if (isset($_SESSION['error_message'])) {
     </div>
   </div>
 </div>
-
-
-
 
 
 

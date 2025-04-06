@@ -94,26 +94,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         die("Error inserting into residents_information_tbl: " . $stmtAddInfo->error);
     }
 
+
     // If a password is provided, insert into account_setting_tbl
-    if (!empty($password)) {
+    if (empty($password)) {
+       $hashedpassword = "PASSWORD NOT SET";
+    } else {
         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    }
+ 
 
-        $sqlAccount = "INSERT INTO account_setting_tbl (Profile_ID, Account_ID, Resident_ID,Member_Password, Date_Created) 
-                       VALUES (?, ?, ?, ?, NOW())";
-        $stmtAccount = $conn->prepare($sqlAccount);
-        if (!$stmtAccount) {
-            die("Error preparing account setting table SQL: " . $conn->error);
-        }
+    $sqlAccount = "INSERT INTO account_setting_tbl (Profile_ID, Account_ID, Resident_ID,Member_Password, Date_Created) 
+                   VALUES (?, ?, ?, ?, NOW())";
+    $stmtAccount = $conn->prepare($sqlAccount);
+    if (!$stmtAccount) {
+        die("Error preparing account setting table SQL: " . $conn->error);
+    }
 
-        $Profile_ID = "PROF" . date("Y") . str_pad($residentCount, 4, "0", STR_PAD_LEFT);
-        $Account_ID = $_SESSION['User_Data']['Account_ID'] ?? '';
-       
+    $Profile_ID = "PROF" . date("Y") . str_pad($residentCount, 4, "0", STR_PAD_LEFT);
+    $Account_ID = $_SESSION['User_Data']['Account_ID'] ?? '';
+   
 
-        $stmtAccount->bind_param("ssss", $Profile_ID,$Account_ID, $Resident_ID , $hashedPassword);
+    $stmtAccount->bind_param("ssss", $Profile_ID,$Account_ID, $Resident_ID , $hashedPassword);
 
-        if (!$stmtAccount->execute()) {
-            die("Error inserting into account_setting_tbl: " . $stmtAccount->error);
-        }
+    if (!$stmtAccount->execute()) {
+        die("Error inserting into account_setting_tbl: " . $stmtAccount->error);
     }
 
     // Redirect back to the member list
