@@ -262,7 +262,8 @@ function sendEmail($category, $message, $target_audience, $recipient_email, $rec
                     }
                 }
                     
-        }   $logIdPrefix = strtoupper(substr($_SESSION['Account_Role'], 0, 3)); // First 3 letters of the admin role
+        }   
+        $logIdPrefix = strtoupper(substr($_SESSION['Account_Role'], 0, 3)); // First 3 letters of the admin role
         $logIdDateTime = date("YmdHis"); // Current date and time in YYYYMMDDHHMMSS format
         $logId = $logIdPrefix . $logIdDateTime; // Combine prefix and date-time
 

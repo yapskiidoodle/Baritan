@@ -69,52 +69,118 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
     background-color: #1C3A5B;
     
     }   
+    
+    .password-wrapper {
+      position: relative;
+    }
+
+    .password-wrapper input {
+      padding-right: 40px; /* space for the eye icon */
+    }
+
+    .password-wrapper .toggle-password {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .password-wrapper .toggle-password i {
+      font-size: 1.1rem;
+      color: #6c757d;
+    }
     </style>
 
 </head>
 <body>
 
 
-    <!--header-->
-    <div class="container-fluid" style="background-color:#1C3A5B;color: white;padding: 1%; width: 100%;  ">  
-        <div class="row" >    
-           <div class="col-1" style="width: 5.3%; ">
-               <img src="../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
-               
-           </div>
-           <div class="col-7" >
-               <h4 style="padding-top:0.4%;">Barangay Baritan</h4>
-               <h6 style="font-size: 10.5px;">Malabon City, Metro Manila, Philippines</h6>
-           </div>
-           <div class="col" style=" text-align: center; padding-top: 1.5%;">
-               <div style="display: flex; ">
-                   <div style="padding:0% 4%;">
-                       <a href="../index.php">Home</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="">About Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="service.php">Services</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="../index.php?#contact"  >Contact Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div hidden>
-                       <img src="../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; margin-top: -26.6%; margin-left: 5%;">
-                   </div>
-                   <div>
-                        <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
-                   </div>
-               </div>
-           </div>
+<?php 
+        $profilePic = isset($_SESSION['User_Data']['Pic_Path']) && !empty($_SESSION['User_Data']['Pic_Path']) 
+            ? '../resident_folder/profile/' . $_SESSION['User_Data']['Pic_Path'] 
+            : '../pics/profile.jpg';
+        ?>
+
+    <!-- Header -->
+    <header class="container-fluid  text-white py-2 px-3" style="background-color: #1C3A5B;">
+    <div class="row align-items-center">
+        <!-- Logo -->
+        <div class="col-auto">
+            <img src="../pics/logo.png" alt="Barangay Baritan Logo" class="img-fluid" style="max-width: 75px;">
+        </div>
+        
+        <!-- Barangay Info -->
+        <div class="col-auto">
+            <h4 class="mb-0">Barangay Baritan</h4>
+            <small class="d-block">Malabon City, Metro Manila, Philippines</small>
+        </div>
+        
+        <!-- Navigation - Pushed to right -->
+        <div class="col ms-auto">
+            <nav class="d-flex justify-content-end align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="nav-item px-2">
+                        <a href="../index.php" class="text-white text-decoration-none">Home</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="about.php" class="text-white text-decoration-none">About Us</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="service.php" class="text-white text-decoration-none">Services</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../index.php?#contact" class="text-white text-decoration-none">Contact Us</a>
+                    </div>
+                    
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown ms-3" id="profileSection" hidden>
+                        <button class="btn dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="<?php echo isset($profilePic) ? $profilePic : '../pics/profile.jpg'; ?>" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="profile.php"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li>
+                                <form action="../src/logout.php" method="POST">
+                                    <button type="submit" class="dropdown-item" name="logoutButton">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Login Button -->
+                    <div class="ms-3" id="loginSection">
+                        <a href="login.php" class="btn btn-danger">Log In</a>
+                    </div>
+                </div>
+            </nav>
         </div>
     </div>
-    <!--END HEADER-->
+</header>
+
+    <script>
+            // Example code to toggle between login and profile sections
+    document.addEventListener('DOMContentLoaded', function() {
+        const isLoggedIn = <?php echo isset($_SESSION['User_Data']) ? 'true' : 'false'; ?>;
+        
+        if (isLoggedIn) {
+            document.getElementById('profileSection').removeAttribute('hidden');
+            document.getElementById('loginSection').style.display = 'none';
+        } else {
+            document.getElementById('loginSection').style.display = 'block';
+        }
+    });
+    </script>
+
+    <!-- END HEADER -->
 
 
 
@@ -147,7 +213,7 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
              
             </div>
    
-            <form id="registrationForm" action="../src/residentInfo.php" method="POST">
+            <form id="registrationForm" action="../src/residentInfo.php" method="POST" enctype="multipart/form-data">
           <!-- Login Details -->
             <div class="container " style="text-align: left;">
 
@@ -156,12 +222,48 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                     <div class="h4 mt-5 text-center" style="font-weight: 700;">Login Details</div>
                     <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Enter valid Email address</label>
-                        <input type="email" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="example@gmail.com" required>
+                        <input type="email" class="form-control" id="userEmail" name="userEmail" aria-describedby="emailHelp" placeholder="example@gmail.com" required maxlegnth="25">
+                        <small id="emailFeedback" class="form-text text-danger" style="display: none;"></small>
+                        <script>
+                            document.getElementById('userEmail').addEventListener('input', function () {
+                                const emailInput = this.value.trim();
+                                const feedback = document.getElementById('emailFeedback');
+
+                                if (emailInput.length === 0) {
+                                    feedback.style.display = 'none';
+                                    return;
+                                }
+
+                                const xhr = new XMLHttpRequest();
+                                xhr.open("POST", "../src/check_email.php", true);
+                                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                                xhr.onload = function () {
+                                    if (xhr.status === 200) {
+                                        const response = JSON.parse(xhr.responseText);
+                                        if (response.status === "taken") {
+                                            feedback.textContent = "This email is already registered.";
+                                            feedback.style.display = "block";
+                                        } else {
+                                            feedback.style.display = "none";
+                                        }
+                                    }
+                                };
+
+                                xhr.send("userEmail=" + encodeURIComponent(emailInput));
+                            });
+                            </script>
+
                         <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputPassword1">Enter Password </label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        <div class="password-wrapper">
+                          <input type="password" name="password" id="password" class="form-control" required placeholder="Password" maxlength="16" />
+                          <button type="button" class="toggle-password" id="togglePassword">
+                            <i class="bi bi-eye" id="eyeIcon"></i>
+                          </button>
+                        </div>
                         <small id="emailHelp" class="form-text text-muted">(must be 8 characters long and containts Capital letters and special character).</small>
                       </div>
                       <div class="form-group mt-4" style="font-weight: 800;">
@@ -381,15 +483,15 @@ require '../src/connect.php'; // Use 'include' or 'require' to load the file
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Upload Identification Card</label>
                         <div class="lead mt-4" style="font-size: 16px;">Front Side</div>
-                        <input type="file" class="form-control" id="idFront"name="idFront" required>
+                        <input type="file" class="form-control" id="idFront"name="idFront"  required accept="image/*">
                         <div class="lead mt-4" style="font-size: 16px;">Back Side</div>
-                        <input type="file" class="form-control" id="idBack" name="idBack" required>
+                        <input type="file" class="form-control" id="idBack" name="idBack"  required accept="image/*">
                       </div>
 
                       <div class="form-group mt-5" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Upload 2x2 Picture</label>
                         <div class="lead mt-4" style="font-size: 16px;">(With White Background)</div>
-                        <input type="file" class="form-control" id="2x2pic" name="2x2pic" required>
+                        <input type="file" class="form-control" id="2x2pic" name="2x2pic"  required accept="image/*">
                         
                       </div>
                 </div>
@@ -533,40 +635,64 @@ function submitForm() {
 // ✅ Validate required inputs and return the first empty one
 function validateInputs() {
     var firstInvalid = null;
-    var generalRegex = /[^a-zA-Z0-9ñ ]/; // Blocks special characters except space (for general fields)
-    var lastNameRegex = /^[a-zA-Zñ -]+$/; // ✅ Allows letters, spaces, and hyphens for last name
-    var emailRegex = /[^a-zA-Z0-9@.]/; // Allows only letters, numbers, @, and .
-    var passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/; // Password: 8+ chars, 1 uppercase, 1 special char
+    var generalRegex = /[^a-zA-Z0-9ñ ]/;
+    var lastNameRegex = /^[a-zA-Zñ -]+$/;
+    var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    var passwordRegex = /^(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/;
+    var imageFileRegex = /\.(jpe?g|png|gif|bmp)$/i;
+    var maxFileSize = 5 * 1024 * 1024; // 5MB
 
     $(tabs[current]).find("input[required], select[required]").each(function () {
-        var value = $(this).val() ? $(this).val().trim() : ''; // ✅ Fix: Avoid `.trim()` on null
+        var input = $(this)[0];
+        var value = $(this).val() ? $(this).val().trim() : '';
         var inputType = $(this).attr("type");
         var inputId = $(this).attr("id");
         var isEmail = inputType === "email";
         var isDate = inputType === "date";
         var isPassword = inputId === "password" || inputId === "rePassword";
+        var isFile = inputType === "file";
 
         // Empty input field
-        if (!value) {
+        if (!value && !isFile) {
             showError(this, "This field is required.");
             if (!firstInvalid) firstInvalid = this;
         } 
+        // File validation
+        else if (isFile) {
+            var file = input.files[0];
+            
+            if (!file) {
+                showError(this, "Please upload a file.");
+                if (!firstInvalid) firstInvalid = this;
+            } 
+            else if (!imageFileRegex.test(file.name)) {
+                showError(this, "Only JPG, PNG, or GIF images are allowed.");
+                if (!firstInvalid) firstInvalid = this;
+            }
+            else if (file.size > maxFileSize) {
+                showError(this, "File size must be less than 5MB.");
+                if (!firstInvalid) firstInvalid = this;
+            }
+            else {
+                removeError(this);
+            }
+        }
         // Email validation
-        else if (isEmail && emailRegex.test(value)) {
-            showError(this, "Only letters, numbers, @, and . are allowed.");
+        else if (isEmail && !emailRegex.test(value)) {
+            showError(this, "Please enter a valid email address.");
             if (!firstInvalid) firstInvalid = this;
-        } 
+        }
         // Password validation
         else if (inputId === "password" && !passwordRegex.test(value)) {
             showError(this, "Password must be at least 8 characters, contain an uppercase letter, and a special character.");
             if (!firstInvalid) firstInvalid = this;
         }
-        // Last name validation (✅ Allows hyphens)
+        // Last name validation
         else if (inputId === "lastName" && !lastNameRegex.test(value)) {
             showError(this, "Only letters, spaces, and hyphens are allowed.");
             if (!firstInvalid) firstInvalid = this;
         }
-        // General fields validation (Prevents special characters)
+        // General fields validation
         else if (!isEmail && !isDate && !isPassword && inputId !== "lastName" && inputId !== "famName" && generalRegex.test(value)) {
             showError(this, "Special characters are not allowed.");
             if (!firstInvalid) firstInvalid = this;
@@ -583,6 +709,22 @@ function validateInputs() {
 
     return firstInvalid;
 }
+
+// Add this after your file validation code
+function previewImage(input, previewId) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $(previewId).attr('src', e.target.result).show();
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+$("#idFront, #idBack, #2x2pic").change(function() {
+    var previewId = "#" + $(this).attr("id") + "Preview";
+    previewImage(this, previewId);
+});
 
 function validatePasswords() {
     var password = $("#password").val();

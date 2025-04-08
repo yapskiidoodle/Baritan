@@ -2,6 +2,9 @@
 require 'connect.php'; // Database connection
 require 'account.php'; // Contains session_start()
 
+
+
+
 if ($_SERVER["REQUEST_METHOD"] == "POST")  {
     $reservationID = uniqid("RES_");
     $residentID = $_SESSION['User_Data']['Resident_ID'];

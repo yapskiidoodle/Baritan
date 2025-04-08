@@ -15,6 +15,12 @@ if (isset($_SESSION['Account_Role'])) {
     exit();
 }
 
+// Count pending documents
+$pendingCount = $conn->query("SELECT COUNT(*) FROM request_document_tbl WHERE Request_Status = 'Pending'")->fetch_row()[0];
+// Count approved documents
+$approvedCount = $conn->query("SELECT COUNT(*) FROM request_document_tbl WHERE Request_Status = 'Approved'")->fetch_row()[0];
+// Count denied documents
+$deniedCount = $conn->query("SELECT COUNT(*) FROM request_document_tbl WHERE Request_Status = 'Rejected'")->fetch_row()[0];
 
 ?>
 <!DOCTYPE html>
@@ -27,6 +33,11 @@ if (isset($_SESSION['Account_Role'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="pics/logo.png">
     <link rel="stylesheet" href="adminDesign.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
     <style>
         body {
             overflow-x: hidden;
@@ -42,7 +53,7 @@ if (isset($_SESSION['Account_Role'])) {
             position: fixed;
             top: 0;
             left: 0;
-            padding-top: 120px; /* Increased padding to create space below the logo */
+            padding-top: 120px;
         }
 
         .sidebar a {
@@ -58,8 +69,8 @@ if (isset($_SESSION['Account_Role'])) {
         }
 
         .sidebar a.active {
-            background-color: #2a4d6e; /* Highlight color */
-            font-weight: bold; /* Optional: Make the text bold */
+            background-color: #2a4d6e;
+            font-weight: bold;
         }
 
         .sidebar i {
@@ -100,7 +111,7 @@ if (isset($_SESSION['Account_Role'])) {
             color: white;
             font-size: 24px;
             cursor: pointer;
-            padding: 0; /* Remove padding to align icon properly */
+            padding: 0;
         }
 
         .header .profile-dropdown .dropdown-menu {
@@ -108,19 +119,17 @@ if (isset($_SESSION['Account_Role'])) {
             left: auto;
         }
 
-        /* Remove the dropdown icon */
         .header .profile-dropdown .btn::after {
             display: none;
         }
 
         /* Main content styling */
         .main-content {
-            margin-left: 270px; /* Increase margin to account for sidebar width (250px + 20px padding) */
+            margin-left: 270px;
             padding: 20px;
-            margin-top: 6%; /* Adjust for header height */
-            width: calc(100% - 270px); /* Ensure it doesn't overflow horizontally */
+            margin-top: 6%;
+            width: calc(100% - 270px);
         }
-
         /* Search bar and filter styling */
         .search-filter {
             display: flex;
@@ -136,55 +145,27 @@ if (isset($_SESSION['Account_Role'])) {
             border-radius: 5px;
         }
 
-        .search-button,
-        .register-button {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 5px;
-            background-color: #1C3A5B;
-            color: white;
-            cursor: pointer;
-        }
-
-        .search-button:hover,
-        .register-button:hover {
-            background-color: #2a4d6e;
-        }
-
-        .sort-by {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .sort-by select {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        /* Table styling */
         .table-container {
-            max-height: 500px; /* Adjust height as needed */
+            max-height: 500px;
             overflow-y: auto;
             border: 1px solid #ddd;
             border-radius: 5px;
-            margin-top: 20px;
         }
 
-        .residents-table {
+        .documents-table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        .residents-table th,
-        .residents-table td {
+        .documents-table th,
+        .documents-table td {
             border: 1px solid #ddd;
-            padding: 12px;
+            padding: 10px;
             text-align: left;
+            font-size: 12px;
         }
 
-        .residents-table th {
+        .documents-table th {
             background-color: #1C3A5B;
             color: white;
             position: sticky;
@@ -192,161 +173,150 @@ if (isset($_SESSION['Account_Role'])) {
             z-index: 1;
         }
 
-        .residents-table tr:nth-child(even) {
+        .documents-table tr:nth-child(even) {
             background-color: #f9f9f9;
         }
 
-        .residents-table tr:hover {
+        .documents-table tr:hover {
             background-color: #f1f1f1;
         }
 
-        /* Modal styling */
-        .modal-content {
-            border-radius: 10px;
+        /* Status badges */
+        .badge-pending {
+            background-color: #ffc107;
+            color: #212529;
         }
 
-        .modal-header {
-            background-color: #1C3A5B;
+        .badge-approved {
+            background-color: #28a745;
             color: white;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
         }
 
-        .modal-body {
-            padding: 20px;
+        .badge-denied {
+            background-color: #dc3545;
+            color: white;
         }
 
-        .modal-footer {
-            border-top: none;
+        /* Action buttons */
+        .btn-view {
+            background-color: #17a2b8;
+            color: white;
         }
-        .search-filter {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
 
-.search-section {
-    display: flex;
-    align-items: center;
-}
+        .btn-approve {
+            background-color: #28a745;
+            color: white;
+        }
 
-.search-bar {
-    width: 250px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-right: 10px;
-}
+        .btn-deny {
+            background-color: #dc3545;
+            color: white;
+        }
 
-.search-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    background-color: #1C3A5B;
-    color: white;
-    cursor: pointer;
-}
+        /* Tab styling */
+        .nav-tabs {
+            margin-bottom: 20px;
+            border-bottom: 2px solid #1C3A5B;
+        }
+        
+        .nav-tabs .nav-link {
+            color: #1C3A5B;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: #fff;
+            background-color: #1C3A5B;
+            border: none;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .nav-tabs .nav-link:hover:not(.active) {
+            background-color: #f1f1f1;
+        }
+        
+        .tab-content {
+            padding: 20px 0;
+        }
 
-.search-button:hover {
-    background-color: #2a4d6e;
+        /* Document details modal */
+        .document-details dt {
+            font-weight: 600;
+        }
+        .document-details dd {
+            margin-bottom: 10px;
+        }
+        /* Add this to your existing style section */
+    .modal-backdrop {
+        z-index: 1040 !important;
+    }
+    
+    #viewDocumentModal, #pdfViewerModal {
+        z-index: 1060 !important;
+    }
+    
+    #confirmActionModal {
+        z-index: 1050 !important;
+    }
+    
+    /* This ensures the deny modal stays above the confirm modal */
+    #denyDocumentModal {
+        z-index: 1070 !important;
+    }
+    .hidden-backdrop {
+    display: none !important;
 }
-
-.sort-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.sort-by {
-    font-size: 14px;
-    color: #333;
-}
-
-.form-select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: white;
-    cursor: pointer;
-    width: 200px; /* Increased width for better readability */
-}
-
-.sort-button {
-    padding: 8px 12px;
-    border: none;
-    border-radius: 5px;
-    background-color: #1C3A5B;
-    color: white;
-    cursor: pointer;
-}
-
-.sort-button:hover {
-    background-color: #2a4d6e;
-}
-/* Status Label Styling */
-.status {
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
-    font-weight: bold;
-}
-
-.status.approved {
-    background-color: #d4edda;
-    color: #155724;
-}
-
-.status.pending {
-    background-color: #fff3cd;
-    color: #856404;
-}
-
-.status.rejected {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
+/* Modal stacking */
+#confirmActionModal {
+        z-index: 1050;
+    }
+    
+    #pdfViewerModal {
+        z-index: 1060;
+    }
+    
+    /* Make sure backdrops stack properly */
+    .modal-backdrop.show:not(:first-child) {
+        opacity: 0;
+    }
     </style>
 </head>
 <body>
 
     <!-- Header -->
     <div class="header">
-        <div class="logo-section">
-            <img src="pics/logo.png" alt="Barangay Baritan Logo">
-            <div>
-                <h4 style="margin: 0;">Barangay Baritan</h4>
-                <h6 style="font-size: 10.5px; margin: 0;">Malabon City, Metro Manila, Philippines</h6>
+            <div class="logo-section">
+                <img src="pics/logo.png" alt="Barangay Baritan Logo">
+                <div>
+                    <h4 style="margin: 0;">Barangay Baritan</h4>
+                    <h6 style="font-size: 10.5px; margin: 0;">Malabon City, Metro Manila, Philippines</h6>
+                </div>
+            </div>
+            <div class="profile-dropdown">
+                <div class="dropdown">
+                    <?php if (isset($_SESSION['Account_Role'])): ?>
+                        <span style="margin-right: 10px; color: white; font-size: 15px; font-weight: Semi-Bold;">
+                            <?php echo $_SESSION['Account_Role']; ?>
+                        </span>
+                    <?php endif; ?>
+                    <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                        <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
+                            <input type="hidden" name="logoutButton" value="1">
+                        </form>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="profile-dropdown">
-        <div class="dropdown">
-            <!-- Display Account Role next to the profile icon -->
-            <?php if (isset($_SESSION['Account_Role'])): ?>
-                <span style="margin-right: 10px; color: white; font-size: 15px; font-weight: Semi-Bold;">
-                    <?php echo $_SESSION['Account_Role']; ?>
-                </span>
-            <?php endif; ?>
-            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-user-circle"></i>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                <li><hr class="dropdown-divider"></li> -->
-                <li><a class="dropdown-item" href="#" onclick="document.getElementById('logoutForm').submit();"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                <form id="logoutForm" action="../src/logout.php" method="POST" style="display: none;">
-                    <input type="hidden" name="logoutButton" value="1">
-                </form>
-            </ul>
-        </div>
-    </div>
-    </div>
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <a href="residents.php" ><i class="fas fa-users"></i>Residents</a>
+        <a href="residents.php"><i class="fas fa-users"></i>Residents</a>
         <a href="announcement.php"><i class="fas fa-bullhorn"></i>Announcement</a>
         <a href="document.php" class="active"><i class="fas fa-file-alt"></i>Documents</a>
         <a href="approved_document.php"><i class="fas fa-file-signature"></i>Approved Documents</a>
@@ -359,166 +329,622 @@ if (isset($_SESSION['Account_Role'])) {
 
     <!-- Main Content -->
     <div class="main-content">
-    <!-- Search and Sort Section -->
-    <div class="search-filter">
-        <!-- Search Bar -->
-        <div class="search-section">
-            <input type="text" class="search-bar" placeholder="Search...">
-            <button class="search-button"><i class="fas fa-search"></i></button>
-        </div>
+        <h2>Document Management</h2>
+        
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs" id="documentTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pending-tab" data-bs-toggle="tab" data-bs-target="#pending-tab-pane" type="button" role="tab" aria-controls="pending-tab-pane" aria-selected="true">
+                    <i class="fas fa-clock"></i> Pending <span class="badge bg-warning"><?php echo $pendingCount; ?></span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="approved-tab" data-bs-toggle="tab" data-bs-target="#approved-tab-pane" type="button" role="tab" aria-controls="approved-tab-pane" aria-selected="false">
+                    <i class="fas fa-check-circle"></i> Approved 
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="denied-tab" data-bs-toggle="tab" data-bs-target="#denied-tab-pane" type="button" role="tab" aria-controls="denied-tab-pane" aria-selected="false">
+                    <i class="fas fa-times-circle"></i> Denied
+                </button>
+            </li>
+        </ul>
 
-        <!-- Sort Section -->
-        <div class="sort-section">
-        <label for="sortDropdown" class="sort-by"></i> Sort:</label>
-            <select id="sortDropdown" class="form-select">
-                <option value="barangay_clearance">Barangay Clearance</option>
-                <option value="barangay_certificate">Barangay Certificate</option>
-                <option value="business_permit">Business Permit</option>
-            </select>
-        <button class="sort-button">Sort</button>
+        <div class="tab-content" id="documentTabsContent">
+            <!-- Pending Documents Tab -->
+            <div class="tab-pane fade show active" id="pending-tab-pane" role="tabpanel" aria-labelledby="pending-tab" tabindex="0">
+            <div class="search-filter">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="badge bg-primary">
+                        Total Pending: <?php echo $pendingCount; ?>
+                    </span>
+                </div>
+                <div class="input-group" style="width: 300px;">
+                    <input type="text" id="pendingSearch" class="form-control" placeholder="Search pending documents...">
+                    <button class="btn btn-primary" type="button" style="background-color: #1C3A5B; border-color: #1C3A5B;" id="pendingSearchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+
+                <div class="table-container">
+                    <table class="documents-table">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Resident Name</th>
+                                <th>Document Type</th>
+                                <th>Purpose</th>
+                                <th>Request Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $pendingQuery = "SELECT r.*, CONCAT(res.FirstName, ' ', res.LastName) AS resident_name 
+                                          FROM request_document_tbl r
+                                          JOIN residents_information_tbl res ON r.Resident_ID = res.Resident_ID
+                                          WHERE r.Request_Status = 'Pending'
+                                          ORDER BY r.Request_Date DESC";
+                            $pendingResult = $conn->query($pendingQuery);
+                            
+                            while ($row = $pendingResult->fetch_assoc()):
+                            ?>
+                            <tr>
+                                <td><?php echo $row['Request_ID']; ?></td>
+                                <td><?php echo htmlspecialchars($row['resident_name']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Document_Type']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Purpose']); ?></td>
+                                <td><?php echo date('M d, Y', strtotime($row['Request_Date'])); ?></td>
+                                <td><span class="badge badge-pending">Pending</span></td>
+                                <td>
+                                <button class="btn btn-sm btn-view" data-bs-toggle="modal" data-bs-target="#viewDocumentModal" 
+                                    data-document-id="<?php echo $row['Request_ID']; ?>"
+                                    data-document-type="<?php echo htmlspecialchars($row['Document_Type']); ?>"
+                                    data-purpose="<?php echo htmlspecialchars($row['Purpose']); ?>"
+                                    data-resident-name="<?php echo htmlspecialchars($row['resident_name']); ?>"
+                                    data-request-date="<?php echo date('M d, Y', strtotime($row['Request_Date'])); ?>">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                    <button class="btn btn-sm btn-approve approve-doc" data-document-id="<?php echo $row['Request_ID']; ?>">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn btn-sm btn-deny deny-doc" data-document-id="<?php echo $row['Request_ID']; ?>">
+                                        <i class="fas fa-times"></i> Deny
+                                    </button>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Approved Documents Tab -->
+            <div class="tab-pane fade" id="approved-tab-pane" role="tabpanel" aria-labelledby="approved-tab" tabindex="0">
+                <div class="search-filter">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-primary">
+                            Total Approved: <?php echo $approvedCount; ?>
+                        </span>
+                    </div>
+                    <div class="input-group" style="width: 300px;">
+                        <input type="text" id="approvedSearch" class="form-control" placeholder="Search approved documents...">
+                        <button class="btn btn-primary" type="button" style="background-color: #1C3A5B; border-color: #1C3A5B;" id="approvedSearchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="documents-table">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Resident Name</th>
+                                <th>Document Type</th>
+                                <th>Purpose</th>
+                                <th>Request Date</th>
+                                <th>Approved Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $approvedQuery = "SELECT r.*, CONCAT(res.FirstName, ' ', res.LastName) AS resident_name 
+                                             FROM request_document_tbl r
+                                             JOIN residents_information_tbl res ON r.Resident_ID = res.Resident_ID
+                                             WHERE r.Request_Status = 'Approved'
+                                             ORDER BY r.Request_Date DESC";
+                            $approvedResult = $conn->query($approvedQuery);
+                            
+                            while ($row = $approvedResult->fetch_assoc()):
+                            ?>
+                            <tr>
+                                <td><?php echo $row['Request_ID']; ?></td>
+                                <td><?php echo htmlspecialchars($row['resident_name']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Document_Type']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Purpose']); ?></td>
+                                <td><?php echo date('M d, Y', strtotime($row['Request_Date'])); ?></td>
+                                <td><?php echo isset($row['Process_Date']) ? date('M d, Y', strtotime($row['Process_Date'])) : 'N/A'; ?></td>
+                                <td><span class="badge badge-approved">Approved</span></td>
+                                <td>
+                                <button class="btn btn-sm btn-view" data-bs-toggle="modal" data-bs-target="#viewDocumentModal" 
+                                    data-document-id="<?php echo $row['Request_ID']; ?>"
+                                    data-document-type="<?php echo htmlspecialchars($row['Document_Type']); ?>"
+                                    data-purpose="<?php echo htmlspecialchars($row['Purpose']); ?>"
+                                    data-resident-name="<?php echo htmlspecialchars($row['resident_name']); ?>"
+                                    data-request-date="<?php echo date('M d, Y', strtotime($row['Request_Date'])); ?>">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Denied Documents Tab -->
+            <div class="tab-pane fade" id="denied-tab-pane" role="tabpanel" aria-labelledby="denied-tab" tabindex="0">
+                <div class="search-filter">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-primary">
+                            Total Denied: <?php echo $deniedCount; ?>
+                        </span>
+                    </div>
+                    <div class="input-group" style="width: 300px;">
+                        <input type="text" id="deniedSearch" class="form-control" placeholder="Search denied documents...">
+                        <button class="btn btn-primary" type="button" style="background-color: #1C3A5B; border-color: #1C3A5B;" id="deniedSearchBtn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="documents-table">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>Resident Name</th>
+                                <th>Document Type</th>
+                                <th>Purpose</th>
+                                <th>Request Date</th>
+                                <th>Denied Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $deniedQuery = "SELECT r.*, CONCAT(res.FirstName, ' ', res.LastName) AS resident_name 
+                                          FROM request_document_tbl r
+                                          JOIN residents_information_tbl res ON r.Resident_ID = res.Resident_ID
+                                          WHERE r.Request_Status = 'Rejected'
+                                          ORDER BY r.Request_Date DESC";
+                            $deniedResult = $conn->query($deniedQuery);
+                            
+                            while ($row = $deniedResult->fetch_assoc()):
+                            ?>
+                            <tr>
+                                <td><?php echo $row['Request_ID']; ?></td>
+                                <td><?php echo htmlspecialchars($row['resident_name']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Document_Type']); ?></td>
+                                <td><?php echo htmlspecialchars($row['Purpose']); ?></td>
+                                <td><?php echo date('M d, Y', strtotime($row['Request_Date'])); ?></td>
+                                <td><?php echo isset($row['Process_Date']) ? date('M d, Y', strtotime($row['Process_Date'])) : 'N/A'; ?></td>
+                                <td><span class="badge badge-denied">Denied</span></td>
+                                <td>
+                                <button class="btn btn-sm btn-view" data-bs-toggle="modal" data-bs-target="#viewDocumentModal" 
+                                    data-document-id="<?php echo $row['Request_ID']; ?>"
+                                    data-document-type="<?php echo htmlspecialchars($row['Document_Type']); ?>"
+                                    data-purpose="<?php echo htmlspecialchars($row['Purpose']); ?>"
+                                    data-resident-name="<?php echo htmlspecialchars($row['resident_name']); ?>"
+                                    data-request-date="<?php echo date('M d, Y', strtotime($row['Request_Date'])); ?>">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
-        <!-- Table Container -->
-        <div class="table-container">
-        <table class="residents-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Date Received</th>
-                    <th>Document Type</th>
-                    <th>Assigned To</th>
-                    <th>Reason for Applying</th>
-                    <th>Receipt</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Sample Data Rows -->
-                <tr>
-                    <td>Juan Dela Cruz</td>
-                    <td>2023-10-01</td>
-                    <td>Barangay Clearance</td>
-                    <td>Officer A</td>
-                    <td>Employment</td>
-                    <td>#12345</td>
-                    <td><span class="status approved">Approved</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <tr>
-                    <td>Maria Santos</td>
-                    <td>2023-10-02</td>
-                    <td>Barangay Certificate</td>
-                    <td>Officer B</td>
-                    <td>Scholarship</td>
-                    <td>#12346</td>
-                    <td><span class="status pending">Pending</span></td>
-                </tr>
-                <!-- Add more rows as needed -->
-            </tbody>
-        </table>
+    <!-- View Document Modal -->
+<div class="modal fade" id="viewDocumentModal" tabindex="-1" aria-labelledby="viewDocumentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="viewDocumentModalLabel">Document Request Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="document-details">
+                            <dt>Request ID:</dt>
+                            <dd id="modalRequestId">-</dd>
+                            
+                            <dt>Resident Name:</dt>
+                            <dd id="modalResidentName">-</dd>
+                            
+                            <dt>Document Type:</dt>
+                            <dd id="modalDocumentType">-</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="document-details">
+                            <dt>Request Date:</dt>
+                            <dd id="modalRequestDate">-</dd>
+                            
+                            <dt>Purpose:</dt>
+                            <dd id="modalPurpose">-</dd>
+                            
+                            <dt>Status:</dt>
+                            <dd><span class="badge" id="modalStatus">-</span></dd>
+                        </dl>
+                    </div>
+                </div>
+                
+                <!-- Denial Reason Section (hidden by default) -->
+                <div id="denialReasonSection" style="display: none;" class="mt-4">
+                    <h5>Reason for Denial</h5>
+                    <div class="mb-3">
+                        <label for="denyReason" class="form-label">Reason:</label>
+                        <select class="form-select" id="denyReason" required>
+                            <option value="" selected disabled>Select a reason</option>
+                            <option value="Incomplete information">Incomplete information</option>
+                            <option value="Invalid purpose">Invalid purpose</option>
+                            <option value="Unverified resident">Unverified resident</option>
+                            <option value="Other">Other (please specify)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3" id="otherReasonContainer" style="display: none;">
+                        <label for="otherReason" class="form-label">Specify Reason</label>
+                        <textarea class="form-control" id="otherReason" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="confirmDenialBtn" class="btn btn-danger" style="display: none;">
+                    <i class="fas fa-times me-1"></i> Confirm Denial
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+   
+
+    <!-- PDF Viewer Modal (for View action) -->
+<div class="modal fade" id="pdfViewerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Document Preview</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="pdfPreviewFrame" style="width:100%; height:500px; border:none;"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a id="downloadPdfBtn" class="btn btn-primary" download>
+                    <i class="fas fa-download"></i> Download
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
+ <!-- Approval Confirmation Modal -->
+ <div class="modal fade" id="approveDocumentModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Confirm Document Approval</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <dl class="document-details">
+                                <dt>Request ID:</dt>
+                                <dd id="approveRequestId">-</dd>
+                                
+                                <dt>Resident Name:</dt>
+                                <dd id="approveResidentName">-</dd>
+                                
+                                <dt>Document Type:</dt>
+                                <dd id="approveDocumentType">-</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="document-details">
+                                <dt>Request Date:</dt>
+                                <dd id="approveRequestDate">-</dd>
+                                
+                                <dt>Purpose:</dt>
+                                <dd id="approvePurpose">-</dd>
+                                
+                                <dt>Status:</dt>
+                                <dd><span class="badge badge-pending">Pending</span></dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center mb-3">
+                        <button id="viewDocumentForApproveBtn" class="btn btn-primary">
+                            <i class="fas fa-file-pdf me-2"></i> View Document
+                        </button>
+                    </div>
+                    
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i> Are you sure you want to approve this document request?
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="post" action="process_document.php" style="display:inline;">
+                    <input type="hidden" name="action" value="approve">
+                    <input type="hidden" name="request_id" value="<?php echo $row['Request_ID']; ?>">
+                    <button type="button" id="confirmApproveBtn" class="btn btn-success">
+                        <i class="fas fa-check me-1"></i> Confirm Approval
+                    </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- Denial Confirmation Modal -->
+<div class="modal fade" id="denyDocumentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Confirm Document Denial</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <dl class="document-details">
+                            <dt>Request ID:</dt>
+                            <dd id="denyRequestId">-</dd>
+                            
+                            <dt>Resident Name:</dt>
+                            <dd id="denyResidentName">-</dd>
+                            
+                            <dt>Document Type:</dt>
+                            <dd id="denyDocumentType">-</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="document-details">
+                            <dt>Request Date:</dt>
+                            <dd id="denyRequestDate">-</dd>
+                            
+                            <dt>Purpose:</dt>
+                            <dd id="denyPurpose">-</dd>
+                            
+                            <dt>Status:</dt>
+                            <dd><span class="badge badge-pending">Pending</span></dd>
+                        </dl>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="denyModalReason" class="form-label">Reason for Denial:</label>
+                    <select class="form-select" id="denyModalReason" required>
+                        <option value="" selected disabled>Select a reason</option>
+                        <option value="Incomplete information">Incomplete information</option>
+                        <option value="Invalid purpose">Invalid purpose</option>
+                        <option value="Unverified resident">Unverified resident</option>
+                        <option value="Other">Other (please specify)</option>
+                    </select>
+                </div>
+
+                <div class="mb-3" id="denyModalOtherReasonContainer" style="display: none;">
+                    <label for="denyModalOtherReason" class="form-label">Specify Reason</label>
+                    <textarea class="form-control" id="denyModalOtherReason" rows="3" placeholder="Please specify the reason..."></textarea>
+                </div>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> This action cannot be undone. Please provide a clear reason for denial.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmDenyBtn" class="btn btn-danger">
+                    <i class="fas fa-times me-1"></i> Confirm Denial
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <script>
+$(document).ready(function() {
+    // Search functionality for pending documents
+    $('#pendingSearchBtn').click(function() {
+        searchDocuments('pending');
+    });
+    
+    $('#pendingSearch').keypress(function(e) {
+        if (e.which === 13) { // Enter key
+            searchDocuments('pending');
+        }
+    });
+    
+    // Search functionality for approved documents
+    $('#approvedSearchBtn').click(function() {
+        searchDocuments('approved');
+    });
+    
+    $('#approvedSearch').keypress(function(e) {
+        if (e.which === 13) { // Enter key
+            searchDocuments('approved');
+        }
+    });
+    
+    // Search functionality for denied documents
+    $('#deniedSearchBtn').click(function() {
+        searchDocuments('denied');
+    });
+    
+    $('#deniedSearch').keypress(function(e) {
+        if (e.which === 13) { // Enter key
+            searchDocuments('denied');
+        }
+    });
+    
+    function searchDocuments(status) {
+        const searchTerm = $(`#${status}Search`).val().toLowerCase();
+        const table = $(`#${status}-tab-pane table tbody tr`);
+        
+        table.each(function() {
+            const row = $(this);
+            const requestId = row.find('td:eq(0)').text().toLowerCase();
+            const residentName = row.find('td:eq(1)').text().toLowerCase();
+            const docType = row.find('td:eq(2)').text().toLowerCase();
+            const requestDate = row.find('td:eq(4)').text().toLowerCase();
+            
+            // Check if search term matches any of these fields
+            if (requestId.includes(searchTerm) || 
+                residentName.includes(searchTerm) || 
+                docType.includes(searchTerm) ||
+                requestDate.includes(searchTerm)) {
+                row.show();
+            } else {
+                row.hide();
+            }
+        });
+    }
+
+    let currentRequestId = null; // Store the current request ID
+    
+    // View Document Modal handling
+    $('#viewDocumentModal').on('show.bs.modal', function(event) {
+        const button = $(event.relatedTarget);
+        const requestId = button.data('document-id');
+        const documentType = button.data('document-type');
+        const purpose = button.data('purpose');
+        const residentName = button.data('resident-name');
+        const requestDate = button.data('request-date');
+        
+        const modal = $(this);
+        modal.find('#modalRequestId').text(requestId);
+        modal.find('#modalDocumentType').text(documentType);
+        modal.find('#modalPurpose').text(purpose);
+        modal.find('#modalResidentName').text(residentName);
+        modal.find('#modalRequestDate').text(requestDate);
+        
+        // Set status badge based on which tab it's from
+        if (button.closest('#pending-tab-pane').length) {
+            modal.find('#modalStatus').text('Pending').removeClass().addClass('badge badge-pending');
+        } else if (button.closest('#approved-tab-pane').length) {
+            modal.find('#modalStatus').text('Approved').removeClass().addClass('badge badge-approved');
+        } else if (button.closest('#denied-tab-pane').length) {
+            modal.find('#modalStatus').text('Denied').removeClass().addClass('badge badge-denied');
+        }
+    });
+    
+    // Approve button clicked
+    $('.approve-doc').click(function() {
+        currentRequestId = $(this).data('document-id');
+        
+        $.ajax({
+            url: 'fetch_request_details.php',
+            method: 'POST',
+            data: { request_id: currentRequestId },
+            dataType: 'json',
+            success: function(response) {
+                // Populate the approval modal with document details
+                $('#approveRequestId').text(response.request_id);
+                $('#approveResidentName').text(response.resident_name);
+                $('#approveDocumentType').text(response.document_type);
+                $('#approvePurpose').text(response.purpose);
+                $('#approveRequestDate').text(response.request_date);
+                
+                $('#approveDocumentModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching request details:", error);
+                alert("Failed to load document details. Please try again.");
+            }
+        });
+    });
+
+    // Deny button clicked
+    $('.deny-doc').click(function() {
+        currentRequestId = $(this).data('document-id');
+        
+        $.ajax({
+            url: 'fetch_request_details.php',
+            method: 'POST',
+            data: { request_id: currentRequestId },
+            dataType: 'json',
+            success: function(response) {
+                // Populate the denial modal with document details
+                $('#denyRequestId').text(response.request_id);
+                $('#denyResidentName').text(response.resident_name);
+                $('#denyDocumentType').text(response.document_type);
+                $('#denyPurpose').text(response.purpose);
+                $('#denyRequestDate').text(response.request_date);
+                
+                // Reset the deny form
+                $('#denyModalReason').val('').trigger('change');
+                $('#denyModalOtherReason').val('');
+                
+                $('#denyDocumentModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching request details:", error);
+                alert("Failed to load document details. Please try again.");
+            }
+        });
+    });
+
+    // Show/hide other reason textarea based on deny reason selection
+    $(document).on('change', '#denyModalReason', function() {
+        if ($(this).val() === 'Other') {
+            $('#denyModalOtherReasonContainer').show();
+            $('#denyModalOtherReason').prop('required', true);
+        } else {
+            $('#denyModalOtherReasonContainer').hide();
+            $('#denyModalOtherReason').prop('required', false);
+        }
+    });
+
+    // View document button in approval modal
+    $('#viewDocumentForApproveBtn').click(function() {
+        if (currentRequestId) {
+            $('#approveDocumentModal').modal('hide');
+            $('#pdfPreviewFrame').attr('src', `generate_document.php?request_id=${currentRequestId}`);
+            $('#downloadPdfBtn').attr('href', `generate_document.php?request_id=${currentRequestId}&download=1`);
+            $('#pdfViewerModal').modal('show');
+        }
+    });
+
+    // When PDF viewer is closed, show the approval modal again
+    $('#pdfViewerModal').on('hidden.bs.modal', function() {
+        $('#approveDocumentModal').modal('show');
+    });
 
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+
+});
+</script>
+   
+</body>
+</html>

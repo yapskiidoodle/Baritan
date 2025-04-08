@@ -77,68 +77,90 @@ require '../../src/account.php';
 </head>
 <body>
 
-
-  
-    
-     
-    
-    <!-- header-->
-    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
-        <div class="row">
-           <div class="col-1" style="width: 5.3%; ">
-               <img src="../../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
-               
-           </div>
-           <div class="col-7" >
-               <h4 style="padding-top:0.4%;">Barangay Baritan</h4>
-               <h6 style="font-size: 10.5px;">Malabon City, Metro Manila, Philippines</h6>
-           </div>
-           <div class="col" style=" text-align: center; padding-top: 1.5%;">
-               <div style="display: flex; ">
-                   <div style="padding:0% 4%;">
-                       <a href="../../">Home</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="../about.php">About Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="../service.php">Services</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                      <a href="../../index.php#contact">Contact Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   
-                    <?php if (isset($_SESSION['userEmail'])) { ?>
-                        <div class="dropdown" id="profile" name="profile">
-                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="../../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="../../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
-                                <li>
-                                    <form action="../../src/logout.php" method="POST">
-                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    <?php } else { ?>
-                        <div id="start" name="start">
-                            <a href="../login.php" class="btn btn-danger ms-2">Log In</a>
-                        </div>
-                    <?php } ?>
-               </div>
-           </div>
+<?php 
+        $profilePic = isset($_SESSION['User_Data']['Pic_Path']) && !empty($_SESSION['User_Data']['Pic_Path']) 
+            ? '../../resident_folder/profile/' . $_SESSION['User_Data']['Pic_Path'] 
+            : '../../pics/profile.jpg';
+        ?>  
+<!-- Header -->
+<header class="container-fluid  text-white py-2 px-3" style="background-color: #1C3A5B;">
+    <div class="row align-items-center">
+        <!-- Logo -->
+        <div class="col-auto">
+            <img src="../../pics/logo.png" alt="Barangay Baritan Logo" class="img-fluid" style="max-width: 75px;">
         </div>
+        
+        <!-- Barangay Info -->
+        <div class="col-auto">
+            <h4 class="mb-0">Barangay Baritan</h4>
+            <small class="d-block">Malabon City, Metro Manila, Philippines</small>
         </div>
-    <!-- End Header -->
+        
+        <!-- Navigation - Pushed to right -->
+        <div class="col ms-auto">
+            <nav class="d-flex justify-content-end align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="nav-item px-2">
+                        <a href="../../index.php" class="text-white text-decoration-none">Home</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../about.php" class="text-white text-decoration-none">About Us</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../service.php" class="text-white text-decoration-none">Services</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../../index.php?#contact" class="text-white text-decoration-none">Contact Us</a>
+                    </div>
+                    
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown ms-3" id="profileSection" hidden>
+                        <button class="btn dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="<?php echo isset($profilePic) ? $profilePic : '../../pics/profile.jpg'; ?>" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="../profile.php"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li>
+                                <form action="../../src/logout.php" method="POST">
+                                    <button type="submit" class="dropdown-item" name="logoutButton">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Login Button -->
+                    <div class="ms-3" id="loginSection">
+                        <a href="../login.php" class="btn btn-danger">Log In</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <script>
+            // Example code to toggle between login and profile sections
+    document.addEventListener('DOMContentLoaded', function() {
+        const isLoggedIn = <?php echo isset($_SESSION['User_Data']) ? 'true' : 'false'; ?>;
+        
+        if (isLoggedIn) {
+            document.getElementById('profileSection').removeAttribute('hidden');
+            document.getElementById('loginSection').style.display = 'none';
+        } else {
+            document.getElementById('loginSection').style.display = 'block';
+        }
+    });
+    </script>
+
+    <!-- END HEADER -->
 
 
-    <div class="container text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%; margin-top:10%;"> 
+    <div class="container text-center w-75" style=" background-color: white; padding: 3% 0% 5% 0%; margin-bottom:5%; margin-top:5%;"> 
      
         <div class="display-4 " style="font-weight: 700;">Reservation</div>
         <div class="container w-75 mt-5">
@@ -220,19 +242,19 @@ require '../../src/account.php';
                         <div class="col-auto">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Date to Reserve</label>
-                                <input type="date" class="form-control" id="exampleInputPassword1" name="dateToReserve">
+                                <input type="date" class="form-control" id="exampleInputPassword1" name="dateToReserve" required>
                               </div>  
                         </div>
                         <div class="col-auto">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Date to Return</label>
-                                <input type="date" class="form-control" id="exampleInputPassword1" name="dateToReturn" >
+                                <input type="date" class="form-control" id="exampleInputPassword1" name="dateToReturn" required >
                               </div>
                         </div>
                         <div class="col">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="purpose">Purpose of Reservation</label>
-                                <select class="form-control" id="purpose" name="purpose">
+                                <select class="form-control" id="purpose" name="purpose" required>
                                     <option value="">--Choose--</option>
                                     <option value="Birthday Celebration">Birthday Celebration</option>
                                     <option value="Community_meeting">Community Meeting</option>
@@ -288,7 +310,8 @@ require '../../src/account.php';
                     <button type="button" id="back_button" onclick="window.location.href='../service.php'" class="button mt-2">
                         Back
                     </button>
-                    <button type="button" id="next_button" class="button ms-auto mt-2" data-bs-target="#confirmation"data-bs-toggle="modal" >Finish</button>
+                    <button type="button" id="next_button" class="button mt-2 ms-auto" onclick="validateAndShowConfirmation()">Finish</button>
+                    
                 </div>
                     
                
@@ -365,6 +388,44 @@ require '../../src/account.php';
         document.getElementById("reservationForm").disabled = true;
 
     }
+
+    function validateAndShowConfirmation() {
+    // First, validate the form inputs
+    if (validateInput()) {
+        // If validation is successful, show the confirmation modal
+        $('#confirmation').modal('show');
+    }
+}
+
+function validateInput() {
+    let valid = true;
+    let firstInvalidField = null;
+
+    // Validate all required inputs
+    $("input[required], select[required]").each(function () {
+        if (!$(this).val().trim()) {
+            // If the field is empty, mark it as invalid (red) and set the first invalid field
+            $(this).addClass("is-invalid").removeClass("is-valid");
+
+            // If it's the first invalid field, focus on it
+            if (!firstInvalidField) {
+                firstInvalidField = this;
+            }
+
+            valid = false;
+        } else {
+            // If the field is filled, mark it as valid (green)
+            $(this).addClass("is-valid").removeClass("is-invalid");
+        }
+    });
+
+    // Focus on the first invalid field if any
+    if (firstInvalidField) {
+        firstInvalidField.focus();
+    }
+
+    return valid;
+}
 </script>
 
 

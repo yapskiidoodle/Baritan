@@ -5,8 +5,26 @@ require('../admin/fpdf186/fpdf.php'); // Include the FPDF library
 ob_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") { 
+    
     $documentType = $_POST['documentType'];
-    $fullName = $_POST['firstName'] . ' ' . $_POST['middleName'][0] . '. ' . $_POST['lastName'] . ' ' . $_POST['suffix'];
+    
+    $purpose = $_POST['purpose'];
+    
+    $firstName = ucwords(strtolower(trim($_POST['firstName'])));
+    $middleName = isset($_POST['middleName']) ? trim($_POST['middleName']) : '';
+    $lastName = ucwords(strtolower(trim($_POST['lastName'])));
+    $suffix = isset($_POST['suffix']) ? trim($_POST['suffix']) : '';
+
+    // Format middle initial if available
+    $middleInitial = $middleName !== '' ? strtoupper($middleName[0]) . '.' : '';
+
+    // Format suffix if available
+    $suffixFormatted = $suffix !== '' ? ' ' . ucwords(strtolower($suffix)) : '';
+
+    // Construct full name
+    $fullName = "$firstName " . ($middleInitial ? "$middleInitial " : '') . "$lastName$suffixFormatted";
+
+
     $address = $_POST['block'] . " " . $_POST['street'] . " " . $_POST['subdivision'] . ', Barangay Baritan, Malabon City';
     function addOrdinalSuffix($num) {
         if (!in_array(($num % 100), [11, 12, 13])) {
@@ -22,8 +40,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $today = date("j"); // Get day as a number
     $monthYear = date("F Y"); // Get month and year
     $formattedDate = addOrdinalSuffix($today) . " day of " . $monthYear;
+
+    if (isset($_POST['submitBtn'])) { 
+        
+        $requestID = uniqid("REQ_");
+        $residentID = $_SESSION['User_Data']['Resident_ID'];
+
+        // Prepare SQL statement
+        $sql = "INSERT INTO request_document_tbl 
+                (Request_ID, Resident_ID, Document_Type, Purpose, FirstName,LastName,MiddleName,Suffix, Address ) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            die("Error preparing SQL: " . $conn->error);
+        }   
+        // Bind parameters
+        $stmt->bind_param("sssssssss", $requestID, $residentID, $documentType, $purpose, $firstName, $lastName, $middleName, $suffix, $address);
+
+        if ($stmt->execute()) {
+            echo "Request submitted successfully.";
+            header("Location: ../index.php"); // Redirect to index
+            exit(); // Ensure script stops execution after redirect
+
+
+    }
+
     
 }
+    }
+
+
 
 
 // Create instance of FPDF class
@@ -47,9 +94,8 @@ $pdf->SetTextColor(0, 0, 0);
 
 
 
-$purpose = $_POST['purpose'];
 
-if ($documentType == "certificate") {
+if ($documentType == "Certificate") {
     $header = "CERTIFICATE"; 
     $body = '
     This is to certify that this office interposes no objection as to the operation of '.$purpose.' owned by '.$fullName.' located at #'.$address.'.
@@ -58,7 +104,7 @@ if ($documentType == "certificate") {
     
     Issued this '.$formattedDate.' at Barangay Baritan, City of Malabon.';
 
-}  else if ($documentType == "permit") { 
+}  else if ($documentType == "Permit") { 
     $header = "PERMIT"; 
     $body = '
     This is to certify that '.$fullName.' of #'.$address.' has complied with the necessary requirements and is hereby granted permission to operate for the purpose of '.$purpose.' within the jurisdiction of Barangay Baritan, City of Malabon.
@@ -67,7 +113,7 @@ if ($documentType == "certificate") {
 
     Issued this '.$formattedDate.' at Barangay Baritan, City of Malabon.';
 
-} else if ($documentType == "clearance") {
+} else if ($documentType == "Clearance") {
     $header = "CLEARANCE"; 
     $body = '
       This is to certify that ' . $fullName . ' is a bona fide resident of #' . $address . ' and personally known to be a person of good moral character without any criminal record or derogatory information against him/her and who enjoys a good reputation in this community.
@@ -100,4 +146,5 @@ $pdf->MultiCell(105, 10,
 
 // Output the PDF
 $pdf->Output();
+
 ?>

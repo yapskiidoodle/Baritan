@@ -77,67 +77,91 @@ require '../../src/account.php';
 </head>
 <body>
 
-
-      
-    
-    <!-- header-->
-    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
-        <div class="row">
-           <div class="col-1" style="width: 5.3%; ">
-               <img src="../../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
-               
-           </div>
-           <div class="col-7" >
-               <h4 style="padding-top:0.4%;">Barangay Baritan</h4>
-               <h6 style="font-size: 10.5px;">Malabon City, Metro Manila, Philippines</h6>
-           </div>
-           <div class="col" style=" text-align: center; padding-top: 1.5%;">
-               <div style="display: flex; ">
-                   <div style="padding:0% 4%;">
-                       <a href="../../">Home</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="../about.php">About Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="../service.php">Services</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                      <a href="../../index.php#contact">Contact Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   
-                    <?php if (isset($_SESSION['userEmail'])) { ?>
-                        <div class="dropdown" id="profile" name="profile">
-                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="../../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="../../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
-                                <li>
-                                    <form action="../../src/logout.php" method="POST">
-                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    <?php } else { ?>
-                        <div id="start" name="start">
-                            <a href="../login.php" class="btn btn-danger ms-2">Log In</a>
-                        </div>
-                    <?php } ?>
-               </div>
-           </div>
+<?php 
+        $profilePic = isset($_SESSION['User_Data']['Pic_Path']) && !empty($_SESSION['User_Data']['Pic_Path']) 
+            ? '../../resident_folder/profile/' . $_SESSION['User_Data']['Pic_Path'] 
+            : '../../pics/profile.jpg';
+        ?>  
+<!-- Header -->
+<header class="container-fluid  text-white py-2 px-3" style="background-color: #1C3A5B;">
+    <div class="row align-items-center">
+        <!-- Logo -->
+        <div class="col-auto">
+            <img src="../../pics/logo.png" alt="Barangay Baritan Logo" class="img-fluid" style="max-width: 75px;">
         </div>
+        
+        <!-- Barangay Info -->
+        <div class="col-auto">
+            <h4 class="mb-0">Barangay Baritan</h4>
+            <small class="d-block">Malabon City, Metro Manila, Philippines</small>
         </div>
-    <!-- End Header -->
+        
+        <!-- Navigation - Pushed to right -->
+        <div class="col ms-auto">
+            <nav class="d-flex justify-content-end align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="nav-item px-2">
+                        <a href="../../index.php" class="text-white text-decoration-none">Home</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../about.php" class="text-white text-decoration-none">About Us</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../service.php" class="text-white text-decoration-none">Services</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../../index.php?#contact" class="text-white text-decoration-none">Contact Us</a>
+                    </div>
+                    
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown ms-3" id="profileSection" hidden>
+                        <button class="btn dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="<?php echo isset($profilePic) ? $profilePic : '../../pics/profile.jpg'; ?>" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="../profile.php"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li>
+                                <form action="../../src/logout.php" method="POST">
+                                    <button type="submit" class="dropdown-item" name="logoutButton">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Login Button -->
+                    <div class="ms-3" id="loginSection">
+                        <a href="../login.php" class="btn btn-danger">Log In</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <script>
+            // Example code to toggle between login and profile sections
+    document.addEventListener('DOMContentLoaded', function() {
+        const isLoggedIn = <?php echo isset($_SESSION['User_Data']) ? 'true' : 'false'; ?>;
+        
+        if (isLoggedIn) {
+            document.getElementById('profileSection').removeAttribute('hidden');
+            document.getElementById('loginSection').style.display = 'none';
+        } else {
+            document.getElementById('loginSection').style.display = 'block';
+        }
+    });
+    </script>
+
+    <!-- END HEADER -->
 
 
 
-    <div class="container text-center w-75" style=" background-color: white; padding: 3% 0%; margin-bottom:5%;margin-top:10%;"> 
+    <div class="container text-center w-75" style=" background-color: white; padding: 3% 0%; margin-bottom:5%;margin-top:5%;"> 
         <div class="display-4 " style="font-weight: 700;">Complaint Form</div>
         <div class="lead">All section as marked <s style="color:red">*</s> are to be completed </div>
         <div class="lead" style="font-size: 16px;">All Personal Details remains <b>CONFIDENTIAL</b></div>
@@ -182,25 +206,27 @@ require '../../src/account.php';
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Name of Person making the Complaint</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. Juan Dela Cruz" name="fullName">
+                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="ex. Juan Dela Cruz" name="fullName" required>
                               </div>
                         </div>
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Residential Address</label>
-                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Block No. Street Name, Subd/Village/Sitio" name="address">
+                                <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Block No. Street Name, Subd/Village/Sitio" name="address" required>
                               </div>
                         </div>
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Contact Information</label>
-                                <input type="number" class="form-control" id="exampleInputPassword1" placeholder="(09) " name="contact">
+                                <input type="tel" class="form-control" id="contact" name="contact" 
+                            placeholder="09XXXXXXXXX" required 
+                            pattern="09[0-9]{9}" maxlength="11">
                               </div>
                         </div>
                         <div class="col w-100">
                             <div class="form-group mt-4" style="font-weight: 800;">
                                 <label for="exampleInputPassword1">Email Address</label>
-                                <input type="email" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com" name="email">
+                                <input type="email" class="form-control" id="exampleInputPassword1" placeholder="example@gmail.com" name="email" required>
                               </div>
                         </div>
                         
@@ -216,38 +242,38 @@ require '../../src/account.php';
                     <div class="col-md-6 ">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Date  of Incident</label>
-                            <input type="date" class="form-control" id="exampleInputPassword1" name="dateOfIncident">
+                            <input type="date" class="form-control" id="exampleInputPassword1" name="dateOfIncident" required>
                           </div>
                     </div>
                     <div class="col-md-6 ">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Time of the Incident</label>
-                            <input type="time" class="form-control" id="exampleInputPassword1" name="timeOfIncident">
+                            <input type="time" class="form-control" id="exampleInputPassword1" name="timeOfIncident" required>
                           </div>
                     </div>
                     <div class="col-md-12 w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Location of the Incident</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1" name="locationOfIncident">
+                            <input type="text" class="form-control" id="exampleInputPassword1" name="locationOfIncident" required>
                           </div>
                     </div>
                     <div class="col-md-12 w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">What is the Subject of your Complaint</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1" name="whatSubjectOfComplaint">
+                            <input type="text" class="form-control" id="exampleInputPassword1" name="whatSubjectOfComplaint" required>
                           </div>
                     </div>
                     <div class="col-md-12 w-100">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleInputPassword1">Who is the Subject of your complaint</label>
-                            <input type="text" class="form-control" id="exampleInputPassword1" name="whoSubjectOfComplaint">
+                            <input type="text" class="form-control" id="exampleInputPassword1" name="whoSubjectOfComplaint" required>
                           </div>
                     </div>
                     
                     <div class="col-md-12">
                         <div class="form-group mt-4" style="font-weight: 800;">
                             <label for="exampleFormControlTextarea1">Summary of the Complaint</label>
-                            <textarea class="form-control" name="summaryOfComplaint" id="exampleFormControlTextarea1" rows="3" ></textarea>
+                            <textarea class="form-control" name="summaryOfComplaint" id="exampleFormControlTextarea1" rows="3"  required></textarea>
                           </div>
                     </div>
                    </div>
@@ -324,57 +350,118 @@ require '../../src/account.php';
                     </div>
             </form>
                     <script> 
-
                         var current = 0;
                         var tabs = $(".tab");
                         var tabs_pill = $(".step-circle");
+
+                        // Initial load
                         loadFormData(current);
-                        
+
                         function loadFormData(n) {
-                        
-                            $(tabs_pill[n]).addClass("active");
-                            $(tabs_pill[n]).removeClass("inactive"); 
+                            $(tabs_pill[n]).addClass("active").removeClass("inactive"); 
                             $(tabs[n]).removeClass("d-none");
-                          
-                        if (n == 0) {
-                            $("#back_button").addClass("d-none"); // Hide the Back button
-                        } else {
-                            $("#back_button").removeClass("d-none"); // Show the Back button
+
+                            // Handle Back button visibility
+                            if (n === 0) {
+                                $("#back_button").addClass("d-none"); // Hide Back button on first tab
+                            } else {
+                                $("#back_button").removeClass("d-none"); // Show Back button
+                            }
+
+                            // Handle Next button text and attributes
+                            if (n === tabs.length - 1) {
+                                $("#next_button")
+                                    .text("Submit")
+                                    .removeAttr("onclick")
+                                    .attr("data-bs-toggle", "modal")
+                                    .attr("data-bs-target", "#confirmation");
+                            } else {
+                                $("#next_button")
+                                    .attr("type", "button")
+                                    .text("Next")
+                                    .attr("onclick", "next()");
+                            }
                         }
-                
-                        n == tabs.length -1
-                            ? $("#next_button")
-                                .text("Submit")
-                                .removeAttr("onclick")
-                                .attr("data-bs-toggle", "modal")
-                                .attr("data-bs-target","#exampleModal")
-                            : $("#next_button")
-                                .attr("type", "button")
-                                .text("Next")
-                                .attr("onclick", "next()");
-                        
-                        
-                        }
-                        
+
                         function next() {
-                          $(tabs[current]).addClass("d-none");
-                          $(tabs_pill[current]).addClass("inactive");
-                         
-                          current++;
-                          loadFormData(current);
-                        }
-                        
-                        function back() {
-                          $(tabs[current]).addClass("d-none");
-                          $(tabs_pill[current]).addClass("inactive");
-                          
-                          $("#next_button").removeAttr("data-bs-toggle","data-bs-target")
-                
-                        
-                          current--;
-                          loadFormData(current);
-                        }
-                        
+    var firstEmptyInput = validateInputs();
+
+    if (firstEmptyInput) {
+        firstEmptyInput.focus(); // Focus the first invalid input
+        return; // Prevent moving to next tab
+    }
+
+    $(tabs[current]).addClass("d-none");
+    $(tabs_pill[current]).addClass("inactive");
+
+    current++;
+    loadFormData(current);
+}
+
+function back() {
+    $(tabs[current]).addClass("d-none");
+    $(tabs_pill[current]).addClass("inactive");
+
+    $("#next_button").removeAttr("data-bs-toggle data-bs-target");
+
+    current--;
+    loadFormData(current);
+}
+
+function validateInputs() {
+    var firstInvalid = null;
+
+    // Validation regexes
+    var generalRegex = /^[a-zA-Z0-9ñÑ ,.'-]+$/; // Letters, numbers, space, basic punctuation
+    var contactRegex = /^09\d{9}$/; // PH mobile number format
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    $(tabs[current]).find("input[required], select[required], textarea[required]").each(function () {
+        var value = $(this).val() ? $(this).val().trim() : '';
+        var inputType = $(this).attr("type");
+        var inputName = $(this).attr("name");
+
+        if (!value) {
+            showError(this, "This field is required.");
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        else if (inputName === "contact" && !contactRegex.test(value)) {
+            showError(this, "Enter a valid contact number (09XXXXXXXXX).");
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        else if (inputType === "email" && !emailRegex.test(value)) {
+            showError(this, "Enter a valid email address.");
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        else if (
+            ["fullName", "address", "locationOfIncident", "whatSubjectOfComplaint", "whoSubjectOfComplaint", "nameOfWitness", "witnessAddress"].includes(inputName) &&
+            !generalRegex.test(value)
+        ) {
+            showError(this, "Only letters, numbers, spaces, and basic punctuation are allowed.");
+            if (!firstInvalid) firstInvalid = this;
+        } 
+        else {
+            removeError(this);
+        }
+    });
+
+    return firstInvalid;
+}
+
+// Helper functions
+function showError(input, message) {
+    $(input).addClass("is-invalid");
+
+    if (!$(input).next(".invalid-feedback").length) {
+        $(input).after(`<div class="invalid-feedback">${message}</div>`);
+    }
+}
+
+function removeError(input) {
+    $(input).removeClass("is-invalid");
+    $(input).next(".invalid-feedback").remove();
+}
+
                               </script>
                 
                 

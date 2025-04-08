@@ -69,6 +69,7 @@ if ($familyID) {
     <link rel="icon" type="image/x-icon" href="../pics/logo.png">
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../design.css"> 
@@ -127,63 +128,96 @@ if ($familyID) {
     border-radius: 0%;
     background-color: #1C3A5B;
     
-    }   
+    }
+    li a {
+  color: #017fb1;
+}   
     </style>
 
 </head>
 <body>
+<?php 
+        $profilePic = isset($_SESSION['User_Data']['Pic_Path']) && !empty($_SESSION['User_Data']['Pic_Path']) 
+            ? '../resident_folder/profile/' . $_SESSION['User_Data']['Pic_Path'] 
+            : '../pics/profile.jpg';
+        ?>
 
-
-    <!--header-->
-    <div class="container-fluid" style="background-color:#1C3A5B;color: white;padding: 1%; width: 100%;  ">  
-        <div class="row" >    
-           <div class="col-1" style="width: 5.3%; ">
-               <img src="../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
-               
-           </div>
-           <div class="col-7" >
-               <h4 style="padding-top:0.4%;">Barangay Baritan</h4>
-               <h6 style="font-size: 10.5px;">Malabon City, Metro Manila, Philippines</h6>
-           </div>
-           <div class="col" style=" text-align: center; padding-top: 1.5%;">
-               <div style="display: flex; ">
-                   <div style="padding:0% 4%;">
-                       <a href="../index.php">Home</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="about.php">About Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="service.php">Services</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="../index.php?#contact"  >Contact Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div class="dropdown" id="profile" name="profile" hidden>
-                        <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <img src="../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
+    <!-- Header -->
+    <header class="container-fluid  text-white py-2 px-3" style="background-color: #1C3A5B;">
+    <div class="row align-items-center">
+        <!-- Logo -->
+        <div class="col-auto">
+            <img src="../pics/logo.png" alt="Barangay Baritan Logo" class="img-fluid" style="max-width: 75px;">
+        </div>
+        
+        <!-- Barangay Info -->
+        <div class="col-auto">
+            <h4 class="mb-0">Barangay Baritan</h4>
+            <small class="d-block">Malabon City, Metro Manila, Philippines</small>
+        </div>
+        
+        <!-- Navigation - Pushed to right -->
+        <div class="col ms-auto">
+            <nav class="d-flex justify-content-end align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="nav-item px-2">
+                        <a href="../index.php" class="text-white text-decoration-none">Home</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="about.php" class="text-white text-decoration-none">About Us</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="service.php" class="text-white text-decoration-none">Services</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../index.php?#contact" class="text-white text-decoration-none">Contact Us</a>
+                    </div>
+                    
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown ms-3" id="profileSection" hidden>
+                        <button class="btn dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="<?php echo isset($profilePic) ? $profilePic : '../pics/profile.jpg'; ?>" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
                         </button>
-                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                            <!--<li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog"></i> Settings</a></li>
-                            <li><hr class="dropdown-divider"></li> -->
-                            <li><a class="dropdown-item" href="profile.php" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Profile</a></li>
-                            <li><form action="../src/logout.php" method="POST"><button class="dropdown-item" href="index.php" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button></li></form>
-
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="profile.php"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li>
+                                <form action="../src/logout.php" method="POST">
+                                    <button type="submit" class="dropdown-item" name="logoutButton">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </button>
+                                </form>
+                            </li>
                         </ul>
                     </div>
-                   <div id="start" name="start">
-                        <button id="login" class="btn btn-danger ms-2" style="margin-top: -8.6%; width: 100%;">Log In</button>
-                   </div>
-               </div>
-           </div>
+                    
+                    <!-- Login Button -->
+                    <div class="ms-3" id="loginSection">
+                        <a href="login.php" class="btn btn-danger">Log In</a>
+                    </div>
+                </div>
+            </nav>
         </div>
     </div>
-    <!--END HEADER-->
+</header>
+
+    <script>
+            // Example code to toggle between login and profile sections
+    document.addEventListener('DOMContentLoaded', function() {
+        const isLoggedIn = <?php echo isset($_SESSION['User_Data']) ? 'true' : 'false'; ?>;
+        
+        if (isLoggedIn) {
+            document.getElementById('profileSection').removeAttribute('hidden');
+            document.getElementById('loginSection').style.display = 'none';
+        } else {
+            document.getElementById('loginSection').style.display = 'block';
+        }
+    });
+    </script>
+
+    <!-- END HEADER -->
 
     <?php if (isset($_SESSION['success_message'])): ?>
     <div class="alert alert-success m-3" ><?= $_SESSION['success_message']; ?></div>
@@ -196,193 +230,691 @@ if ($familyID) {
 <?php endif; ?>
 
     <div class="container mt-5 text-center" style="background-color: white; padding: 3%; margin-bottom: 5%;"> 
-        <div class="container d-flex justify-content-end">
-           <button class="btn btn-warning rounded-pill ">
-            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="45" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16" style="color: white;">
-                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>
-            </svg> 
-           </button>
-        </div>
+    <div class="row" style="width: 95%; height: auto; margin: auto; padding: 10px;">
+    <!-- Profile Picture Column -->
+    <div class="col-md-2 mt-4">
+        <!-- Current Profile Picture -->
         
-        <div class="row " style=" width: 95%; height: auto; margin: auto; padding: 10px;"> 
-            <div class="col-md-2 mt-4" >
-                <img src="../pics/profile.jpg" style="border-radius: 50%; width: 150px;">
+        <img src="<?= $profilePic ?>" id="profilePreview" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+        
+        <!-- Upload Form -->
+        <form id="profilePicForm" action="../src/update_profile_pic.php" method="POST" enctype="multipart/form-data" class="mt-3 text-center">
+            <input type="file" id="profilePicInput" name="profile_pic" accept="image/*" class="d-none">
+            <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('profilePicInput').click()">
+                <i class="fas fa-camera"></i> Change Photo
+            </button>
+            <button type="submit" class="btn btn-success btn-sm mt-2" id="uploadBtn" style="display: none;">
+                <i class="fas fa-upload"></i> Save Image
+            </button>
+        </form>
+    </div>
+
+    <!-- Profile Info Column -->
+    <div class="col-md-8" style="text-align: left;">
+        <div class="container">
+            <h4 class="mt-4"><?= htmlspecialchars($FirstName . ' ' . $LastName) ?></h4>
+            <div class="h1">
+                <?= htmlspecialchars($LastName) ?> <span class="lead d-inline">Family</span>
             </div>
-            <div class="col-md-10" style=" text-align: left;">
-                <div class="container d-inline ">
-                    <h4 class="mt-4 "><?php echo sprintf("%s %s", $FirstName, $LastName); ?>
-                       
-                    </h4>
-                    
-                    <div class="h1 "> 
-                
-                       
-
-
-                        <?php echo sprintf("%s", $LastName); ?> <div class="lead d-inline"> Family</div>
-                        <div class="lead" style="font-size: 16px;">
-                            <?php echo sprintf("%s", $userEmail); ?>
-                        </div>
-                        <div class="lead" style="font-size: 16px;">
-                            <?php echo sprintf("%s", $Address); ?>
-
-                        </div>
-                    </div>
-                   
-                </div>
-                <!-- <button class="button" style="margin-left: 10%;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart-fill" viewBox="0 0 16 16" style="color: rgb(238, 255, 4);">
-                                <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1"/>
-                              </svg>
-                              <div class="lead d-inline ">
-                                Change Head of the family
-                              </div>
-                        </button> -->
+            <div class="lead" style="font-size: 16px;">
+                <?= htmlspecialchars($userEmail) ?>
             </div>
-            <div class="col" style="height: 100%;">
-            <div class="d-flex justify-content-end mt-auto gap-2">
-    <button type="button" id="switch_button" class="button mt-2" 
-        style="padding: 0% 2%; font-size: 20px;" 
-        data-bs-toggle="modal" data-bs-target="#account">
-        Switch Account
-    </button>
-
-   <!-- Edit Button for Non-Head (outside table) -->
-   <?php if (!$isHead): ?>  
-    <button id="edit_button" class="btn btn-warning text-white mt-2" 
-        style="padding: 0% 2%; font-size: 20px;" 
-        data-bs-toggle="modal" 
-        data-bs-target="#editModal">
-         Edit Profile
-    </button>
-    <?php endif; ?>
-
-    <?php if ($isHead): ?>  
-    <button type="button" id="add_account_button" class="button mt-2" 
-        style="padding: 0% 2%; font-size: 20px;" 
-        data-bs-toggle="modal" data-bs-target="#registerModal">
-        Add Member
-    </button>
-    <?php endif; ?>
-<!-- id="edit_button" class="btn btn-warning text-white mt-2" 
-            style="padding: 0% 2%; font-size: 20px;"  -->
-</div>
-</div>
-
+            <div class="lead" style="font-size: 16px;">
+                <?= htmlspecialchars($Address) ?>
+            </div>
         </div>
+    </div>
+
+    <!-- Action Buttons Column -->
+    <div class="col-md-2 d-flex flex-column justify-content-end">
+        <div class="d-flex flex-column gap-2">
+            <button type="button" id="switch_button" class="btn btn-primary" 
+                data-bs-toggle="modal" data-bs-target="#account">
+                Switch Account
+            </button>
+
+            <?php if (!$isHead): ?>  
+            <button id="edit_button" class="btn btn-warning text-white" 
+                data-bs-toggle="modal" data-bs-target="#editModal">
+                Edit Profile
+            </button>
+            <?php endif; ?>
+
+            <?php if ($isHead): ?>  
+            <button type="button" id="add_account_button" class="btn btn-primary" 
+                data-bs-toggle="modal" data-bs-target="#registerModal">
+                Add Member
+            </button>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+
+<script>
+// Preview image before upload
+document.getElementById('profilePicInput').addEventListener('change', function(e) {
+    if (this.files && this.files[0]) {
+        var reader = new FileReader();
+        
+        reader.onload = function(e) {
+            document.getElementById('profilePreview').src = e.target.result;
+            document.getElementById('uploadBtn').style.display = 'inline-block';
+        }
+        
+        reader.readAsDataURL(this.files[0]);
+    }
+});
+
+// Show loading indicator during upload
+document.getElementById('profilePicForm').addEventListener('submit', function() {
+    document.getElementById('uploadBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    document.getElementById('uploadBtn').disabled = true;
+});
+</script>
+
+
+
         <hr>
-        <div class="display-5" style="text-align: left;">
-            Family Members
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Relationship</th>
-                    <?php if ($isHead): ?> <!-- Show headers only if Head -->
-                        <th scope="col">Edit</th>
-                        <th scope="col">Remove</th>
+     <!-- Family Table -->
+     <div class="display-5" style="text-align: left;">
+    Family Members
+</div>
+<div class="table-responsive">
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Relationship</th>
+            <th scope="col">Age</th>
+            <th scope="col">Contact</th>
+            <?php if ($isHead): ?>
+                <th scope="col" class="text-center">Actions</th>
+            <?php endif; ?>
+        </tr>
+    </thead>
+    <tbody id="tableBody">
+        <?php
+        if ($familyID) {
+            // First get all pending delete requests
+            $deleteRequests = [];
+            $deleteQuery = "SELECT Resident_ID, Status FROM delete_member_tbl WHERE Status = 'Pending'";
+            $deleteResult = $conn->query($deleteQuery);
+            while ($deleteRow = $deleteResult->fetch_assoc()) {
+                $deleteRequests[$deleteRow['Resident_ID']] = $deleteRow['Status'];
+            }
+            
+            // Then get family members, ordered with Head first
+            $query = "SELECT 
+                Resident_ID,
+                Address,
+                FirstName,
+                COALESCE(MiddleName, '') AS MiddleName,
+                LastName,
+                COALESCE(Suffix, '') AS Suffix,
+                Sex,
+                Date_of_Birth,
+                Role,
+                Contact_Number,
+                Resident_Email,
+                Religion,
+                Eligibility_Status,
+                Civil_Status,
+                Emergency_Person,
+                Emergency_Contact_No,
+                Relationship_to_Person,
+                Emergency_Address,
+                Occupation,
+                TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) AS Age
+            FROM Residents_information_tbl
+            WHERE Family_Name_ID = ?
+            ORDER BY CASE WHEN Role = 'Head' THEN 0 ELSE 1 END, FirstName";
+            
+            $stmt = $conn->prepare($query);
+            if (!$stmt) {
+                die("Query preparation failed: " . $conn->error);
+            }
+            $stmt->bind_param("s", $familyID);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            $count = 0;
+            while ($row = $result->fetch_assoc()) {
+                $count++;
+                $fullName = htmlspecialchars($row['FirstName']) . 
+                           (!empty($row['MiddleName']) ? ' ' . htmlspecialchars(substr($row['MiddleName'], 0, 1)) . '.' : '') . 
+                           ' ' . htmlspecialchars($row['LastName']) . 
+                           (!empty($row['Suffix']) ? ' ' . htmlspecialchars($row['Suffix']) : '');
+                
+                // Check if this member has a pending delete request
+                $isPendingDelete = isset($deleteRequests[$row['Resident_ID']]) && $deleteRequests[$row['Resident_ID']] == 'Pending';
+                
+                // Highlight the Head row differently
+                $isHeadMember = $row['Role'] === 'Head';
+                ?>
+                <tr <?= $isPendingDelete ? 'class="table-secondary"' : ($isHeadMember ? 'class="table-primary"' : '') ?>>
+                    <th scope="row"><?= $count ?></th>
+                    <td>
+                        <div class="fw-bold"><?= $fullName ?>
+                            <?php if ($isHeadMember): ?>
+                                <span class="badge bg-primary ms-2">Head</span>
+                            <?php endif; ?>
+                        </div>
+                        <small class="text-muted"><?= htmlspecialchars($row['Resident_Email']) ?></small>
+                    </td>
+                    <td><?= htmlspecialchars($row['Role']) ?></td>
+                    <td><?= htmlspecialchars($row['Age']) ?></td>
+                    <td>
+                        <div><?= htmlspecialchars($row['Contact_Number']) ?></div>
+                        <small class="text-muted"><?= htmlspecialchars($row['Occupation']) ?></small>
+                    </td>
+                    
+                    <?php if ($isHead): ?>
+                        <td class="text-center">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <button class="btn btn-outline-warning" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#editModal"
+                                    onclick="populateEditModal(
+                                        '<?= htmlspecialchars($row['Resident_ID']) ?>', 
+                                        '<?= htmlspecialchars($row['FirstName']) ?>', 
+                                        '<?= htmlspecialchars($row['MiddleName']) ?>', 
+                                        '<?= htmlspecialchars($row['LastName']) ?>', 
+                                        '<?= htmlspecialchars($row['Suffix']) ?>',
+                                        '<?= htmlspecialchars($row['Sex']) ?>', 
+                                        '<?= htmlspecialchars($row['Date_of_Birth']) ?>', 
+                                        '<?= htmlspecialchars($row['Resident_Email']) ?>', 
+                                        '<?= htmlspecialchars($row['Contact_Number']) ?>', 
+                                        '<?= htmlspecialchars($row['Occupation']) ?>', 
+                                        '<?= htmlspecialchars($row['Religion']) ?>', 
+                                        '<?= htmlspecialchars($row['Eligibility_Status']) ?>', 
+                                        '<?= htmlspecialchars($row['Civil_Status']) ?>', 
+                                        '<?= htmlspecialchars($row['Address']) ?>', 
+                                        '<?= htmlspecialchars($row['Emergency_Person']) ?>', 
+                                        '<?= htmlspecialchars($row['Emergency_Contact_No']) ?>', 
+                                        '<?= htmlspecialchars($row['Relationship_to_Person']) ?>', 
+                                        '<?= htmlspecialchars($row['Emergency_Address']) ?>', 
+                                        '<?= htmlspecialchars($row['Role']) ?>'
+                                    )"
+                                    <?= $isPendingDelete ? 'disabled' : '' ?>>
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <?php if (!$isHeadMember): // Don't allow removal of Head ?>
+                                    <button class="btn btn-outline-danger" 
+                                        onclick="showDeleteModal('<?= htmlspecialchars($row['Resident_ID']) ?>', '<?= $fullName ?>')"
+                                        <?= $isPendingDelete ? 'disabled' : '' ?>>
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                <?php endif; ?>
+                                <?php if ($isPendingDelete): ?>
+                                    <span class="badge bg-warning text-dark ms-2">Pending Removal</span>
+                                <?php endif; ?>
+                            </div>
+                        </td>
                     <?php endif; ?>
                 </tr>
-            </thead>
-            <tbody id="tableBody">
                 <?php
-                     if ($familyID) {
-                        $query = "SELECT 
-                        Resident_ID,
-                        Address,
-                        FirstName,
-                        COALESCE(MiddleName, '') AS MiddleName,
-                        LastName,
-                        COALESCE(Suffix, '') AS Suffix,  -- ✅ ADDED Suffix
-                        Sex,
-                        Date_of_Birth,
-                        Role,
-                        Contact_Number,
-                        Resident_Email,
-                        Religion,
-                        Eligibility_Status,
-                        Civil_Status,
-                        Emergency_Person,
-                        Emergency_Contact_No,
-                        Relationship_to_Person,
-                        Emergency_Address,
-                        Occupation,
-                        TIMESTAMPDIFF(YEAR, Date_of_Birth, CURDATE()) AS Age
-                    FROM Residents_information_tbl
-                    WHERE Family_Name_ID = ?";
-    
-                        $stmt = $conn->prepare($query);
-                        if (!$stmt) {
-                            die("Query preparation failed: " . $conn->error);
-                        }
-                        $stmt->bind_param("s", $familyID);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-                    $count = 0;
-                    while ($row = $result->fetch_assoc()) {
-                        $count++;
-                        ?>
-                        <tr>
-                            <th scope="row"><?= $count ?></th>
-                            <td><?= htmlspecialchars($row['FirstName']) ?> 
-                                <?= !empty($row['MiddleName']) ? htmlspecialchars(substr($row['MiddleName'], 0, 1)) . "." : "" ?>
-                                <?= htmlspecialchars($row['LastName']) ?>
-                                <?= !empty($row['Suffix']) ? htmlspecialchars($row['Suffix']) : "" ?>
-                            </td>
-                            <td><?= htmlspecialchars($row['Role']) ?></td>
+            }
 
-                            <?php if ($isHead): ?> <!-- Only show buttons if user is Head -->
-                                <td>
-                                    <button class="btn btn-warning btn-sm" 
-                                        data-bs-toggle="modal" 
-                                        data-bs-target="#editModal"
-                                        onclick="populateEditModal(
-                            '<?= htmlspecialchars($row['Resident_ID']) ?>', 
-                            '<?= htmlspecialchars($row['FirstName']) ?>', 
-                            '<?= htmlspecialchars($row['MiddleName']) ?>', 
-                            '<?= htmlspecialchars($row['LastName']) ?>', 
-                            '<?= htmlspecialchars($row['Suffix']) ?>',  /* ✅ ADDED SUFFIX */
-                            '<?= htmlspecialchars($row['Sex']) ?>', 
-                            '<?= htmlspecialchars($row['Date_of_Birth']) ?>', 
-                            '<?= htmlspecialchars($row['Resident_Email']) ?>', 
-                            '<?= htmlspecialchars($row['Contact_Number']) ?>', 
-                            '<?= htmlspecialchars($row['Occupation']) ?>', 
-                            '<?= htmlspecialchars($row['Religion']) ?>', 
-                            '<?= htmlspecialchars($row['Eligibility_Status']) ?>', 
-                            '<?= htmlspecialchars($row['Civil_Status']) ?>', 
-                            '<?= htmlspecialchars($row['Address']) ?>', 
-                            '<?= htmlspecialchars($row['Emergency_Person']) ?>', 
-                            '<?= htmlspecialchars($row['Emergency_Contact_No']) ?>', 
-                            '<?= htmlspecialchars($row['Relationship_to_Person']) ?>', 
-                            '<?= htmlspecialchars($row['Emergency_Address']) ?>', 
-                            '<?= htmlspecialchars($row['Role']) ?>'
-                        )">
-                                        Edit
-                                    </button>
-                                </td>
-                                <td>
-                                    <button class="btn btn-danger btn-sm" onclick="confirmDelete('<?= htmlspecialchars($row['Resident_ID']) ?>')">
-                                        Remove
-                                    </button>
-                                </td>
-                            <?php endif; ?>
-                        </tr>
-                        <?php
-                    }
+            if ($count === 0) {
+                echo '<tr><td colspan="' . ($isHead ? '6' : '5') . '" class="text-center py-4">No family members found.</td></tr>';
+            }
 
-                    if ($count === 0) {
-                        echo "<tr><td colspan='" . ($isHead ? "5" : "3") . "' class='text-center'>No family members found.</td></tr>";
-                    }
+            $stmt->close();
+        } else {
+            echo '<tr><td colspan="' . ($isHead ? '6' : '5') . '" class="text-center py-4">No family members found.</td></tr>';
+        }
+        ?>
+    </tbody>
+</table>
+</div>
 
-                    $stmt->close();
-                } else {
-                    echo "<tr><td colspan='" . ($isHead ? "5" : "3") . "' class='text-center'>No family members found.</td></tr>";
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Remove Family Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="../src/process_delete_member.php" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="deleteResidentId" name="resident_id">
+                    <p>You are about to request removal of: <strong id="deleteMemberName"></strong></p>
+                    <div class="mb-3">
+                        <label for="deleteReason" class="form-label">Reason for removal:</label>
+                        <textarea class="form-control" id="deleteReason" name="delete_reason" rows="3" required></textarea>
+                    </div>
+                    <div class="alert alert-info">
+                        Note: This request will need to be approved by an administrator.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Submit Removal Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function showDeleteModal(residentId, fullName) {
+    document.getElementById('deleteResidentId').value = residentId;
+    document.getElementById('deleteMemberName').textContent = fullName;
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+}
+
+function confirmDelete(residentId) {
+    if (confirm('Are you sure you want to request removal of this family member?')) {
+        // You can add AJAX call here if you want to handle it without page reload
+        window.location.href = '../src/process_delete_member.php?resident_id=' + residentId;
+    }
+}
+</script>
+     <!-- Document Request Table -->
+        <div class="display-5" style="text-align: left; padding-top: 2%;">
+    Document Requests
+</div>
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">Request ID</th>
+            <th scope="col">Document Type</th>
+            <th scope="col">Purpose</th>
+            <th scope="col">Request Date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // Query to get document requests for the current resident
+        $query = "SELECT 
+                    Request_ID,
+                    Document_Type,
+                    Purpose,
+                    FirstName,
+                    MiddleName,
+                    LastName,
+                    Suffix,
+                    DATE_FORMAT(Request_Date, '%M %d, %Y') AS Formatted_Date,
+                    Request_Status,
+                    Denial_Reason
+                  FROM request_document_tbl
+                  WHERE Resident_ID = ?
+                  ORDER BY Request_Date DESC";
+        
+        $stmt = $conn->prepare($query);
+        if (!$stmt) {
+            die("Query preparation failed: " . $conn->error);
+        }
+        $stmt->bind_param("s", $_SESSION['User_Data']['Resident_ID']); // Assuming you store resident ID in session
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $fullName = htmlspecialchars($row['FirstName']) . 
+                           (!empty($row['MiddleName']) ? ' ' . htmlspecialchars(substr($row['MiddleName'], 0, 1)) . '.' : '') . 
+                           ' ' . htmlspecialchars($row['LastName']) . 
+                           (!empty($row['Suffix']) ? ' ' . htmlspecialchars($row['Suffix']) : '');
+                
+                $statusBadge = '';
+                switch ($row['Request_Status']) {
+                    case 'Pending':
+                        $statusBadge = '<span class="badge bg-warning text-dark">Pending</span>';
+                        break;
+                    case 'Rejected':
+                        $statusBadge = '<span class="badge bg-danger">Rejected</span>';
+                        break;
+                    case 'Approved':
+                        $statusBadge = '<span class="badge bg-success">Approved</span>';
+                        break;
+                    default:
+                        $statusBadge = '<span class="badge bg-secondary">' . htmlspecialchars($row['Request_Status']) . '</span>';
                 }
                 ?>
-            </tbody>
-        </table>
+                <tr>
+                    <td><?= htmlspecialchars($row['Request_ID']) ?></td>
+                    <td><?= htmlspecialchars($row['Document_Type']) ?></td>
+                    <td><?= htmlspecialchars($row['Purpose']) ?></td>
+                    <td><?= htmlspecialchars($row['Formatted_Date']) ?></td>
+                    <td><?= $statusBadge ?></td>
+                    <td>
+                        <?php if ($row['Request_Status'] == 'Pending'): ?>
+                            <button class="btn btn-outline-secondary btn-sm" disabled>
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                        <?php elseif ($row['Request_Status'] == 'Rejected'): ?>
+                            <button class="btn btn-outline-danger btn-sm" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#requestDetailsModal"
+                                    onclick="showRequestDetails(
+                                        '<?= htmlspecialchars($row['Request_ID']) ?>',
+                                        '<?= htmlspecialchars($row['Document_Type']) ?>',
+                                        '<?= htmlspecialchars($row['Purpose']) ?>',
+                                        '<?= $fullName ?>',
+                                        '<?= htmlspecialchars($row['Formatted_Date']) ?>',
+                                        'Rejected',
+                                        '<?= htmlspecialchars($row['Denial_Reason']) ?>'
+                                    )">
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                        <?php elseif ($row['Request_Status'] == 'Approved'): ?>
+                            <button class="btn btn-outline-success btn-sm" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#requestDetailsModal"
+                                    onclick="showRequestDetails(
+                                        '<?= htmlspecialchars($row['Request_ID']) ?>',
+                                        '<?= htmlspecialchars($row['Document_Type']) ?>',
+                                        '<?= htmlspecialchars($row['Purpose']) ?>',
+                                        '<?= $fullName ?>',
+                                        '<?= htmlspecialchars($row['Formatted_Date']) ?>',
+                                        'Approved',
+                                        ''
+                                    )">
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php
+            }
+        } else {
+            echo '<tr><td colspan="6" class="text-center py-4">No document requests found.</td></tr>';
+        }
+        $stmt->close();
+        ?>
+    </tbody>
+</table>
+
+<!-- Request Details Modal -->
+<div class="modal fade" id="requestDetailsModal" tabindex="-1" aria-labelledby="requestDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="requestDetailsModalLabel">Request Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><strong>Request ID:</strong> <span id="detailRequestId"></span></p>
+                        <p><strong>Document Type:</strong> <span id="detailDocumentType"></span></p>
+                        <p><strong>Purpose:</strong> <span id="detailPurpose"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Request Date:</strong> <span id="detailRequestDate"></span></p>
+                        <p><strong>Status:</strong> <span id="detailStatus"></span></p>
+                        <p><strong>Requested By:</strong> <span id="detailRequesterName"></span></p>
+                    </div>
+                </div>
+                <div class="alert" id="statusAlert">
+                    <!-- Status message will appear here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showRequestDetails(requestId, documentType, purpose, requesterName, requestDate, requestStatus, denialReason) {
+    // Set basic details
+    document.getElementById('detailRequestId').textContent = requestId;
+    document.getElementById('detailDocumentType').textContent = documentType;
+    document.getElementById('detailPurpose').textContent = purpose;
+    document.getElementById('detailRequesterName').textContent = requesterName;
+    document.getElementById('detailRequestDate').textContent = requestDate;
+    
+    // Set status with appropriate styling
+    const statusElement = document.getElementById('detailStatus');
+    statusElement.innerHTML = '';
+    let statusBadge;
+    switch(requestStatus) {
+        case 'Pending':
+            statusBadge = '<span class="badge bg-warning text-dark">Pending</span>';
+            break;
+        case 'Rejected':
+            statusBadge = '<span class="badge bg-danger">Rejected</span>';
+            break;
+        case 'Approved':
+            statusBadge = '<span class="badge bg-success">Approved</span>';
+            break;
+        default:
+            statusBadge = '<span class="badge bg-secondary">' + requestStatus + '</span>';
+    }
+    statusElement.innerHTML = statusBadge;
+    
+    // Set status message and show/hide download button
+    const alertElement = document.getElementById('statusAlert');
+    const downloadBtn = document.getElementById('downloadBtn');
+    alertElement.className = 'alert'; // Reset classes
+    
+    if (requestStatus === 'Rejected') {
+        alertElement.classList.add('alert-danger');
+        alertElement.innerHTML = `<strong>Rejection Reason:</strong> ${denialReason || 'No reason provided.'}`;
+        downloadBtn.style.display = 'none';
+    } else if (requestStatus === 'Approved') {
+        alertElement.classList.add('alert-success');
+        alertElement.innerHTML = `<strong>Approval Notice:</strong> Your document is ready for pickup at the barangay office.`;
+        downloadBtn.style.display = 'block';
+        downloadBtn.onclick = function() {
+            window.location.href = `download_document.php?request_id=${requestId}`;
+        };
+    } else {
+        alertElement.classList.add('alert-info');
+        alertElement.innerHTML = `<strong>Status:</strong> Your request is currently being processed.`;
+        downloadBtn.style.display = 'none';
+    }
+}
+</script>
+
+
+
+
+
+
+<!-- Barangay ID Table -->
+<div class="display-5" style="text-align: left; padding-top: 2%;">
+    Barangay ID Requests
+</div>
+<table class="table table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th scope="col">ID Number</th>
+            <th scope="col">Full Name</th>
+            <th scope="col">Request Date</th>
+            <th scope="col">Valid Until</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        // Query to get Barangay ID requests for the current resident
+        $query = "SELECT 
+                    Barangay_ID,
+                    FullName,
+                    DATE_FORMAT(Date_Created, '%M %d, %Y') AS Formatted_Date,
+                    Valid_Until,
+                    Status,
+                    TwoByTwo,
+                    Denial_Reason
+                  FROM barangay_id_tbl
+                  WHERE Resident_ID = ?
+                  ORDER BY Date_Created DESC";
+        
+        $stmt = $conn->prepare($query);
+        if (!$stmt) {
+            die("Query preparation failed: " . $conn->error);
+        }
+        $stmt->bind_param("s", $_SESSION['User_Data']['Resident_ID']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                // Format Valid_Until to match April 08, 2025 format
+                $requestDate = $row['Formatted_Date'];
+                $validUntilFormatted = '';
+                if (!empty($row['Valid_Until'])) {
+                    $validUntilDate = DateTime::createFromFormat('F j, Y', $row['Valid_Until']);
+                    if ($validUntilDate) {
+                        $validUntilFormatted = $validUntilDate->format('F d, Y');
+                    } else {
+                        $validUntilFormatted = $row['Valid_Until']; // fallback if formatting fails
+                    }
+                }
+                
+                $statusBadge = '';
+                switch ($row['Status']) {
+                    case 'Pending':
+                        $statusBadge = '<span class="badge bg-warning text-dark">Pending</span>';
+                        break;
+                    case 'Rejected':
+                        $statusBadge = '<span class="badge bg-danger">Rejected</span>';
+                        break;
+                    case 'Approved':
+                        $statusBadge = '<span class="badge bg-success">Approved</span>';
+                        break;
+                    default:
+                        $statusBadge = '<span class="badge bg-secondary">' . htmlspecialchars($row['Status']) . '</span>';
+                }
+                ?>
+                <tr>
+                    <td><?= htmlspecialchars($row['Barangay_ID']) ?></td>
+                    <td><?= htmlspecialchars($row['FullName']) ?></td>
+                    <td><?= htmlspecialchars($row['Formatted_Date']) ?></td>
+                    <td><?= htmlspecialchars($validUntilFormatted) ?></td>
+                    <td><?= $statusBadge ?></td>
+                    <td>
+                        <?php if ($row['Status'] == 'Pending'): ?>
+                            <button class="btn btn-outline-secondary btn-sm" disabled>
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                        <?php elseif ($row['Status'] == 'Rejected'): ?>
+                            <button class="btn btn-outline-danger btn-sm" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#idDetailsModal"
+                                    onclick="showIdDetails(
+                                        '<?= htmlspecialchars($row['Barangay_ID']) ?>',
+                                        '<?= htmlspecialchars($row['FullName']) ?>',
+                                        '<?= htmlspecialchars($row['Formatted_Date']) ?>',
+                                        '<?= htmlspecialchars($validUntilFormatted) ?>',
+                                        'Rejected',
+                                        '<?= htmlspecialchars($row['Denial_Reason']) ?>',
+                                        '<?= htmlspecialchars($row['TwoByTwo']) ?>'
+                                    )">
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                        <?php elseif ($row['Status'] == 'Approved'): ?>
+                            <button class="btn btn-outline-success btn-sm" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#idDetailsModal"
+                                    onclick="showIdDetails(
+                                        '<?= htmlspecialchars($row['Barangay_ID']) ?>',
+                                        '<?= htmlspecialchars($row['FullName']) ?>',
+                                        '<?= htmlspecialchars($row['Formatted_Date']) ?>',
+                                        '<?= htmlspecialchars($validUntilFormatted) ?>',
+                                        'Approved',
+                                        '',
+                                        '<?= htmlspecialchars($row['TwoByTwo']) ?>'
+                                    )">
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <?php
+            }
+        } else {
+            echo '<tr><td colspan="6" class="text-center py-4">No Barangay ID requests found.</td></tr>';
+        }
+        $stmt->close();
+        ?>
+    </tbody>
+</table>
+
+<!-- ID Details Modal -->
+<div class="modal fade" id="idDetailsModal" tabindex="-1" aria-labelledby="idDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="idDetailsModalLabel">Barangay ID Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>ID Number:</strong> <span id="detailIdNumber"></span></p>
+                        <p><strong>Full Name:</strong> <span id="detailFullName"></span></p>
+                        <p><strong>Request Date:</strong> <span id="detailRequestDate"><?php echo htmlspecialchars($requestDate); ?></span></p>
+                        <p><strong>Valid Until:</strong> <span id="detailValidUntil"></span></p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <img id="detailPhoto" src="" class="img-thumbnail" style="max-height: 200px;" alt="ID Photo">
+                    </div>
+                </div>
+                <div class="alert mt-3" id="statusAlert">
+                    <!-- Status message will appear here -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showIdDetails(idNumber, fullName, requestDate, validUntil, status, denialReason, photoPath) {
+    // Set basic details
+    document.getElementById('detailIdNumber').textContent = idNumber;
+    document.getElementById('detailFullName').textContent = fullName;
+    document.getElementById('detailRequestDate').textContent = requestDate;
+    document.getElementById('detailValidUntil').textContent = validUntil;
+    
+    // Set photo
+    if (photoPath) {
+        document.getElementById('detailPhoto').src = '../resident_folder/2x2pic/' + photoPath;
+    }
+    
+    // Set status with appropriate styling
+    const statusElement = document.getElementById('statusAlert');
+    statusElement.className = 'alert'; // Reset classes
+    
+    if (status === 'Rejected') {
+        statusElement.classList.add('alert-danger');
+        statusElement.innerHTML = `<strong>Rejection Reason:</strong> ${denialReason || 'No reason provided.'}`;
+        document.getElementById('modalDownloadBtn').style.display = 'none';
+    } else if (status === 'Approved') {
+        statusElement.classList.add('alert-success');
+        statusElement.innerHTML = `<strong>Approval Notice:</strong> Your Barangay ID is ready for download.`;
+        document.getElementById('modalDownloadBtn').style.display = 'block';
+        document.getElementById('modalDownloadBtn').onclick = function() {
+            window.location.href = `download_id.php?id=${idNumber}`;
+        };
+    } else {
+        statusElement.classList.add('alert-info');
+        statusElement.innerHTML = `<strong>Status:</strong> Your request is currently being processed.`;
+        document.getElementById('modalDownloadBtn').style.display = 'none';
+    }
+}
+
+function downloadId(idNumber) {
+    window.location.href = `download_id.php?id=${idNumber}`;
+}
+</script>
+
+
+      
     </div>
     <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -676,28 +1208,54 @@ function setSelectValue(id, value) {
         </div>
         <div class="modal-body">
             <div class=" tc_body">
-                <ol>
-                  <li>
-                    <h3>Terms of use</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
-                  </li>
-                  <li>
-                    <h3>Intellectual property rights</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
-                  </li>
-                  <li>
-                    <h3>Prohibited activities</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
-                  </li>
-                  <li>
-                    <h3>Termination clause</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
-                  </li>
-                  <li>
-                    <h3>Governing law</h3>
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Tenetur, quidem doloribus cumque vero, culpa voluptates dolorum reprehenderit nihil nisi odit necessitatibus voluptate voluptatibus magni ducimus sed accusamus illo nobis veniam.</p>
-                  </li>
-                </ol>
+            <ol>
+                <li>
+                    <h3>Terms of Use</h3>
+                    <ul>
+                    <li>The terms and conditions set forth in this document govern the use of all services offered by Barangay Baritan, Malabon.</li>
+                    <li>By accessing or using any of our services, you agree to comply with these terms.</li>
+                    <li>Failure to comply with the terms may result in restricted access or termination of services.</li>
+                    <li>For more information, refer to the <a href="https://www.officialgazette.gov.ph/2012/07/23/republic-act-no-10173/" target="_blank">Data Privacy Act of 2012</a> for privacy guidelines.</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Intellectual Property Rights</h3>
+                    <ul>
+                    <li>All content, logos, trademarks, and materials provided through the Barangay Baritan Information Management System are protected by intellectual property laws.</li>
+                    <li>Unauthorized use or reproduction of materials without prior written consent from Barangay Baritan is prohibited.</li>
+                    <li>Barangay Baritan retains ownership over the system’s software and data provided to users.</li>
+                    <li>For more information, refer to the <a href="https://www.wipo.int/treaties/en/ip/ptoc/index.html" target="_blank">Intellectual Property Code of the Philippines</a> (Republic Act No. 8293).</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Prohibited Activities</h3>
+                    <ul>
+                    <li>Engaging in any activity that disrupts or harms the operation of the Barangay Baritan Information Management System is prohibited.</li>
+                    <li>Users must not upload, share, or distribute any malicious content or engage in hacking activities.</li>
+                    <li>Any use of the system for fraudulent activities or to violate local laws is strictly prohibited.</li>
+                    <li>For more information on online security, refer to the <a href="https://www.officialgazette.gov.ph/2012/04/16/republic-act-no-10175/" target="_blank">Cybercrime Prevention Act of 2012</a>.</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Termination Clause</h3>
+                    <ul>
+                    <li>Barangay Baritan reserves the right to suspend or terminate access to the system if users violate the terms outlined in this agreement.</li>
+                    <li>Users may request termination of their accounts in accordance with the Barangay Baritan policies.</li>
+                    <li>Upon termination, all personal data and access rights may be revoked, subject to applicable laws.</li>
+                    <li>For more information on termination and rights of the parties, refer to the <a href="https://www.officialgazette.gov.ph/1991/06/11/republic-act-no-7641/" target="_blank">Labor Code of the Philippines</a> (Book VI: Termination of Employment).</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Governing Law</h3>
+                    <ul>
+                    <li>These terms are governed by and construed in accordance with the laws of the Philippines.</li>
+                    <li>Any disputes arising from the use of the Barangay Baritan Information Management System will be resolved under the jurisdiction of the courts in Malabon City.</li>
+                    <li>Users agree to resolve any disputes amicably before resorting to legal actions.</li>
+                    <li>For a comprehensive guide to Philippine law, refer to the <a href="https://www.officialgazette.gov.ph/constitution/" target="_blank">1987 Philippine Constitution</a>.</li>
+                    </ul>
+                </li>
+            </ol>
+
               </div>
         </div>
         <div class="modal-footer">
@@ -796,117 +1354,149 @@ function setSelectValue(id, value) {
 
  
 <!-- Account Selection Modal -->
-<div class="modal fade" id="account" tabindex="-1" aria-labelledby="exampleModalLabel" data-bs-backdrop="static">
+<div class="modal fade" id="account" tabindex="-1" aria-labelledby="accountModalLabel" data-bs-backdrop="static">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Select Account</h5>
+        <h5 class="modal-title" id="accountModalLabel">Select Account</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <div class="row justify-content-center">
-          <?php foreach ($familyMembers as $member): ?>
-            <div class="col-6 d-flex flex-column align-items-center text-center">
-              <a href="#" class="text-decoration-none text-dark" data-bs-dismiss="modal" 
-                onclick="switchAccount('<?= $member['Resident_ID'] ?>', '<?= $member['Role'] ?>')">
-                <img src="../pics/profile.jpg" alt="Profile" class="img-fluid rounded-circle"
-                  style="width: 85px; transition: transform 0.3s ease-in-out;">
-                <div class="lead mt-2" style="font-size: 16px;"><?= $member['Role'] ?></div>
-                <div class="lead fw-bold"><?= $member['FirstName'] ?></div>
+          <?php 
+          // Sort family members - Head first
+          usort($familyMembers, function($a, $b) {
+              if ($a['Role'] === 'Head') return -1;
+              if ($b['Role'] === 'Head') return 1;
+              return 0;
+          });
+          
+          foreach ($familyMembers as $member): 
+            // Get profile picture path safely
+            $profilePic = isset($member['Pic_Path']) && !empty($member['Pic_Path']) 
+              ? '../resident_folder/profile/' . $member['Pic_Path']
+              : '../pics/profile.jpg';
+              
+            // Verify the image file exists
+            $imagePath = (isset($member['Pic_Path']) && file_exists('../resident_folder/profile/' . $member['Pic_Path']))
+              ? '../resident_folder/profile/' . $member['Pic_Path']
+              : '../pics/profile.jpg';
+          ?>
+            <div class="col-6 d-flex flex-column align-items-center text-center mb-4">
+              <a href="#" class="text-decoration-none text-dark account-select" 
+                 data-resident-id="<?= htmlspecialchars($member['Resident_ID']) ?>"
+                 data-role="<?= htmlspecialchars($member['Role']) ?>"
+                 data-is-head="<?= $member['Role'] === 'Head' ? 'true' : 'false' ?>"
+                 data-bs-dismiss="modal">
+                <img src="<?= $imagePath ?>" 
+                     alt="<?= htmlspecialchars($member['FirstName']) ?>" 
+                     class="img-fluid rounded-circle profile-img border border-2"
+                     style="width: 85px; height: 85px; object-fit: cover; transition: transform 0.3s ease;"
+                     onerror="this.onerror=null;this.src='../pics/profile.jpg';">
+                <div class="mt-2">
+                  <div class="fw-bold">
+                    <?= htmlspecialchars($member['FirstName']) ?>
+                    <?= isset($member['LastName']) ? ' ' . htmlspecialchars($member['LastName']) : '' ?>
+                  </div>
+                  <div class="text-muted small"><?= htmlspecialchars($member['Role']) ?></div>
+                </div>
               </a>
             </div>
           <?php endforeach; ?>
-          <!-- Add Account -->
-          <!-- <div class="col-6 d-flex flex-column align-items-center text-center">
-            <a href="#" class="text-decoration-none text-dark">
-              <img src="../pics/profile.jpg" alt="Add Account" class="img-fluid rounded-circle"
-                style="width: 85px; transition: transform 0.3s ease-in-out;">
-              <div class="lead fw-bold mt-2">Add Account</div>
-            </a>
-          </div> -->
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>
 </div>
 
-
 <script>
-function switchAccount(residentID, role) {
-    console.log("🔄 Attempting to switch account...");
+// Account selection handler
+document.querySelectorAll('.account-select').forEach(item => {
+  item.addEventListener('click', function(e) {
+    e.preventDefault();
+    const residentId = this.getAttribute('data-resident-id');
+    const role = this.getAttribute('data-role');
+    const isHead = this.getAttribute('data-is-head') === 'true';
     
-    // Convert role to lowercase and trim whitespace for reliable comparison
-    role = role.toLowerCase().trim();
-
-    console.log("Resident ID:", residentID);
-    console.log("Role:", role);
-
-    if (role !== "head") {
-        // Open the password modal for non-head accounts
-        console.log("🔑 Opening Password Modal...");
-        document.getElementById("residentID").value = residentID;
-        
-        let passwordModal = new bootstrap.Modal(document.getElementById("accountPassword"));
-        passwordModal.show();
+    if (isHead) {
+      // Directly switch for Head without password
+      switchAccount(residentId, role);
     } else {
-        // ✅ If role is HEAD, submit a POST request instead of GET
-        console.log("✅ Head account detected. Sending POST request...");
-
-        // Create a hidden form dynamically
-        let form = document.createElement("form");
-        form.method = "POST";
-        form.action = "../src/switch_account.php"; // Ensure correct path
-
-        // Create hidden input fields
-        let inputResidentID = document.createElement("input");
-        inputResidentID.type = "hidden";
-        inputResidentID.name = "Resident_ID";
-        inputResidentID.value = residentID;
-
-        let inputRole = document.createElement("input");
-        inputRole.type = "hidden";
-        inputRole.name = "Role";
-        inputRole.value = role;
-
-        // Append inputs to form
-        form.appendChild(inputResidentID);
-        form.appendChild(inputRole);
-
-        // Append form to body and submit
-        document.body.appendChild(form);
-        form.submit();
+      // Show password modal for non-Head members
+      document.getElementById('residentID').value = residentId;
+      const passwordModal = new bootstrap.Modal(document.getElementById('accountPassword'));
+      passwordModal.show();
     }
+  });
+});
+
+// Hover effect for profile images
+document.querySelectorAll('.profile-img').forEach(img => {
+  img.addEventListener('mouseenter', function() {
+    this.style.transform = 'scale(1.1)';
+  });
+  img.addEventListener('mouseleave', function() {
+    this.style.transform = 'scale(1)';
+  });
+});
+
+function switchAccount(residentId, role) {
+  // Submit form via AJAX or redirect
+  fetch('../src/switch_account.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `Resident_ID=${encodeURIComponent(residentId)}`
+  })
+  .then(response => {
+    if (response.redirected) {
+      window.location.href = response.url;
+    } else {
+      return response.text().then(text => {
+        if (text.includes('Error')) {
+          alert(text);
+        } else {
+          window.location.reload();
+        }
+      });
+    }
+  })
+  .catch(error => console.error('Error:', error));
 }
 </script>
-
-
-
 
 <!-- Password Modal -->
 <div class="modal fade" id="accountPassword" tabindex="-1" aria-labelledby="accountPasswordLabel" data-bs-backdrop="static">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header text-white">
+      <div class="modal-header text-white bg-primary">
         <h5 class="modal-title" id="accountPasswordLabel">Enter Password</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
       </div>
       <div class="modal-body text-center">
         <form id="passwordForm" action="../src/switch_account.php" method="POST">
-          <input type="hidden" id="residentID" name="Resident_ID"> <!-- Hidden input to store ID -->
-          <div class="mt-3" style="text-align:left;">
-            <label class="form-label" for="passwordMember">Password</label>
+          <input type="hidden" id="residentID" name="Resident_ID">
+          <div class="mb-3 text-start">
+            <label for="passwordMember" class="form-label">Password</label>
+            <input type="password" name="passwordMember" id="passwordMember" 
+                   class="form-control" required placeholder="Enter Password"
+                   autocomplete="current-password">
           </div>
-          <input type="password" name="passwordMember" id="passwordMember" class="form-control" required placeholder="Enter Password"/>
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-success">Login</button>
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
         </form>
-      </div>
-      <div class="modal-footer d-flex justify-content-center">
-        <button type="button" class="btn btn-secondary w-25" data-bs-toggle="modal" 
-        data-bs-target="#account">Close</button>
-        <button type="submit" form="passwordForm" class="btn btn-success w-25 mt-2">Login</button>
       </div>
     </div>
   </div>
 </div>
+
+
 
 
 

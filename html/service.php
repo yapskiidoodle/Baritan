@@ -58,63 +58,93 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
     <script src="../chatbot.js"> </script>
     <link rel="stylesheet" href="../chatbot.css">
 
-    <!--header-->
-    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%;">
-        <div class="row">
-           <div class="col-1" style="width: 5.3%; ">
-               <img src="../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
-               
-           </div>
-           <div class="col-7" >
-               <h4 style="padding-top:0.4%;">Barangay Baritan</h4>
-               <h6 style="font-size: 10.5px;">Malabon City, Metro Manila, Philippines</h6>
-           </div>
-           <div class="col" style=" text-align: center; padding-top: 1.5%;">
-               <div style="display: flex; ">
-                   <div style="padding:0% 4%;">
-                       <a href="../">Home</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="about.php">About Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                       <a href="service.php">Services</a>
-                   </div>
-                   <div class="vr"></div>
-                   <div style="padding:0% 4%;">
-                      <a href="../index.php#contact">Contact Us</a>
-                   </div>
-                   <div class="vr"></div>
-                   
-                    <?php if (isset($_SESSION['userEmail'])) { ?>
-                        <div class="dropdown" id="profile" name="profile">
-                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
-                                <li>
-                                    <form action="../src/logout.php" method="POST">
-                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    <?php } else { ?>
-                      
-                        <div id="start" name="start">
-                            <a href="login.php" class="btn btn-danger ms-2">Log In</a>
-                        </div>
-                    <?php } ?>
-               </div>
-           </div>
-        </div>
-        </div>
-    <!-- End Header -->
+   
+    
+    <?php 
+        $profilePic = isset($_SESSION['User_Data']['Pic_Path']) && !empty($_SESSION['User_Data']['Pic_Path']) 
+            ? '../resident_folder/profile/' . $_SESSION['User_Data']['Pic_Path'] 
+            : '../pics/profile.jpg';
+        ?>
 
-    <div style="margin: 10%;" class="container">
+    <!-- Header -->
+    <header class="container-fluid  text-white py-2 px-3" style="background-color: #1C3A5B;">
+    <div class="row align-items-center">
+        <!-- Logo -->
+        <div class="col-auto">
+            <img src="../pics/logo.png" alt="Barangay Baritan Logo" class="img-fluid" style="max-width: 75px;">
+        </div>
+        
+        <!-- Barangay Info -->
+        <div class="col-auto">
+            <h4 class="mb-0">Barangay Baritan</h4>
+            <small class="d-block">Malabon City, Metro Manila, Philippines</small>
+        </div>
+        
+        <!-- Navigation - Pushed to right -->
+        <div class="col ms-auto">
+            <nav class="d-flex justify-content-end align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="nav-item px-2">
+                        <a href="../index.php" class="text-white text-decoration-none">Home</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="about.php" class="text-white text-decoration-none">About Us</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="service.php" class="text-white text-decoration-none">Services</a>
+                    </div>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../index.php?#contact" class="text-white text-decoration-none">Contact Us</a>
+                    </div>
+                    
+                    <!-- Profile Dropdown -->
+                    <div class="dropdown ms-3" id="profileSection" hidden>
+                        <button class="btn dropdown-toggle p-0" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="<?php echo isset($profilePic) ? $profilePic : '../pics/profile.jpg'; ?>" alt="Profile" class="rounded-circle" style="width: 30px; height: 30px; object-fit: cover;">
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" href="profile.php"><i class="fas fa-user me-2"></i>Profile</a></li>
+                            <li>
+                                <form action="../src/logout.php" method="POST">
+                                    <button type="submit" class="dropdown-item" name="logoutButton">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Login Button -->
+                    <div class="ms-3" id="loginSection">
+                        <a href="login.php" class="btn btn-danger">Log In</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+
+    <script>
+            // Example code to toggle between login and profile sections
+    document.addEventListener('DOMContentLoaded', function() {
+        const isLoggedIn = <?php echo isset($_SESSION['User_Data']) ? 'true' : 'false'; ?>;
+        
+        if (isLoggedIn) {
+            document.getElementById('profileSection').removeAttribute('hidden');
+            document.getElementById('loginSection').style.display = 'none';
+        } else {
+            document.getElementById('loginSection').style.display = 'block';
+        }
+    });
+    </script>
+
+    <!-- END HEADER -->
+
+
+    <div style="margin: 5% 10%;" class="container">
     <div class="ms-5">
         <div class="display-6">
             Our Services
@@ -135,16 +165,10 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                         <li style="color: #1C3A5B;" class="h4">Application Forms 
                             <div class="lead ms-4" style="font-size: 18px;">Renewal/Closure/Personal Use</div>
                             <div class="text-center">
-                            <?php
-                                $redirectPage = 'application.php';
-                                if (!isset($_SESSION['userEmail'])) {
-                                    $_SESSION['error_message'] = "Please log in first to access Application module";
-                                    $redirectPage = 'login.php';
-                                }
-                                ?>
-                            <a href="<?php echo $redirectPage; ?>">
+                            <a href="<?php echo isset($_SESSION['userEmail']) ? 'application.php' : 'login.php?error=application'; ?>">
                                 <button class="learn mt-3" style="padding: 10px 20px">Check Forms</button>
                             </a>
+
                             </div>
                         </li>
                         <br><br><br>
@@ -152,16 +176,17 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                             <div class="lead ms-4" style="font-size: 18px;">Barangay ID for the residents
                                 of <br> Barangay Baritan</div>
                             <div class="text-center">
-                            <button type="button" id="next_button" class="learn mt-3" style="padding: 10px 20px" 
-                                <?php if (!isset($_SESSION['userEmail'])) {  ?>
-                                    <?php $_SESSION['error_message'] = "Please log in first to access Barangay ID module"; ?>
-                                    onclick="window.location.href='login.php';"
-                                <?php } else { ?>
-                                    data-bs-target="#autofill" data-bs-toggle="modal"
-                                <?php } ?>
+                            <button type="button" id="next_button" class="learn mt-3" style="padding: 10px 20px"
+                                <?php if (!isset($_SESSION['userEmail'])): ?>
+                                    onclick="window.location.href='login.php?error=barangayid';"
+                                <?php else: ?>
+                                    onclick="window.location.href='services/barangay-id.php';"
+                                <?php endif; ?>
                             >
                                 Click to Apply
                             </button>
+
+
                             </div>
                         </li>
                     </div>
@@ -169,39 +194,20 @@ if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
                         <li style="color: #1C3A5B;" class="h4">Reservation
                             <div class="lead ms-4" style="font-size: 18px;">Reserve Tents, Chairs, etc...</div>
                             <div class="text-center">
-                            <?php
-                                $redirectReservation = 'services/reservation.php';
-                                if (!isset($_SESSION['userEmail'])) {
-                                    $_SESSION['error_message'] = "Please log in first to access the Reservation module";
-                                    $redirectReservation = 'login.php';
-                                }
-                                ?>
-                            <a href="<?php echo $redirectReservation; ?>">
+                            <a href="<?php echo isset($_SESSION['userEmail']) ? 'services/reservation.php' : 'login.php?error=reservation'; ?>">
                                 <button class="learn mt-3" style="padding: 10px 20px">Click to Apply</button>
                             </a>
+
+
                             </div>
                         </li>
                     </div>
                 </div>
-    
+             
 
 
-                <hr clas```php
-<?php
-// Check if the session variable 'deactivated' is set and its value is true
-if (isset($_SESSION['deactivated']) && $_SESSION['deactivated'] === true) {
-    // Display a modal to notify the user that their account has been deactivated
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var myModal = new bootstrap.Modal(document.getElementById('deactivatedModal'));
-            myModal.show();
-        });
-    </script>";
-    // Clear the session variable
-    unset($_SESSION['deactivated']);
-}
-?>
-```s="hr mt-4">
+
+                <hr class="hr mt-4">
                 <div class="row" style="margin-top: 10%;">
                     <div class="col">
                         <li style="color: #1C3A5B;" class="h4">Report Complaint

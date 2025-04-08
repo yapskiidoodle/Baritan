@@ -159,59 +159,74 @@
     </style>
 </head>
 <body>
+    
+<?php 
+        $profilePic = isset($_SESSION['User_Data']['Pic_Path']) && !empty($_SESSION['User_Data']['Pic_Path']) 
+            ? '../resident_folder/profile/' . $_SESSION['User_Data']['Pic_Path'] 
+            : '../pics/profile.jpg';
+        ?>
+
     <!-- Header -->
-    <div style="background-color:#1C3A5B;top:0;color: white;padding: 1%; position:fixed; width: 100%; z-index: 1000;">
-        <div class="row">
-            <div class="col-1" style="width: 5.3%;">
-                <img src="../pics/logo.png" alt="Barangay Baritan Logo" style="width: 75px; display: inline;">
-            </div>
-            <div class="col-7">
-                <h4 style="padding-top:0.4%;">Barangay Baritan</h4>
-                <h6 style="font-size: 10.5px;">Malabon City, Metro Manila, Philippines</h6>
-            </div>
-            <div class="col" style="text-align: center; padding-top: 1.5%;">
-                <div style="display: flex;">
-                    <div style="padding:0% 4%;">
-                        <a href="../">Home</a>
+    <header class="container-fluid  text-white py-2 px-3" style="background-color: #1C3A5B;">
+    <div class="row align-items-center">
+        <!-- Logo -->
+        <div class="col-auto">
+            <img src="../pics/logo.png" alt="Barangay Baritan Logo" class="img-fluid" style="max-width: 75px;">
+        </div>
+        
+        <!-- Barangay Info -->
+        <div class="col-auto">
+            <h4 class="mb-0">Barangay Baritan</h4>
+            <small class="d-block">Malabon City, Metro Manila, Philippines</small>
+        </div>
+        
+        <!-- Navigation - Pushed to right -->
+        <div class="col ms-auto">
+            <nav class="d-flex justify-content-end align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="nav-item px-2">
+                        <a href="../index.php" class="text-white text-decoration-none">Home</a>
                     </div>
-                    <div class="vr"></div>
-                    <div style="padding:0% 4%;">
-                        <a href="about.php">About Us</a>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="about.php" class="text-white text-decoration-none">About Us</a>
                     </div>
-                    <div class="vr"></div>
-                    <div style="padding:0% 4%;">
-                        <a href="service.php">Services</a>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="service.php" class="text-white text-decoration-none">Services</a>
                     </div>
-                    <div class="vr"></div>
-                    <div style="padding:0% 4%;">
-                        <a href="../index.php#contact">Contact Us</a>
+                    <div class="vr text-white mx-1 d-none d-md-block"></div>
+                    <div class="nav-item px-2">
+                        <a href="../index.php?#contact" class="text-white text-decoration-none">Contact Us</a>
                     </div>
-                    <div class="vr"></div>
-                    <?php if (isset($_SESSION['userEmail'])) { ?>
-                        <div class="dropdown" id="profile" name="profile">
-                            <button class="btn dropdown-toggle" type="button" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                                <img src="../pics/profile.jpg" alt="" style="border-radius: 50%; width: 30px;">
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="profileDropdown">
-                                <li><a class="dropdown-item" href="../html/profile.php"><i class="fas fa-user"></i> Profile</a></li>
-                                <li>
-                                    <form action="../src/logout.php" method="POST">
-                                        <button class="dropdown-item" name="logoutButton"><i class="fas fa-sign-out-alt"></i> Logout</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        </div>
-                    <?php } else { ?>
-                        <div id="start" name="start">
-                            <a href="login.php" class="btn btn-danger ms-2">Log In</a>
-                        </div>
-                    <?php } ?>
+                    
+                    
+                    
+                    <!-- Login Button -->
+                    <div class="ms-3" id="loginSection">
+                        <a href="login.php" class="btn btn-danger">Log In</a>
+                    </div>
                 </div>
-            </div>
+            </nav>
         </div>
     </div>
-    <!-- End Header -->
+</header>
 
+    <script>
+            // Example code to toggle between login and profile sections
+    document.addEventListener('DOMContentLoaded', function() {
+        const isLoggedIn = <?php echo isset($_SESSION['User_Data']) ? 'true' : 'false'; ?>;
+        
+        if (isLoggedIn) {
+            document.getElementById('profileSection').removeAttribute('hidden');
+            document.getElementById('loginSection').style.display = 'none';
+        } else {
+            document.getElementById('loginSection').style.display = 'block';
+        }
+    });
+    </script>
+
+    <!-- END HEADER -->
     <!-- Announcements Container -->
     <div class="container announcements-container">
         <h2 class="text-center mb-4">Announcements</h2>

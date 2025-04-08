@@ -171,7 +171,7 @@ $showPasswordSection = ($accountType === 'with');
              
             </div>
    
-            <form id="registrationForm" action="../src/addMemberLogic.php" method="POST">
+            <form id="registrationForm" action="../src/addMemberLogic.php" method="POST" enctype="multipart/form-data">
           <!-- Login Details -->
             <div class="container " style="text-align: left;">
 
@@ -415,15 +415,15 @@ $showPasswordSection = ($accountType === 'with');
                       <div class="form-group mt-4" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Upload Identification Card</label>
                         <div class="lead mt-4" style="font-size: 16px;">Front Side</div>
-                        <input type="file" class="form-control" id="idFront"name="idFront" required>
+                        <input type="file" class="form-control" id="idFront"name="idFront" required accept="image/*">
                         <div class="lead mt-4" style="font-size: 16px;">Back Side</div>
-                        <input type="file" class="form-control" id="idBack" name="idBack" required>
+                        <input type="file" class="form-control" id="idBack" name="idBack" required accept="image/*">
                       </div>
 
                       <div class="form-group mt-5" style="font-weight: 800;">
                         <label for="exampleInputEmail1">Upload 2x2 Picture</label>
                         <div class="lead mt-4" style="font-size: 16px;">(With White Background)</div>
-                        <input type="file" class="form-control" id="2x2pic" name="2x2pic" required>
+                        <input type="file" class="form-control" id="2x2pic" name="2x2pic" required accept="image/*">
                         
                       </div>
                 </div>

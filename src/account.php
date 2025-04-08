@@ -2,13 +2,7 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
 require 'connect.php'; // Load the database connection
-
-// Initialize try count if not set
-if (!isset($_SESSION['try'])) {
-    $_SESSION['try'] = 0;
-}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['loginButton'])) {
     $userEmail = trim($_POST["userEmail"] ?? '');
@@ -120,17 +114,44 @@ die("Query preparation failed: " . mysqli_error($conn));
             exit();
         }
     } else {
-        // Handle invalid login attempt
-        $_SESSION['try']++;
-        if ($_SESSION['try'] >= 5) {
-            $_SESSION['error_message'] = "Too many failed attempts. Please try again later.";
-            header("Location: ../html/login.php");
-            exit();
-        } else {
-            $_SESSION['error_message'] = "Wrong Username or Password. Attempt {$_SESSION['try']} of 5.";
-            header("Location: ../html/login.php");
-            exit();
-        }
+
+                
+        // Initialize the disable button flag
+        $disableButton = false;
+            // Check if this is the first failed attempt and set the timestamp
+            if (!isset($_SESSION['first_failed_time']) && isset($_SESSION['try']) && $_SESSION['try'] >= 1) {
+                $_SESSION['first_failed_time'] = time();
+            }
+
+            // Check if 1 minute has passed since the first failed attempt
+            if (isset($_SESSION['first_failed_time']) && (time() - $_SESSION['first_failed_time'] > 60)) {
+                // Reset the attempt counter and re-enable the button after 1 minute
+                $_SESSION['try'] = 0;
+                unset($_SESSION['first_failed_time']); // Remove the timestamp
+                $disableButton = false;
+            }
+
+            // Handle invalid login attempt
+            if ($_SESSION['try'] == 5) {
+                // Too many failed attempts, calculate remaining time
+                $remainingTime = 60 - (time() - $_SESSION['first_failed_time']); // Remaining time in seconds
+                $_SESSION['remaining_time'] = $remainingTime; // Store the remaining time in session
+                $_SESSION['error_message'] = "Too many failed attempts. Please try again in {$remainingTime} seconds.";
+                $disableButton = true;  // Disable the login button
+                header("Location: ../html/login.php");
+                exit();
+            } else {
+                // Handle wrong username/password
+                $_SESSION['try']++;
+                
+                $_SESSION['error_message'] = "Wrong Username or Password. Attempt {$_SESSION['try']} of 5.";
+                if ($_SESSION['try'] == 5) {
+                    $_SESSION['error_message'] = "";
+                }
+                header("Location: ../html/login.php");
+                exit();
+            }
+
     }
 
     // ✅ Close statement

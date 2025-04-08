@@ -3,6 +3,8 @@ require 'connect.php';
 require 'account.php'; // Ensures session_start()
 
 
+
+
 // Retrieve Family_Name_ID from the session FIRST
 $Family_Name_ID = $_SESSION['User_Data']['Family_Name_ID'] ?? '';
 
@@ -51,6 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Occupation = $_POST['occupation'] ?? '';
     $Religion = $_POST['religion'] ?? '';
     $Civil_Status = $_POST['civilStatus'] ?? '';
+    $Eligibility_Status = $_POST['eligibilityStatus'] ?? '';
     $Emergency_Person = $_POST['emergencyPerson'] ?? '';
     $Emergency_Contact_No = $_POST['emergencyContact'] ?? '';
     $Emergency_Address = $_POST['emergencyAddress'] ?? '';
@@ -58,12 +61,81 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Address = $_SESSION['User_Data']['Address'] ?? '';
     $Valid_ID_Type = $_POST['idType'] ?? '';
 
-    // Generate Resident ID
+
+    $uploadDir = '../resident_folder/';
+    $validIdFrontDir = $uploadDir . 'valid_id/Front/';
+    $validIdBackDir = $uploadDir . 'valid_id/Back/';
+    $pic2x2Dir = $uploadDir . 'profile/';
+    
+    // Create directories if they don't exist
+    if (!file_exists($validIdFrontDir)) mkdir($validIdFrontDir, 0777, true);
+    if (!file_exists($validIdBackDir)) mkdir($validIdBackDir, 0777, true);
+    if (!file_exists($pic2x2Dir)) mkdir($pic2x2Dir, 0777, true);
+
+    // Validate and process file uploads
+    $validIdFront = '';
+    $validIdBack = '';
+    $pic2x2 = '';
+    
+    // Function to handle file uploads
+    function handleFileUpload($fileInput, $targetDir, $residentId) {
+        if (!isset($_FILES[$fileInput]) || $_FILES[$fileInput]['error'] !== UPLOAD_ERR_OK) {
+            return ['success' => false, 'message' => 'No file uploaded or upload error'];
+        }
+        
+        $file = $_FILES[$fileInput];
+        $maxSize = 5 * 1024 * 1024; // 5MB
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        
+        // Validate file type
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file['tmp_name']);
+        
+        if (!in_array($mime, $allowedTypes)) {
+            return ['success' => false, 'message' => 'Only JPG, PNG, or GIF images are allowed'];
+        }
+        
+       
+        
+        // Generate unique filename
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $filename = $residentId . '_' . $fileInput . '_' . time() . '.' . $ext;
+        $targetPath = $targetDir . $filename;
+        
+        if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+            return ['success' => true, 'path' => $filename];
+        } else {
+            return ['success' => false, 'message' => 'Failed to move uploaded file'];
+        }
+    }
+    // Generate Resident ID (your existing code)
     $query = "SELECT COUNT(*) AS total FROM residents_information_tbl";
     $result = mysqli_query($conn, $query);
     $row = mysqli_fetch_assoc($result);
     $residentCount = ($row['total'] ?? 0) + 1;
     $Resident_ID = strtoupper(substr($LastName, 0, 3)) . date("Y") . str_pad($residentCount, 4, "0", STR_PAD_LEFT);
+
+    // Handle file uploads after Resident_ID is generated
+    $idFrontResult = handleFileUpload('idFront', $validIdFrontDir, $Resident_ID);
+    $idBackResult = handleFileUpload('idBack', $validIdBackDir, $Resident_ID);
+    $pic2x2Result = handleFileUpload('2x2pic', $pic2x2Dir, $Resident_ID);
+
+    // Check for file upload errors
+    if (!$idFrontResult['success'] || !$idBackResult['success'] || !$pic2x2Result['success']) {
+        die("File upload error: " . 
+            ($idFrontResult['message'] ?? '') . " " . 
+            ($idBackResult['message'] ?? '') . " " . 
+            ($pic2x2Result['message'] ?? ''));
+    }
+
+    $validIdFront = $idFrontResult['path'];
+    $validIdBack = $idBackResult['path'];
+    $pic2x2 = $pic2x2Result['path'];
+    // Generate Resident ID
+    $query = "SELECT COUNT(*) AS total FROM residents_information_tbl";
+    $result = mysqli_query($conn, $query);
+    $row = mysqli_fetch_assoc($result);
+    $residentCount = ($row['total'] ?? 0) + 1;
 
     // Calculate Age
     $dob = new DateTime($Date_of_Birth);
@@ -86,8 +158,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmtAddInfo->bind_param("sssssssssssssssssssssssss", 
         $Resident_ID, $Family_Name_ID, $FirstName, $MiddleName, $LastName, $Suffix, $Sex, $Date_of_Birth, $Role, $Contact_Number,
         $Resident_Email, $Occupation, $Religion, $Eligibility_Status, $Civil_Status, $Emergency_Person, $Emergency_Contact_No, 
-        $Emergency_Address, $Relationship_to_Person, $Address, $Valid_ID_Type, $Valid_ID_Picture_Front, $Valid_ID_Picture_Back, 
-        $Pic_Path, $Age
+        $Emergency_Address, $Relationship_to_Person, $Address, $Valid_ID_Type,   $validIdFront, $validIdBack, 
+        $pic2x2, $Age
         );
 
     if (!$stmtAddInfo->execute()) {

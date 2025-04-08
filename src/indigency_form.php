@@ -5,8 +5,26 @@ require('../admin/fpdf186/fpdf.php'); // Include the FPDF library
 ob_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") { 
+    
     $documentType = $_POST['documentType'];
-    $fullName = $_POST['firstName'] . ' ' . $_POST['middleName'][0] . '. ' . $_POST['lastName'] . ' ' . $_POST['suffix'];
+    
+    $purpose = $_POST['purpose'];
+    
+    $firstName = ucwords(strtolower(trim($_POST['firstName'])));
+    $middleName = isset($_POST['middleName']) ? trim($_POST['middleName']) : '';
+    $lastName = ucwords(strtolower(trim($_POST['lastName'])));
+    $suffix = isset($_POST['suffix']) ? trim($_POST['suffix']) : '';
+
+    // Format middle initial if available
+    $middleInitial = $middleName !== '' ? strtoupper($middleName[0]) . '.' : '';
+
+    // Format suffix if available
+    $suffixFormatted = $suffix !== '' ? ' ' . ucwords(strtolower($suffix)) : '';
+
+    // Construct full name
+    $fullName = "$firstName " . ($middleInitial ? "$middleInitial " : '') . "$lastName$suffixFormatted";
+
+
     $address = $_POST['block'] . " " . $_POST['street'] . " " . $_POST['subdivision'] . ', Barangay Baritan, Malabon City';
     function addOrdinalSuffix($num) {
         if (!in_array(($num % 100), [11, 12, 13])) {
@@ -22,8 +40,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $today = date("j"); // Get day as a number
     $monthYear = date("F Y"); // Get month and year
     $formattedDate = addOrdinalSuffix($today) . " day of " . $monthYear;
+
+    if (isset($_POST['submitBtn'])) { 
+        
+        $requestID = uniqid("REQ_");
+        $residentID = $_SESSION['User_Data']['Resident_ID'];
+
+        // Prepare SQL statement
+        $sql = "INSERT INTO request_document_tbl 
+                (Request_ID, Resident_ID, Document_Type, Purpose, FirstName,LastName,MiddleName,Suffix, Address ) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            die("Error preparing SQL: " . $conn->error);
+        }   
+        // Bind parameters
+        $stmt->bind_param("sssssssss", $requestID, $residentID, $documentType, $purpose, $firstName, $lastName, $middleName, $suffix, $address);
+
+        if ($stmt->execute()) {
+            echo "Request submitted successfully.";
+            header("Location: ../index.php"); // Redirect to index
+            exit(); // Ensure script stops execution after redirect
+
+
+    }
+
     
 }
+    }
+
 
 
 // Create instance of FPDF class
